@@ -11,6 +11,15 @@ desktop.ini
 
 # Node
 node_modules/
+dist/
+
+# Compiled
+*.class
+*.py[cod]
+*.jar
+
+# Build
+target/
 
 # Temp
 *.tmp
@@ -19,3 +28,19 @@ node_modules/
 
 # Logs
 *.log
+
+# Test reports
+TEST*.xml
+
+# Applications
+*.app
+*.exe
+*.war
+
+# Large media files
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
