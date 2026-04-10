@@ -7,8 +7,8 @@
 ## 사용법
 ```
 /plan-review BO-PDM-001                # 특정 문서 검증
-/plan-review domains/BO/product        # 도메인 전체 검증
-/plan-review domains/BO/product --cross-domain  # 도메인 간 연관성 포함
+/plan-review domains/BO/product        # 도메인 전체 검증 (도메인 간 연관성 포함)
+/plan-review domains/BO/product --no-cross-domain  # 도메인 간 연관성 제외
 ```
 
 ## /plan-validate 와의 차이
