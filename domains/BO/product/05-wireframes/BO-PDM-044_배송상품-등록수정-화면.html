@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="wfr-id"      content="BO-PDM-044">
+  <meta name="wfr-title"   content="배송상품 등록수정 화면">
+  <meta name="wfr-domain"  content="product">
+  <meta name="wfr-route"   content="/bo/products/delivery/form">
+  <meta name="wfr-version" content="1.0">
+  <title>BO-PDM-044 — 배송상품 등록수정 화면 | 임직원 복지몰</title>
+  <link rel="stylesheet" href="../../../../_wireframe/base.css">
+  <style>
+    /* LNB 확장형 사이드바 */
+    .lnb-menu-item > a { display: flex; align-items: center; justify-content: space-between; padding: 10px 24px; color: #555; font-size: 13px; text-decoration: none; cursor: pointer; }
+    .lnb-menu-item > a:hover { background: #eef1f6; color: #1a1a2e; }
+    .lnb-menu-item .arrow { font-size: 10px; transition: transform 0.2s; }
+    .lnb-menu-item.open > a .arrow { transform: rotate(90deg); }
+    .lnb-submenu { display: none; list-style: none; padding: 0; }
+    .lnb-menu-item.open > .lnb-submenu { display: block; }
+    .lnb-sub-header { padding: 8px 24px 2px 36px; font-size: 11px; color: #999; font-weight: 600; }
+    .lnb-submenu a { display: block; padding: 7px 24px 7px 48px; color: #666; font-size: 13px; text-decoration: none; }
+    .lnb-submenu a:hover, .lnb-submenu a.active { background: #eef1f6; color: #1a1a2e; font-weight: 600; }
+    /* 승인상태 badge */
+    .wf-badge--registering { background: #f3f4f6; color: #6b7280; }
+    .wf-badge--pending { background: #dbeafe; color: #1d4ed8; }
+    .wf-badge--withdrawn { background: #ffedd5; color: #c2410c; }
+    .wf-badge--approved { background: #dcfce7; color: #15803d; }
+    .wf-badge--rejected { background: #fee2e2; color: #dc2626; }
+    /* 판매상태 badge */
+    .wf-badge--selling { background: #dcfce7; color: #15803d; }
+    .wf-badge--sales-paused { background: #ffedd5; color: #c2410c; }
+    .wf-badge--temp-out { background: #fef9c3; color: #a16207; }
+    .wf-badge--out-of-stock { background: #fee2e2; color: #dc2626; }
+    .wf-badge--sales-ended { background: #f3f4f6; color: #6b7280; }
+    /* Form */
+    .form-section { margin-bottom: 24px; }
+    .form-section h2 { font-size: 16px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #eee; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 13px; font-weight: 600; color: #374151; }
+    .form-group .required { color: #ef4444; }
+    .form-buttons { display: flex; justify-content: center; gap: 8px; margin-top: 24px; padding-top: 16px; border-top: 1px solid #eee; }
+    .readonly-field { background: #f9fafb; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 13px; color: #6b7280; }
+  </style>
+</head>
+<body>
+
+<div class="spec-layout">
+  <!-- 좌측: 와이어프레임 -->
+  <div class="wf-layout">
+
+    <!-- GNB -->
+    <header class="wf-gnb" data-region="gnb">
+      <span class="gnb-logo">임직원 복지몰</span>
+      <span class="gnb-service">BO 관리자</span>
+      <span class="wf-ml-auto wf-text-sm">홍길동님 · <a href="#" style="color:#aab;">로그아웃</a></span>
+    </header>
+
+    <!-- LNB -->
+    <aside class="wf-lnb" data-region="lnb">
+      <nav>
+        <ul style="list-style:none;">
+          <li><a href="#" style="display:block;padding:10px 24px;color:#555;font-size:13px;text-decoration:none;">대시보드</a></li>
+          <li class="lnb-menu-item"><a href="#"><span>회원 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>카테고리 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item open">
+            <a href="#"><span>상품 관리</span><span class="arrow">▸</span></a>
+            <ul class="lnb-submenu">
+              <li class="lnb-sub-header">배송상품 관리</li>
+              <li><a href="#">배송상품 목록</a></li>
+              <li class="lnb-sub-header">티켓상품 관리</li>
+              <li><a href="#">티켓상품 목록</a></li>
+              <li class="lnb-sub-header">상품 등록/승인 관리</li>
+              <li><a href="#">배송상품 승인 목록</a></li>
+              <li><a href="#" class="active">배송상품 등록/수정</a></li>
+              <li><a href="#">티켓상품 승인 목록</a></li>
+              <li><a href="#">티켓상품 등록/수정</a></li>
+            </ul>
+          </li>
+          <li class="lnb-menu-item"><a href="#"><span>주문배송 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>클레임관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>정산 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>프로모션 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>전시 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>게시판 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>CS 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>운영 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>고객사 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>판매사 관리</span><span class="arrow">▸</span></a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Content -->
+    <main class="wf-content" data-region="content">
+      <h1>배송상품 등록/수정</h1>
+
+      <!-- 탭: 모드 전환 시뮬레이션 -->
+      <div class="wf-tabs">
+        <div class="wf-tab active" onclick="switchMode('register')">등록 모드</div>
+        <div class="wf-tab" onclick="switchMode('editReg')">수정(REGISTERING)</div>
+        <div class="wf-tab" onclick="switchMode('editApproved')">수정(APPROVED)</div>
+        <div class="wf-tab" onclick="switchMode('viewPending')">조회(PENDING)</div>
+      </div>
+
+      <section data-component="BO-PDM-020" data-title="배송상품 등록/수정 폼" data-action="BO-PDM-030,031,032,033,034">
+
+        <!-- 섹션 1: 기본정보 -->
+        <div class="form-section">
+          <h2>기본정보</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>상품코드</label>
+              <div class="readonly-field" id="fldProductCode">자동 생성</div>
+            </div>
+            <div class="form-group">
+              <label>요청코드</label>
+              <div class="readonly-field" id="fldRequestCode">자동 생성</div>
+            </div>
+            <div class="form-group">
+              <label>상품유형 <span class="required">*</span></label>
+              <select class="wf-select" id="fldProductType">
+                <option>일반상품</option>
+                <option>옵션상품</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>브랜드 <span class="required">*</span></label>
+              <select class="wf-select" id="fldBrand">
+                <option>선택</option>
+                <option>브랜드A</option>
+                <option>브랜드B</option>
+                <option>브랜드C</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>상품명 <span class="required">*</span></label>
+              <input class="wf-input" type="text" id="fldProductName" placeholder="상품명을 입력하세요">
+            </div>
+          </div>
+        </div>
+
+        <!-- 섹션 2: 배송 안내 -->
+        <div class="form-section">
+          <h2>배송 안내</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>배송방법 <span class="required">*</span></label>
+              <select class="wf-select">
+                <option>택배</option>
+                <option>직배송</option>
+                <option>퀵배송</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>배송비</label>
+              <input class="wf-input" type="text" placeholder="0" value="무료">
+            </div>
+            <div class="form-group">
+              <label>배송 소요일</label>
+              <input class="wf-input" type="text" placeholder="예: 2~3일">
+            </div>
+            <div class="form-group">
+              <label>출고지역</label>
+              <input class="wf-input" type="text" placeholder="출고지역 입력">
+            </div>
+          </div>
+        </div>
+
+        <!-- 섹션 2-2: 설치 안내 -->
+        <div class="form-section">
+          <h2>설치 안내</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>설치 필요 여부</label>
+              <select class="wf-select">
+                <option>불필요</option>
+                <option>필요</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>설치 비용</label>
+              <input class="wf-input" type="text" placeholder="0" value="무료">
+            </div>
+            <div class="form-group full">
+              <label>설치 안내</label>
+              <textarea class="wf-input" style="height:80px;resize:vertical;" placeholder="설치 관련 안내 사항을 입력하세요"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 섹션 3: 상태정보 -->
+        <div class="form-section">
+          <h2>상태정보</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>승인상태</label>
+              <div id="approvalBadge"><span class="wf-badge wf-badge--registering">등록중</span></div>
+            </div>
+            <div class="form-group">
+              <label>판매상태</label>
+              <select class="wf-select" id="fldSaleStatus">
+                <option>판매중</option>
+                <option>판매일시중지</option>
+                <option>판매종료</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>판매 시작일 <span class="required">*</span></label>
+              <input class="wf-input" type="date">
+            </div>
+            <div class="form-group">
+              <label>판매 종료일 <span class="required">*</span></label>
+              <input class="wf-input" type="date">
+            </div>
+          </div>
+        </div>
+
+        <!-- 섹션 4: 승인 이력 (수정/조회 모드만) -->
+        <div class="form-section" id="approvalHistory" style="display:none;">
+          <h2>승인 이력</h2>
+          <table class="wf-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>요청일</th>
+                <th>처리일</th>
+                <th>처리자</th>
+                <th>처리상태</th>
+                <th>비고</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>2026-04-10</td>
+                <td>2026-04-11</td>
+                <td>관리자</td>
+                <td><span class="wf-badge wf-badge--approved">승인</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>2026-04-08</td>
+                <td>2026-04-09</td>
+                <td>관리자</td>
+                <td><span class="wf-badge wf-badge--rejected">반려</span></td>
+                <td>상품 이미지 해상도 부족</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 하단 버튼 -->
+        <div class="form-buttons" id="btn-register">
+          <button class="wf-btn">목록</button>
+          <button class="wf-btn">임시저장</button>
+          <button class="wf-btn wf-btn--primary">저장</button>
+          <button class="wf-btn wf-btn--primary">승인요청</button>
+        </div>
+        <div class="form-buttons" id="btn-editReg" style="display:none;">
+          <button class="wf-btn">목록</button>
+          <button class="wf-btn wf-btn--primary">저장</button>
+          <button class="wf-btn wf-btn--danger">삭제</button>
+          <button class="wf-btn wf-btn--primary">승인요청</button>
+        </div>
+        <div class="form-buttons" id="btn-editApproved" style="display:none;">
+          <button class="wf-btn">목록</button>
+          <button class="wf-btn wf-btn--primary">저장</button>
+          <button class="wf-btn">판매일시중지</button>
+          <button class="wf-btn wf-btn--danger">판매종료</button>
+        </div>
+        <div class="form-buttons" id="btn-viewPending" style="display:none;">
+          <button class="wf-btn">목록</button>
+          <button class="wf-btn wf-btn--danger">승인철회</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 우측: 디스크립션 패널 -->
+  <div class="spec-desc-panel">
+    <h3>BO-PDM-044 — 배송상품 등록수정 화면</h3>
+    <p><strong>메뉴 경로:</strong> 상품 관리 &gt; 상품 등록/승인 관리 &gt; 배송상품 등록/수정</p>
+    <p><strong>Route:</strong> /bo/products/delivery/form</p>
+    <hr style="margin:8px 0;">
+    <p><strong>관련 문서</strong></p>
+    <ul>
+      <li>컴포넌트: BO-PDM-020 (배송상품 등록/수정 폼)</li>
+      <li>액션: BO-PDM-030 (상품 등록)</li>
+      <li>액션: BO-PDM-031 (상품 수정)</li>
+      <li>액션: BO-PDM-032 (상품 삭제)</li>
+      <li>액션: BO-PDM-033 (상품 승인요청)</li>
+      <li>액션: BO-PDM-034 (상품 승인철회)</li>
+    </ul>
+    <hr style="margin:8px 0;">
+    <h4 style="font-size:13px;margin:8px 0 4px;">탭 모드 전환</h4>
+    <ul>
+      <li><strong>등록:</strong> 신규 상품 등록 폼</li>
+      <li><strong>수정(REGISTERING):</strong> 미승인 상품 수정</li>
+      <li><strong>수정(APPROVED):</strong> 승인된 상품 수정</li>
+      <li><strong>조회(PENDING):</strong> 승인대기 중 조회전용</li>
+    </ul>
+    <h4 style="font-size:13px;margin:8px 0 4px;">섹션 구성</h4>
+    <ul>
+      <li><strong>기본정보:</strong> 상품코드, 요청코드, 상품유형, 브랜드, 상품명</li>
+      <li><strong>배송 안내:</strong> 배송방법, 배송비, 소요일, 출고지역</li>
+      <li><strong>설치 안내:</strong> 설치 필요여부, 비용, 안내</li>
+      <li><strong>상태정보:</strong> 승인상태(badge), 판매상태, 판매기간</li>
+      <li><strong>승인 이력:</strong> 수정/조회 모드만 표시</li>
+    </ul>
+    <h4 style="font-size:13px;margin:8px 0 4px;">모드별 하단 버튼</h4>
+    <ul>
+      <li><strong>등록:</strong> 목록 / 임시저장 / 저장 / 승인요청</li>
+      <li><strong>수정(REG):</strong> 목록 / 저장 / 삭제 / 승인요청</li>
+      <li><strong>수정(APR):</strong> 목록 / 저장 / 판매일시중지 / 판매종료</li>
+      <li><strong>조회(PND):</strong> 목록 / 승인철회</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+/* LNB 메뉴 그룹 토글 */
+document.querySelectorAll('.lnb-menu-item > a').forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    var li = this.parentElement;
+    if (li.querySelector('.lnb-submenu')) li.classList.toggle('open');
+  });
+});
+/* 탭 모드 전환 */
+var badges = { register:'<span class="wf-badge wf-badge--registering">등록중</span>', editReg:'<span class="wf-badge wf-badge--registering">등록중</span>', editApproved:'<span class="wf-badge wf-badge--approved">승인완료</span>', viewPending:'<span class="wf-badge wf-badge--pending">승인대기</span>' };
+var codes = { register:['자동 생성','자동 생성'], editReg:['PRD-2026-0001','REQ-2026-0001'], editApproved:['PRD-2026-0001','REQ-2026-0001'], viewPending:['PRD-2026-0001','REQ-2026-0001'] };
+function switchMode(mode) {
+  document.querySelectorAll('.wf-tab').forEach(function(t){ t.classList.remove('active'); });
+  event.target.classList.add('active');
+  document.getElementById('approvalBadge').innerHTML = badges[mode];
+  document.getElementById('fldProductCode').textContent = codes[mode][0];
+  document.getElementById('fldRequestCode').textContent = codes[mode][1];
+  document.getElementById('approvalHistory').style.display = (mode==='register') ? 'none' : 'block';
+  ['register','editReg','editApproved','viewPending'].forEach(function(m){ document.getElementById('btn-'+m).style.display = (m===mode) ? 'flex' : 'none'; });
+  var isReadonly = (mode==='viewPending');
+  document.querySelectorAll('.wf-content input,.wf-content select,.wf-content textarea').forEach(function(el){ el.disabled = isReadonly; });
+}
+</script>
+
+</body>
+</html>

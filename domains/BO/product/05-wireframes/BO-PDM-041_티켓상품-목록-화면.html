@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="wfr-id"      content="BO-PDM-041">
+  <meta name="wfr-title"   content="티켓상품 목록 화면">
+  <meta name="wfr-domain"  content="product">
+  <meta name="wfr-route"   content="/bo/products/ticket">
+  <meta name="wfr-version" content="1.0">
+  <title>BO-PDM-041 — 티켓상품 목록 화면 | 임직원 복지몰</title>
+  <link rel="stylesheet" href="../../../../_wireframe/base.css">
+  <style>
+    /* LNB 확장형 사이드바 */
+    .lnb-menu-item > a { display: flex; align-items: center; justify-content: space-between; padding: 10px 24px; color: #555; font-size: 13px; text-decoration: none; cursor: pointer; }
+    .lnb-menu-item > a:hover { background: #eef1f6; color: #1a1a2e; }
+    .lnb-menu-item .arrow { font-size: 10px; transition: transform 0.2s; }
+    .lnb-menu-item.open > a .arrow { transform: rotate(90deg); }
+    .lnb-submenu { display: none; list-style: none; padding: 0; }
+    .lnb-menu-item.open > .lnb-submenu { display: block; }
+    .lnb-sub-header { padding: 8px 24px 2px 36px; font-size: 11px; color: #999; font-weight: 600; }
+    .lnb-submenu a { display: block; padding: 7px 24px 7px 48px; color: #666; font-size: 13px; text-decoration: none; }
+    .lnb-submenu a:hover, .lnb-submenu a.active { background: #eef1f6; color: #1a1a2e; font-weight: 600; }
+    /* 승인상태 badge */
+    .wf-badge--registering { background: #f3f4f6; color: #6b7280; }
+    .wf-badge--pending { background: #dbeafe; color: #1d4ed8; }
+    .wf-badge--withdrawn { background: #ffedd5; color: #c2410c; }
+    .wf-badge--approved { background: #dcfce7; color: #15803d; }
+    .wf-badge--rejected { background: #fee2e2; color: #dc2626; }
+    /* 판매상태 badge */
+    .wf-badge--selling { background: #dcfce7; color: #15803d; }
+    .wf-badge--sales-paused { background: #ffedd5; color: #c2410c; }
+    .wf-badge--temp-out { background: #fef9c3; color: #a16207; }
+    .wf-badge--out-of-stock { background: #fee2e2; color: #dc2626; }
+    .wf-badge--sales-ended { background: #f3f4f6; color: #6b7280; }
+  </style>
+</head>
+<body>
+
+<div class="spec-layout">
+  <!-- 좌측: 와이어프레임 -->
+  <div class="wf-layout">
+
+    <!-- GNB -->
+    <header class="wf-gnb" data-region="gnb">
+      <span class="gnb-logo">임직원 복지몰</span>
+      <span class="gnb-service">BO 관리자</span>
+      <span class="wf-ml-auto wf-text-sm">홍길동님 · <a href="#" style="color:#aab;">로그아웃</a></span>
+    </header>
+
+    <!-- LNB -->
+    <aside class="wf-lnb" data-region="lnb">
+      <nav>
+        <ul style="list-style:none;">
+          <li><a href="#" style="display:block;padding:10px 24px;color:#555;font-size:13px;text-decoration:none;">대시보드</a></li>
+          <li class="lnb-menu-item"><a href="#"><span>회원 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>카테고리 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item open">
+            <a href="#"><span>상품 관리</span><span class="arrow">▸</span></a>
+            <ul class="lnb-submenu">
+              <li class="lnb-sub-header">배송상품 관리</li>
+              <li><a href="#">배송상품 목록</a></li>
+              <li class="lnb-sub-header">티켓상품 관리</li>
+              <li><a href="#" class="active">티켓상품 목록</a></li>
+              <li class="lnb-sub-header">상품 등록/승인 관리</li>
+              <li><a href="#">배송상품 승인 목록</a></li>
+              <li><a href="#">배송상품 등록/수정</a></li>
+              <li><a href="#">티켓상품 승인 목록</a></li>
+              <li><a href="#">티켓상품 등록/수정</a></li>
+            </ul>
+          </li>
+          <li class="lnb-menu-item"><a href="#"><span>주문배송 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>클레임관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>정산 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>프로모션 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>전시 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>게시판 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>CS 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>운영 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>고객사 관리</span><span class="arrow">▸</span></a></li>
+          <li class="lnb-menu-item"><a href="#"><span>판매사 관리</span><span class="arrow">▸</span></a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Content -->
+    <main class="wf-content" data-region="content">
+      <h1>티켓상품 목록</h1>
+
+      <section data-component="BO-PDM-025" data-title="티켓상품 목록 테이블" data-action="BO-PDM-038">
+        <!-- 검색 필터 -->
+        <div class="wf-filter-row">
+          <label class="wf-text-sm">상품유형</label>
+          <select class="wf-select">
+            <option>전체</option>
+            <option>쿠폰형</option>
+            <option>예약형</option>
+          </select>
+          <label class="wf-text-sm">판매상태</label>
+          <select class="wf-select">
+            <option>전체</option>
+            <option>판매중</option>
+            <option>판매일시중지</option>
+            <option>일시품절</option>
+            <option>품절</option>
+            <option>판매종료</option>
+          </select>
+          <label class="wf-text-sm">판매사</label>
+          <select class="wf-select">
+            <option>전체</option>
+            <option>판매사A</option>
+            <option>판매사B</option>
+          </select>
+          <label class="wf-text-sm">상품명</label>
+          <input class="wf-input" type="text" placeholder="상품명 검색">
+          <label class="wf-text-sm">등록기간</label>
+          <input class="wf-input" type="date"> ~ <input class="wf-input" type="date">
+          <button class="wf-btn wf-btn--primary">검색</button>
+          <button class="wf-btn">초기화</button>
+        </div>
+
+        <!-- 상단 툴바 -->
+        <div class="wf-flex-between wf-mb wf-mt">
+          <span class="wf-text-sm wf-text-muted">검색결과 <strong>87</strong>건</span>
+          <select class="wf-select">
+            <option>20건</option>
+            <option>50건</option>
+            <option>100건</option>
+          </select>
+        </div>
+
+        <!-- 테이블 -->
+        <table class="wf-table">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>상품코드</th>
+              <th>요청코드</th>
+              <th>상품명</th>
+              <th>상품유형</th>
+              <th>판매상태</th>
+              <th>판매사</th>
+              <th>판매기간</th>
+              <th>등록일</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>TKT-2026-0001</td>
+              <td>REQ-2026-0101</td>
+              <td><a href="#">[판매사A] 제주 리조트 숙박권</a></td>
+              <td>예약형</td>
+              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+              <td>판매사A</td>
+              <td>2026-04-01 ~ 2026-12-31</td>
+              <td>2026-04-01</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>TKT-2026-0002</td>
+              <td>REQ-2026-0102</td>
+              <td><a href="#">[판매사B] 영화 관람권 2매</a></td>
+              <td>쿠폰형</td>
+              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+              <td>판매사B</td>
+              <td>2026-03-01 ~ 2026-12-31</td>
+              <td>2026-03-01</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>TKT-2026-0003</td>
+              <td>REQ-2026-0103</td>
+              <td><a href="#">[판매사A] 스파 이용권</a></td>
+              <td>쿠폰형</td>
+              <td><span class="wf-badge wf-badge--sales-paused">판매일시중지</span></td>
+              <td>판매사A</td>
+              <td>2026-04-05 ~ 2026-09-30</td>
+              <td>2026-04-05</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>TKT-2026-0004</td>
+              <td>REQ-2026-0104</td>
+              <td><a href="#">[판매사C] 놀이공원 자유이용권</a></td>
+              <td>예약형</td>
+              <td><span class="wf-badge wf-badge--temp-out">일시품절</span></td>
+              <td>판매사C</td>
+              <td>2026-05-01 ~ 2026-10-31</td>
+              <td>2026-04-10</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>TKT-2026-0005</td>
+              <td>REQ-2026-0105</td>
+              <td><a href="#">[판매사D] 크리스마스 디너 쿠폰</a></td>
+              <td>쿠폰형</td>
+              <td><span class="wf-badge wf-badge--sales-ended">판매종료</span></td>
+              <td>판매사D</td>
+              <td>2025-12-01 ~ 2025-12-31</td>
+              <td>2025-11-15</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- 페이지네이션 -->
+        <div class="wf-pagination">
+          <button class="wf-pagination-btn">&laquo;</button>
+          <button class="wf-pagination-btn">&lsaquo;</button>
+          <button class="wf-pagination-btn active">1</button>
+          <button class="wf-pagination-btn">2</button>
+          <button class="wf-pagination-btn">3</button>
+          <button class="wf-pagination-btn">4</button>
+          <button class="wf-pagination-btn">5</button>
+          <button class="wf-pagination-btn">&rsaquo;</button>
+          <button class="wf-pagination-btn">&raquo;</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 우측: 디스크립션 패널 -->
+  <div class="spec-desc-panel">
+    <h3>BO-PDM-041 — 티켓상품 목록 화면</h3>
+    <p><strong>메뉴 경로:</strong> 상품 관리 &gt; 티켓상품 관리 &gt; 티켓상품 목록</p>
+    <p><strong>Route:</strong> /bo/products/ticket</p>
+    <hr style="margin:8px 0;">
+    <p><strong>관련 문서</strong></p>
+    <ul>
+      <li>컴포넌트: BO-PDM-025 (티켓상품 목록 테이블)</li>
+      <li>액션: BO-PDM-038 (상품 목록 조회)</li>
+    </ul>
+    <hr style="margin:8px 0;">
+    <h4 style="font-size:13px;margin:8px 0 4px;">검색/필터 영역</h4>
+    <ul>
+      <li>상품유형: 전체 / 쿠폰형 / 예약형</li>
+      <li>판매상태: 전체 / 판매중 / 판매일시중지 / 일시품절 / 품절 / 판매종료</li>
+      <li>판매사: 셀렉트 (전체 + 개별)</li>
+      <li>상품명: 키워드 검색 (LIKE)</li>
+      <li>등록기간: 시작일 ~ 종료일</li>
+    </ul>
+    <h4 style="font-size:13px;margin:8px 0 4px;">목록 테이블</h4>
+    <ul>
+      <li>9컬럼: No, 상품코드, 요청코드, 상품명(링크), 상품유형, 판매상태(badge), 판매사, 판매기간, 등록일</li>
+      <li>상품명 클릭 → 상세/수정 화면 이동</li>
+      <li>기본 정렬: 등록일 DESC</li>
+      <li>출력건수: 20 / 50 / 100건 선택</li>
+    </ul>
+    <h4 style="font-size:13px;margin:8px 0 4px;">판매상태 Badge</h4>
+    <ul>
+      <li><span class="wf-badge wf-badge--selling">판매중</span> SELLING</li>
+      <li><span class="wf-badge wf-badge--sales-paused">판매일시중지</span> SALES_PAUSED</li>
+      <li><span class="wf-badge wf-badge--temp-out">일시품절</span> TEMP_OUT_OF_STOCK</li>
+      <li><span class="wf-badge wf-badge--out-of-stock">품절</span> OUT_OF_STOCK</li>
+      <li><span class="wf-badge wf-badge--sales-ended">판매종료</span> SALES_ENDED</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+/* LNB 메뉴 그룹 토글 */
+document.querySelectorAll('.lnb-menu-item > a').forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    var li = this.parentElement;
+    if (li.querySelector('.lnb-submenu')) li.classList.toggle('open');
+  });
+});
+</script>
+
+</body>
+</html>
