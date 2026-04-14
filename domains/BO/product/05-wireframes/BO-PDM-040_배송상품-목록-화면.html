@@ -45,9 +45,9 @@
     .filter-actions { text-align: right; margin-bottom: 16px; }
 
     /* 테이블 가로 스크롤 */
-    .table-scroll-wrap { overflow-x: auto; border: 1px solid #d0d0d0; border-radius: 8px; }
+    .table-scroll-wrap { overflow-x: auto; overflow-y: auto; max-height: 460px; border: 1px solid #d0d0d0; border-radius: 8px; }
     .table-scroll-wrap .wf-table { min-width: 2400px; margin: 0; border-collapse: separate; border-spacing: 0; }
-    .table-scroll-wrap .wf-table th { border-bottom: 2px solid #d0d0d0; border-right: 1px solid #d0d0d0; text-align: center; }
+    .table-scroll-wrap .wf-table th { border-bottom: 2px solid #d0d0d0; border-right: 1px solid #d0d0d0; text-align: center; position: sticky; top: 0; z-index: 2; background: #f7f8fa; }
     .table-scroll-wrap .wf-table th:last-child { border-right: none; }
     .table-scroll-wrap .wf-table td { border-bottom: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0; }
     .table-scroll-wrap .wf-table tr:last-child td { border-bottom: none; }
@@ -491,6 +491,471 @@
                 <td>박승인</td>
                 <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
                 <td><button class="wf-btn wf-btn--sm" disabled style="opacity:0.4;">판매종료</button></td>
+              </tr>
+              <!-- 샘플 6: 판매중, 전시, 설치형, 외부연동 -->
+              <tr>
+                <td>6</td>
+                <td>2026040500006</td>
+                <td>00006</td>
+                <td><a href="#">[브랜드B] 천연 꿀 선물 세트 3종</a></td>
+                <td>외부연동</td>
+                <td>일반</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 42,000</td>
+                <td style="text-align:right;">&#8361; 37,800</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>면세</td>
+                <td>식품 &gt; 꿀/잼 &gt; 천연꿀</td>
+                <td>선물세트 &gt; 식품 &gt; 꿀세트</td>
+                <td>판매사A</td>
+                <td>하위A-2</td>
+                <td>브랜드B</td>
+                <td>HN-SET-003</td>
+                <td>2026-04-05</td>
+                <td>2026-04-10</td>
+                <td>2026-04-05</td>
+                <td>2026-12-31</td>
+                <td>김담당</td>
+                <td>이등록</td>
+                <td>이등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 7: 판매중, 전시, PC -->
+              <tr>
+                <td>7</td>
+                <td>2026040300007</td>
+                <td>00007</td>
+                <td><a href="#">[브랜드E] 프리미엄 이불 세트</a></td>
+                <td>직접등록</td>
+                <td>일반</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC</td>
+                <td style="text-align:right;">&#8361; 189,000</td>
+                <td style="text-align:right;">&#8361; 159,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>생활용품 &gt; 침구 &gt; 이불세트</td>
+                <td>생활 &gt; 침실 &gt; 이불</td>
+                <td>판매사C</td>
+                <td>—</td>
+                <td>브랜드E</td>
+                <td>BD-PRM-SET</td>
+                <td>2026-04-03</td>
+                <td>2026-04-09</td>
+                <td>2026-04-03</td>
+                <td>2026-12-31</td>
+                <td>박담당</td>
+                <td>최등록</td>
+                <td>최등록</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 8: 판매중, 전시, 모바일 -->
+              <tr>
+                <td>8</td>
+                <td>2026040100008</td>
+                <td>00008</td>
+                <td><a href="#">[브랜드A] 건강 견과류 모음 1kg</a></td>
+                <td>직접등록</td>
+                <td>일반</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>모바일</td>
+                <td style="text-align:right;">&#8361; 25,900</td>
+                <td style="text-align:right;">—</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>면세</td>
+                <td>식품 &gt; 견과류 &gt; 혼합견과</td>
+                <td>간식 &gt; 견과류 &gt; 모음전</td>
+                <td>판매사A</td>
+                <td>하위A-1</td>
+                <td>브랜드A</td>
+                <td>NUT-MIX-1K</td>
+                <td>2026-04-01</td>
+                <td>2026-04-07</td>
+                <td>2026-04-01</td>
+                <td>2026-10-31</td>
+                <td>김담당</td>
+                <td>이등록</td>
+                <td>김담당</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 9: 판매중, 전시, 외부연동 -->
+              <tr>
+                <td>9</td>
+                <td>2026033000009</td>
+                <td>00009</td>
+                <td><a href="#">[브랜드C] 무선 블루투스 스피커</a></td>
+                <td>외부연동</td>
+                <td>일반</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 79,000</td>
+                <td style="text-align:right;">&#8361; 69,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>가전 &gt; 음향기기 &gt; 스피커</td>
+                <td>가전 &gt; 모바일악세서리 &gt; 스피커</td>
+                <td>판매사B</td>
+                <td>하위B-1</td>
+                <td>브랜드C</td>
+                <td>BT-SPK-W01</td>
+                <td>2026-03-30</td>
+                <td>2026-04-05</td>
+                <td>2026-03-30</td>
+                <td>2026-12-31</td>
+                <td>박담당</td>
+                <td>최등록</td>
+                <td>박담당</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 10: 판매일시중지, 전시 -->
+              <tr>
+                <td>10</td>
+                <td>2026032500010</td>
+                <td>00010</td>
+                <td><a href="#">[브랜드D] 주방용품 5종 세트</a></td>
+                <td>직접등록</td>
+                <td>일반</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 68,000</td>
+                <td style="text-align:right;">&#8361; 54,400</td>
+                <td><span class="wf-badge wf-badge--sales-paused">판매일시중지</span></td>
+                <td>과세</td>
+                <td>생활용품 &gt; 주방 &gt; 조리도구세트</td>
+                <td>생활 &gt; 주방용품 &gt; 세트</td>
+                <td>판매사C</td>
+                <td>하위C-1</td>
+                <td>브랜드D</td>
+                <td>KT-5SET-01</td>
+                <td>2026-03-25</td>
+                <td>2026-04-10</td>
+                <td>2026-03-25</td>
+                <td>2026-08-31</td>
+                <td>김담당</td>
+                <td>최등록</td>
+                <td>이등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 11: 판매중, 전시, 모바일 -->
+              <tr>
+                <td>11</td>
+                <td>2026032000011</td>
+                <td>00011</td>
+                <td><a href="#">[브랜드B] 아로마 디퓨저 세트</a></td>
+                <td>직접등록</td>
+                <td>일반</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>모바일</td>
+                <td style="text-align:right;">&#8361; 32,000</td>
+                <td style="text-align:right;">—</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>생활용품 &gt; 방향제 &gt; 디퓨저</td>
+                <td>생활 &gt; 인테리어 &gt; 방향제</td>
+                <td>판매사A</td>
+                <td>—</td>
+                <td>브랜드B</td>
+                <td>AR-DIF-SET</td>
+                <td>2026-03-20</td>
+                <td>2026-04-02</td>
+                <td>2026-03-20</td>
+                <td>2026-12-31</td>
+                <td>박담당</td>
+                <td>이등록</td>
+                <td>이등록</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 12: 판매중, 전시, 설치형 -->
+              <tr>
+                <td>12</td>
+                <td>2026031500012</td>
+                <td>00012</td>
+                <td><a href="#">[브랜드E] 드럼세탁기 21kg</a></td>
+                <td>외부연동</td>
+                <td>설치형</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 1,890,000</td>
+                <td style="text-align:right;">&#8361; 1,690,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>가전 &gt; 세탁기 &gt; 드럼세탁기</td>
+                <td>가전 &gt; 생활가전 &gt; 세탁기</td>
+                <td>판매사B</td>
+                <td>하위B-1</td>
+                <td>브랜드E</td>
+                <td>WM-DRM-21K</td>
+                <td>2026-03-15</td>
+                <td>2026-04-01</td>
+                <td>2026-03-15</td>
+                <td>2026-12-31</td>
+                <td>김담당</td>
+                <td>최등록</td>
+                <td>최등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 13: 일시품절, 전시 -->
+              <tr>
+                <td>13</td>
+                <td>2026031000013</td>
+                <td>00013</td>
+                <td><a href="#">[브랜드A] 한우 선물 세트 1호</a></td>
+                <td>직접등록</td>
+                <td>일반</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 129,000</td>
+                <td style="text-align:right;">—</td>
+                <td><span class="wf-badge wf-badge--temp-out">일시품절</span></td>
+                <td>면세</td>
+                <td>식품 &gt; 축산물 &gt; 한우세트</td>
+                <td>선물세트 &gt; 명절 &gt; 한우</td>
+                <td>판매사A</td>
+                <td>하위A-1</td>
+                <td>브랜드A</td>
+                <td>—</td>
+                <td>2026-03-10</td>
+                <td>2026-04-08</td>
+                <td>2026-03-10</td>
+                <td>2026-09-30</td>
+                <td>박담당</td>
+                <td>이등록</td>
+                <td>박담당</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 14: 판매중, 전시 -->
+              <tr>
+                <td>14</td>
+                <td>2026030500014</td>
+                <td>00014</td>
+                <td><a href="#">[브랜드C] 고급 와인 2병 세트</a></td>
+                <td>직접등록</td>
+                <td>일반</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC</td>
+                <td style="text-align:right;">&#8361; 85,000</td>
+                <td style="text-align:right;">&#8361; 76,500</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>식품 &gt; 주류 &gt; 와인</td>
+                <td>선물세트 &gt; 주류 &gt; 와인세트</td>
+                <td>판매사C</td>
+                <td>—</td>
+                <td>브랜드C</td>
+                <td>WN-RED-2BT</td>
+                <td>2026-03-05</td>
+                <td>2026-03-28</td>
+                <td>2026-03-05</td>
+                <td>2026-12-31</td>
+                <td>김담당</td>
+                <td>최등록</td>
+                <td>최등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 15: 판매중, 비전시, 설치형 -->
+              <tr>
+                <td>15</td>
+                <td>2026030100015</td>
+                <td>00015</td>
+                <td><a href="#">[브랜드D] 안마의자 렌탈 상품</a></td>
+                <td>외부연동</td>
+                <td>설치형</td>
+                <td><span class="wf-badge wf-badge--display-off">비전시</span></td>
+                <td>PC</td>
+                <td style="text-align:right;">&#8361; 2,490,000</td>
+                <td style="text-align:right;">&#8361; 2,190,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>가전 &gt; 건강가전 &gt; 안마의자</td>
+                <td>가전 &gt; 헬스케어 &gt; 안마의자</td>
+                <td>판매사B</td>
+                <td>하위B-1</td>
+                <td>브랜드D</td>
+                <td>MC-RNT-PRO</td>
+                <td>2026-03-01</td>
+                <td>2026-04-05</td>
+                <td>2026-03-01</td>
+                <td>2027-02-28</td>
+                <td>박담당</td>
+                <td>최등록</td>
+                <td>박담당</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 16: 품절, 전시 -->
+              <tr>
+                <td>16</td>
+                <td>2026022000016</td>
+                <td>00016</td>
+                <td><a href="#">[브랜드B] 프리미엄 홍삼 세트</a></td>
+                <td>직접등록</td>
+                <td>일반</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 98,000</td>
+                <td style="text-align:right;">—</td>
+                <td><span class="wf-badge wf-badge--out-of-stock">품절</span></td>
+                <td>면세</td>
+                <td>식품 &gt; 건강식품 &gt; 홍삼</td>
+                <td>선물세트 &gt; 건강 &gt; 홍삼세트</td>
+                <td>판매사A</td>
+                <td>하위A-1</td>
+                <td>브랜드B</td>
+                <td>RG-PRM-SET</td>
+                <td>2026-02-20</td>
+                <td>2026-03-15</td>
+                <td>2026-02-20</td>
+                <td>2026-06-30</td>
+                <td>김담당</td>
+                <td>이등록</td>
+                <td>김담당</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 17: 판매중, 전시 -->
+              <tr>
+                <td>17</td>
+                <td>2026021500017</td>
+                <td>00017</td>
+                <td><a href="#">[브랜드E] 실내 공기청정기 18평형</a></td>
+                <td>외부연동</td>
+                <td>일반</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 450,000</td>
+                <td style="text-align:right;">&#8361; 399,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>가전 &gt; 생활가전 &gt; 공기청정기</td>
+                <td>가전 &gt; 계절가전 &gt; 공기청정기</td>
+                <td>판매사B</td>
+                <td>하위B-1</td>
+                <td>브랜드E</td>
+                <td>AP-18P-WHT</td>
+                <td>2026-02-15</td>
+                <td>2026-03-20</td>
+                <td>2026-02-15</td>
+                <td>2026-12-31</td>
+                <td>박담당</td>
+                <td>최등록</td>
+                <td>최등록</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 18: 판매중, 전시 -->
+              <tr>
+                <td>18</td>
+                <td>2026020100018</td>
+                <td>00018</td>
+                <td><a href="#">[브랜드A] 오가닉 올리브유 세트</a></td>
+                <td>직접등록</td>
+                <td>일반</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>모바일</td>
+                <td style="text-align:right;">&#8361; 38,000</td>
+                <td style="text-align:right;">&#8361; 33,200</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>면세</td>
+                <td>식품 &gt; 조미료 &gt; 올리브유</td>
+                <td>식품 &gt; 오일 &gt; 올리브유세트</td>
+                <td>판매사C</td>
+                <td>—</td>
+                <td>브랜드A</td>
+                <td>OV-ORG-SET</td>
+                <td>2026-02-01</td>
+                <td>2026-03-10</td>
+                <td>2026-02-01</td>
+                <td>2026-12-31</td>
+                <td>김담당</td>
+                <td>이등록</td>
+                <td>이등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 19: 판매종료, 비전시 -->
+              <tr>
+                <td>19</td>
+                <td>2026012000019</td>
+                <td>00019</td>
+                <td><a href="#">[브랜드C] 캠핑 의자 2개 세트</a></td>
+                <td>직접등록</td>
+                <td>일반</td>
+                <td><span class="wf-badge wf-badge--display-off">비전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 56,000</td>
+                <td style="text-align:right;">—</td>
+                <td><span class="wf-badge wf-badge--sales-ended">판매종료</span></td>
+                <td>과세</td>
+                <td>생활용품 &gt; 레저 &gt; 캠핑의자</td>
+                <td>레저 &gt; 캠핑 &gt; 의자</td>
+                <td>판매사A</td>
+                <td>하위A-2</td>
+                <td>브랜드C</td>
+                <td>CP-CHR-2ST</td>
+                <td>2026-01-20</td>
+                <td>2026-03-31</td>
+                <td>2026-01-20</td>
+                <td>2026-03-31</td>
+                <td>박담당</td>
+                <td>이등록</td>
+                <td>박담당</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm" disabled style="opacity:0.4;">판매종료</button></td>
+              </tr>
+              <!-- 샘플 20: 판매중, 전시 -->
+              <tr>
+                <td>20</td>
+                <td>2026011500020</td>
+                <td>00020</td>
+                <td><a href="#">[브랜드D] 전동 칫솔 세트</a></td>
+                <td>외부연동</td>
+                <td>일반</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 49,900</td>
+                <td style="text-align:right;">&#8361; 39,900</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>생활용품 &gt; 욕실 &gt; 전동칫솔</td>
+                <td>생활 &gt; 욕실용품 &gt; 칫솔세트</td>
+                <td>판매사C</td>
+                <td>하위C-1</td>
+                <td>브랜드D</td>
+                <td>TB-ELC-SET</td>
+                <td>2026-01-15</td>
+                <td>2026-02-28</td>
+                <td>2026-01-15</td>
+                <td>2026-12-31</td>
+                <td>김담당</td>
+                <td>최등록</td>
+                <td>최등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
               </tr>
             </tbody>
           </table>
