@@ -1,3 +1,8 @@
+---
+name: wireframe-render
+description: 와이어프레임 HTML 렌더링 — MD 문서 기반 표준화된 HTML 화면 생성
+---
+
 # /wireframe-render — 와이어프레임 HTML 렌더링
 
 ## 설명

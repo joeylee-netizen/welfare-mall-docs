@@ -1,3 +1,8 @@
+---
+name: ux-review
+description: UX 사전 리뷰 — Action/Wireframe 단계에서 사용성 문제 조기 발견
+---
+
 # /ux-review — UX 사전 리뷰
 
 ## 설명

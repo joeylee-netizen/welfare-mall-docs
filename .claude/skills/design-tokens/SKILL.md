@@ -1,3 +1,8 @@
+---
+name: design-tokens
+description: 디자인 토큰 카탈로그 — 색상, 간격, 타이포그래피, 컴포넌트 클래스 조회
+---
+
 # /design-tokens — 디자인 토큰 카탈로그
 
 ## 설명

@@ -1,3 +1,8 @@
+---
+name: ux-audit
+description: 접근성 및 사용성 감사 — HTML 와이어프레임 WCAG 2.1 AA 검사
+---
+
 # /ux-audit — 접근성 및 사용성 감사
 
 ## 설명

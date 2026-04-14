@@ -1,3 +1,8 @@
+---
+name: plan-review
+description: 기획 문서의 내용적 품질 검증 — 정책 완결성, 정합성, 흐름 누락 검토
+---
+
 # /plan-review — 기획 내용 검증
 
 ## 설명

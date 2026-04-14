@@ -1,3 +1,8 @@
+---
+name: plan-trace
+description: 문서 ID 참조 추적 — 영향 범위 시각화 및 영향도 분석
+---
+
 # /plan-trace — ID 참조 추적
 
 ## 설명

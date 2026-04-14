@@ -1,3 +1,8 @@
+---
+name: glossary
+description: 프로젝트 용어집 관리 — 용어 조회, 추가, 일관성 검사
+---
+
 # /glossary — 용어집 관리
 
 ## 설명

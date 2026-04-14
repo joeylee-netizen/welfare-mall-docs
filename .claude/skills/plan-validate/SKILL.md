@@ -1,3 +1,8 @@
+---
+name: plan-validate
+description: 기획 문서 유효성 검증 — frontmatter, ID 규칙, 참조 무결성 검사
+---
+
 # /plan-validate — 기획 문서 유효성 검증
 
 ## 설명

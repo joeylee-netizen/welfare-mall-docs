@@ -1,3 +1,8 @@
+---
+name: tc-generate
+description: 테스트케이스 자동 생성 — Policy, Action, Wireframe 분석 후 TC MD 파일 생성
+---
+
 # /tc-generate — 테스트케이스 자동 생성
 
 ## 설명

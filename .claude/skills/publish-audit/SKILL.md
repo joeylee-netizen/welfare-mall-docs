@@ -1,3 +1,8 @@
+---
+name: publish-audit
+description: 발행 와이어프레임 검증 — HTML이 기획 문서와 일치하는지 사후 검증
+---
+
 # /publish-audit — 발행 와이어프레임 검증
 
 ## 설명
