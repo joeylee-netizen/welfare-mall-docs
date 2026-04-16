@@ -21,25 +21,61 @@
   <!-- ── GNB ────────────────────────────────── -->
   <header class="wf-gnb" data-region="gnb">
     <span class="gnb-logo">임직원 복지몰</span>
-    <span class="gnb-service">BO 관리자</span>
-    <span class="wf-ml-auto wf-text-sm">관리자님 환영합니다</span>
+    <div class="gnb-tabs">
+      <a class="gnb-tab gnb-tab--home" title="홈">&#x1F3E0;</a>
+      <span class="gnb-tab gnb-tab--active">화면 제목 <button class="tab-close">&times;</button></span>
+    </div>
+    <span class="wf-ml-auto wf-text-sm">관리자님 &#x2699; 로그아웃</span>
   </header>
+
+  <!-- ── 아이콘 스트립 ────────────────────────── -->
+  <aside class="wf-icon-strip" data-region="icon-strip">
+    <button title="메뉴 토글" onclick="toggleLnb()">&#x2630;</button>
+    <button title="즐겨찾기">&#x2606;</button>
+    <button title="문서">&#x1F4CB;</button>
+    <button title="최근">&#x1F550;</button>
+  </aside>
 
   <!-- ── LNB ────────────────────────────────── -->
   <aside class="wf-lnb" data-region="lnb">
-    <nav>
-      <div class="lnb-group">상품 관리</div>
-      <ul>
-        <li><a href="#" class="active">상품 목록</a></li>
-        <li><a href="#">상품 등록</a></li>
-        <li><a href="#">카테고리 관리</a></li>
-      </ul>
-      <div class="lnb-group">클레임 관리</div>
-      <ul>
-        <li><a href="#">클레임 목록</a></li>
-        <li><a href="#">클레임 처리</a></li>
-      </ul>
-    </nav>
+    <div class="lnb-user">
+      <div class="lnb-user-name">관리자 &#x2699;</div>
+      <div class="lnb-user-email">admin@company.co.kr &middot; 로그아웃</div>
+      <button class="lnb-close" onclick="toggleLnb()">&times;</button>
+    </div>
+    <div class="lnb-toggle-bar">
+      <span>전체메뉴보기</span>
+      <label class="lnb-switch"><input type="checkbox"><span class="slider"></span></label>
+      <span>메뉴필터기능</span>
+    </div>
+    <nav><ul>
+      <li><a href="#"><span class="menu-icon">&#x1F4CA;</span> 대시보드</a></li>
+      <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F464;</span><span>회원 관리</span><span class="arrow">&#x25B8;</span></a></li>
+      <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F3F7;</span><span>카테고리 관리</span><span class="arrow">&#x25B8;</span></a></li>
+      <li class="lnb-menu-item open"><a href="#"><span class="menu-icon">&#x1F4E6;</span><span>상품 관리</span><span class="arrow">&#x25B8;</span></a>
+        <ul class="lnb-submenu">
+          <li class="lnb-sub-header">배송상품 관리</li>
+          <li><a href="#" class="active">배송상품 목록</a></li>
+          <li class="lnb-sub-header">티켓상품 관리</li>
+          <li><a href="#">티켓상품 목록</a></li>
+          <li class="lnb-sub-header">상품 등록/승인 관리</li>
+          <li><a href="#">배송상품 승인 목록</a></li>
+          <li><a href="#">배송상품 등록/수정</a></li>
+          <li><a href="#">티켓상품 승인 목록</a></li>
+          <li><a href="#">티켓상품 등록/수정</a></li>
+        </ul>
+      </li>
+      <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F69A;</span><span>주문배송 관리</span><span class="arrow">&#x25B8;</span></a></li>
+      <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F4AC;</span><span>클레임관리</span><span class="arrow">&#x25B8;</span></a></li>
+      <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F4B0;</span><span>정산 관리</span><span class="arrow">&#x25B8;</span></a></li>
+      <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F381;</span><span>프로모션 관리</span><span class="arrow">&#x25B8;</span></a></li>
+      <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F5BC;</span><span>전시 관리</span><span class="arrow">&#x25B8;</span></a></li>
+      <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F4DD;</span><span>게시판 관리</span><span class="arrow">&#x25B8;</span></a></li>
+      <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F3A7;</span><span>CS 관리</span><span class="arrow">&#x25B8;</span></a></li>
+      <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x2699;</span><span>운영 관리</span><span class="arrow">&#x25B8;</span></a></li>
+      <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F3E2;</span><span>고객사 관리</span><span class="arrow">&#x25B8;</span></a></li>
+      <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F3EA;</span><span>판매사 관리</span><span class="arrow">&#x25B8;</span></a></li>
+    </ul></nav>
   </aside>
 
   <!-- ── Content ────────────────────────────── -->
@@ -96,12 +132,16 @@
 </div>
 
 <script>
-// LNB active state
-document.querySelectorAll('.wf-lnb a').forEach(link => {
-  link.addEventListener('click', e => {
+/* LNB 사이드바 토글 */
+function toggleLnb() {
+  document.querySelector('.wf-layout').classList.toggle('lnb-collapsed');
+}
+/* LNB 메뉴 그룹 토글 */
+document.querySelectorAll('.lnb-menu-item > a').forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
     e.preventDefault();
-    document.querySelectorAll('.wf-lnb a').forEach(l => l.classList.remove('active'));
-    link.classList.add('active');
+    var li = this.parentElement;
+    if (li.querySelector('.lnb-submenu')) li.classList.toggle('open');
   });
 });
 </script>

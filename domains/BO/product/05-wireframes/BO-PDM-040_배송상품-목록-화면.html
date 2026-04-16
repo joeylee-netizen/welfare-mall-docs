@@ -11,17 +11,6 @@
   <title>BO-PDM-040 — 배송상품 목록 화면 | 임직원 복지몰</title>
   <link rel="stylesheet" href="../../../../_wireframe/base.css">
   <style>
-    /* LNB 확장형 사이드바 */
-    .lnb-menu-item > a { display: flex; align-items: center; justify-content: space-between; padding: 10px 24px; color: #555; font-size: 13px; text-decoration: none; cursor: pointer; }
-    .lnb-menu-item > a:hover { background: #eef1f6; color: #1a1a2e; }
-    .lnb-menu-item .arrow { font-size: 10px; transition: transform 0.2s; }
-    .lnb-menu-item.open > a .arrow { transform: rotate(90deg); }
-    .lnb-submenu { display: none; list-style: none; padding: 0; }
-    .lnb-menu-item.open > .lnb-submenu { display: block; }
-    .lnb-sub-header { padding: 8px 24px 2px 36px; font-size: 11px; color: #999; font-weight: 600; }
-    .lnb-submenu a { display: block; padding: 7px 24px 7px 48px; color: #666; font-size: 13px; text-decoration: none; }
-    .lnb-submenu a:hover, .lnb-submenu a.active { background: #eef1f6; color: #1a1a2e; font-weight: 600; }
-
     /* 판매상태 badge */
     .wf-badge--selling { background: #dcfce7; color: #15803d; }
     .wf-badge--sales-paused { background: #ffedd5; color: #c2410c; }
@@ -102,43 +91,61 @@
     <!-- GNB -->
     <header class="wf-gnb" data-region="gnb">
       <span class="gnb-logo">임직원 복지몰</span>
-      <span class="gnb-service">BO 관리자</span>
-      <span class="wf-ml-auto wf-text-sm">홍길동님 · <a href="#" style="color:#aab;">로그아웃</a></span>
+      <div class="gnb-tabs">
+        <a class="gnb-tab gnb-tab--home" title="홈">&#x1F3E0;</a>
+        <span class="gnb-tab gnb-tab--active">배송상품 목록 <button class="tab-close">&times;</button></span>
+      </div>
+      <span class="wf-ml-auto wf-text-sm">홍길동님 &#x2699; 로그아웃</span>
     </header>
+
+    <!-- 아이콘 스트립 -->
+    <aside class="wf-icon-strip" data-region="icon-strip">
+      <button title="메뉴 토글" onclick="toggleLnb()">&#x2630;</button>
+      <button title="즐겨찾기">&#x2606;</button>
+      <button title="문서">&#x1F4CB;</button>
+      <button title="최근">&#x1F550;</button>
+    </aside>
 
     <!-- LNB -->
     <aside class="wf-lnb" data-region="lnb">
-      <nav>
-        <ul style="list-style:none;">
-          <li><a href="#" style="display:block;padding:10px 24px;color:#555;font-size:13px;text-decoration:none;">대시보드</a></li>
-          <li class="lnb-menu-item"><a href="#"><span>회원 관리</span><span class="arrow">▸</span></a></li>
-          <li class="lnb-menu-item"><a href="#"><span>카테고리 관리</span><span class="arrow">▸</span></a></li>
-          <li class="lnb-menu-item open">
-            <a href="#"><span>상품 관리</span><span class="arrow">▸</span></a>
-            <ul class="lnb-submenu">
-              <li class="lnb-sub-header">배송상품 관리</li>
-              <li><a href="#" class="active">배송상품 목록</a></li>
-              <li class="lnb-sub-header">티켓상품 관리</li>
-              <li><a href="#">티켓상품 목록</a></li>
-              <li class="lnb-sub-header">상품 등록/승인 관리</li>
-              <li><a href="#">배송상품 승인 목록</a></li>
-              <li><a href="#">배송상품 등록/수정</a></li>
-              <li><a href="#">티켓상품 승인 목록</a></li>
-              <li><a href="#">티켓상품 등록/수정</a></li>
-            </ul>
-          </li>
-          <li class="lnb-menu-item"><a href="#"><span>주문배송 관리</span><span class="arrow">▸</span></a></li>
-          <li class="lnb-menu-item"><a href="#"><span>클레임관리</span><span class="arrow">▸</span></a></li>
-          <li class="lnb-menu-item"><a href="#"><span>정산 관리</span><span class="arrow">▸</span></a></li>
-          <li class="lnb-menu-item"><a href="#"><span>프로모션 관리</span><span class="arrow">▸</span></a></li>
-          <li class="lnb-menu-item"><a href="#"><span>전시 관리</span><span class="arrow">▸</span></a></li>
-          <li class="lnb-menu-item"><a href="#"><span>게시판 관리</span><span class="arrow">▸</span></a></li>
-          <li class="lnb-menu-item"><a href="#"><span>CS 관리</span><span class="arrow">▸</span></a></li>
-          <li class="lnb-menu-item"><a href="#"><span>운영 관리</span><span class="arrow">▸</span></a></li>
-          <li class="lnb-menu-item"><a href="#"><span>고객사 관리</span><span class="arrow">▸</span></a></li>
-          <li class="lnb-menu-item"><a href="#"><span>판매사 관리</span><span class="arrow">▸</span></a></li>
-        </ul>
-      </nav>
+      <div class="lnb-user">
+        <div class="lnb-user-name">홍길동 &#x2699;</div>
+        <div class="lnb-user-email">hong@company.co.kr &middot; 로그아웃</div>
+        <button class="lnb-close" onclick="toggleLnb()">&times;</button>
+      </div>
+      <div class="lnb-toggle-bar">
+        <span>전체메뉴보기</span>
+        <label class="lnb-switch"><input type="checkbox"><span class="slider"></span></label>
+        <span>메뉴필터기능</span>
+      </div>
+      <nav><ul>
+        <li><a href="#"><span class="menu-icon">&#x1F4CA;</span> 대시보드</a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F464;</span><span>회원 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F3F7;</span><span>카테고리 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item open"><a href="#"><span class="menu-icon">&#x1F4E6;</span><span>상품 관리</span><span class="arrow">&#x25B8;</span></a>
+          <ul class="lnb-submenu">
+            <li class="lnb-sub-header">배송상품 관리</li>
+            <li><a href="#" class="active">배송상품 목록</a></li>
+            <li class="lnb-sub-header">티켓상품 관리</li>
+            <li><a href="#">티켓상품 목록</a></li>
+            <li class="lnb-sub-header">상품 등록/승인 관리</li>
+            <li><a href="#">배송상품 승인 목록</a></li>
+            <li><a href="#">배송상품 등록/수정</a></li>
+            <li><a href="#">티켓상품 승인 목록</a></li>
+            <li><a href="#">티켓상품 등록/수정</a></li>
+          </ul>
+        </li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F69A;</span><span>주문배송 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F4AC;</span><span>클레임관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F4B0;</span><span>정산 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F381;</span><span>프로모션 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F5BC;</span><span>전시 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F4DD;</span><span>게시판 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F3A7;</span><span>CS 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x2699;</span><span>운영 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F3E2;</span><span>고객사 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F3EA;</span><span>판매사 관리</span><span class="arrow">&#x25B8;</span></a></li>
+      </ul></nav>
     </aside>
 
     <!-- Content -->
@@ -1344,6 +1351,10 @@
 </div>
 
 <script>
+/* LNB 사이드바 토글 */
+function toggleLnb() {
+  document.querySelector('.wf-layout').classList.toggle('lnb-collapsed');
+}
 /* LNB 메뉴 그룹 토글 */
 document.querySelectorAll('.lnb-menu-item > a').forEach(function(btn) {
   btn.addEventListener('click', function(e) {
