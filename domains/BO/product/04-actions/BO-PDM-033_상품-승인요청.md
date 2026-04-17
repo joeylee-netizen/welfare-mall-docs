@@ -4,9 +4,9 @@ title: "상품 승인요청"
 type: action
 domain: product
 status: draft
-version: "1.0"
+version: "1.1"
 created: 2026-04-13
-updated: 2026-04-13
+updated: 2026-04-17
 author: "기획자"
 refs:
   - "BO-PDM-001"
@@ -96,5 +96,37 @@ endpoint: "/api/v1/products/{product_id}/request-approval"
 ### 백엔드
 
 - `approval_status`가 `REGISTERING` 또는 `REJECTED`인지 검증
-- 상품 필수 필드 완전성 검증 (미입력 필드가 있으면 승인요청 거부)
+- `is_temp_saved`가 `true`인 경우 승인요청 거부 (정식 저장 필수)
+- 상품 필수 필드 완전성 검증 (미입력 필드가 있으면 `INCOMPLETE_PRODUCT` 오류 반환)
 - 승인 이력 자동 기록 (ProductApprovalHistory)
+
+### INCOMPLETE_PRODUCT 검증 필드 목록
+
+승인요청 시 다음 필드가 모두 입력되어 있어야 한다. 하나라도 누락 시 `400 INCOMPLETE_PRODUCT` 오류를 반환한다.
+
+#### 공통 필수 필드
+
+| 필드명 | 설명 |
+|--------|------|
+| product_name | 상품명 (1자 이상) |
+| product_type | 상품 유형 |
+| sales_status | 판매 상태 |
+| tax_type | 과세구분 |
+| display_channel | 노출채널 |
+| is_displayed | 전시여부 |
+
+#### 배송형 추가 필수 필드
+
+| 필드명 | 설명 | 조건 |
+|--------|------|------|
+| brand_id | 브랜드 | product_category = SHIPPING |
+
+#### 티켓형 추가 필수 필드
+
+| 필드명 | 설명 | 조건 |
+|--------|------|------|
+| vendor_id | 판매사 | product_category = TICKET |
+| validity_period_start | 유효기간 시작일 | product_category = TICKET |
+| validity_period_end | 유효기간 종료일 | product_category = TICKET |
+| usage_info | 이용 안내 | product_category = TICKET |
+| issue_method | 발급 수단 | product_category = TICKET |

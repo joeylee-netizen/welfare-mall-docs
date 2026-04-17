@@ -4,9 +4,9 @@ title: "상품 엔티티"
 type: data
 domain: product
 status: draft
-version: "1.0"
+version: "2.0"
 created: 2026-04-13
-updated: 2026-04-13
+updated: 2026-04-17
 author: "기획자"
 refs:
   - "BO-PDM-001"
@@ -42,6 +42,30 @@ source_system: "welfare-mall-api"
 |--------|------|------|------|------|
 | sales_start_date | DATE | N | 판매 시작일 | 승인완료 후 설정 |
 | sales_end_date | DATE | N | 판매 종료일 | 종료 시 판매종료로 자동 전환 |
+
+#### 확장정보
+
+| 필드명 | 타입 | 필수 | 설명 | 비고 |
+|--------|------|------|------|------|
+| tax_type | Enum | Y | 과세구분 | TaxType 참조 (TAXABLE/TAX_FREE/ZERO_RATED) |
+| model_name | VARCHAR(100) | N | 모델명 | |
+| registration_source | Enum | Y | 등록방식 | RegistrationSource 참조, 기본값: DIRECT |
+| is_temp_saved | BOOLEAN | Y | 임시저장 여부 | 기본값: false |
+| request_type | Enum | Y | 요청구분 | RequestType 참조 |
+| display_channel | Enum | Y | 노출채널 | DisplayChannel 참조, 기본값: ALL |
+| is_displayed | BOOLEAN | Y | 전시여부 | 기본값: false |
+| md_id | BIGINT | N | 담당 MD ID | FK → Admin |
+| client_id | BIGINT | N | 고객사 ID | FK → Client |
+
+#### 티켓상품 전용
+
+| 필드명 | 타입 | 필수 | 설명 | 비고 |
+|--------|------|------|------|------|
+| validity_period_start | DATE | C | 유효기간 시작일 | 티켓형 필수 |
+| validity_period_end | DATE | C | 유효기간 종료일 | 티켓형 필수 |
+| usage_info | TEXT | C | 이용 안내 | 티켓형 필수 |
+| issue_method | Enum | C | 발급 수단 | IssueMethod 참조, 티켓형 필수 |
+| reservation_info | TEXT | N | 예약 안내 | TICKET_RESERVATION만 필수 |
 
 #### 등록/수정 이력
 
@@ -88,6 +112,44 @@ source_system: "welfare-mall-api"
 - `SELLING` → `SALES_ENDED`: 판매기간 만료 시 시스템 자동 전환 또는 관리자 수동 설정
 - `SALES_PAUSED` / `TEMP_OUT_OF_STOCK` / `OUT_OF_STOCK` → `SELLING`: 관리자 수동 전환 (재고 보충 필요)
 
+#### TaxType (과세구분)
+
+| 값 | 설명 |
+|----|------|
+| TAXABLE | 과세 |
+| TAX_FREE | 면세 |
+| ZERO_RATED | 영세 |
+
+#### RegistrationSource (등록방식)
+
+| 값 | 설명 |
+|----|------|
+| DIRECT | PO/BO 직접 등록 |
+| API | 외부 API 연동 등록 |
+
+#### RequestType (요청구분)
+
+| 값 | 설명 |
+|----|------|
+| NEW | 신규등록 |
+| MODIFY | 상품수정 |
+
+#### DisplayChannel (노출채널)
+
+| 값 | 설명 |
+|----|------|
+| ALL | 전체 (PC+모바일) |
+| PC | PC만 |
+| MOBILE | 모바일만 |
+
+#### IssueMethod (발급 수단)
+
+| 값 | 설명 | 비고 |
+|----|------|------|
+| MMS | 문자(MMS) 발급 | |
+| ALIMTALK | 알림톡 발급 | |
+| APP_PUSH | 앱 푸시 발급 | |
+
 #### ApprovalStatus (승인 상태)
 
 | 값 | 설명 | 수정 가능 | 비고 |
@@ -113,6 +175,8 @@ source_system: "welfare-mall-api"
 |------|-------------|------------|------|
 | 브랜드 | Brand | N:1 | 배송형 상품의 브랜드 |
 | 판매사 | Vendor | N:1 | 상품 공급 판매사 |
+| 담당 MD | Admin | N:1 | 상품 담당 MD |
+| 고객사 | Client | N:1 | 서비스 이용 기업 고객 |
 | 승인 이력 | ProductApprovalHistory | 1:N | 상품 승인 상태 변경 이력 |
 | 판매 상태 로그 | ProductSalesStatusLog | 1:N | 판매 상태 변경 로그 |
 
@@ -125,6 +189,9 @@ source_system: "welfare-mall-api"
 | idx_product_brand | brand_id | 브랜드별 상품 조회 |
 | idx_product_vendor | vendor_id | 판매사별 상품 조회 |
 | idx_product_type | product_type | 상품 유형별 조회 |
+| idx_product_tax_type | tax_type | 과세구분별 조회 |
+| idx_product_md | md_id | 담당 MD별 조회 |
+| idx_product_client | client_id | 고객사별 조회 |
 | uq_product_code | product_code | 상품코드 유니크 제약 |
 
 ### (5) 제약 조건
@@ -138,6 +205,11 @@ source_system: "welfare-mall-api"
 - 승인완료(`APPROVED`) 상태의 상품만 FO에 전시된다.
 - 판매종료(`SALES_ENDED`) 상품은 FO에서 비노출된다.
 - `product_category`는 `product_type`에 의해 자동 결정된다.
+- `product_name`은 최소 1자, 최대 200자이다.
+- `rejection_reason`은 최소 1자, 최대 500자이다.
+- 티켓형 상품(`TICKET`)은 `validity_period_start`, `validity_period_end`, `usage_info`, `issue_method`가 필수이다.
+- `validity_period_end`는 `validity_period_start`보다 미래 시점이어야 한다.
+- `reservation_info`는 `product_type`이 `TICKET_RESERVATION`일 때 필수이다.
 
 ---
 
