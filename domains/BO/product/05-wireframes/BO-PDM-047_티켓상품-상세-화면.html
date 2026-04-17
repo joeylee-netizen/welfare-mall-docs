@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="wfr-id"      content="BO-PDM-047">
+  <meta name="wfr-title"   content="티켓상품 상세 화면">
+  <meta name="wfr-domain"  content="product">
+  <meta name="wfr-route"   content="/bo/products/ticket/:id">
+  <meta name="wfr-version" content="1.0">
+  <title>BO-PDM-047 — 티켓상품 상세 화면 | 임직원 복지몰</title>
+  <link rel="stylesheet" href="../../../../_wireframe/base.css">
+  <style>
+    /* 승인상태 badge */
+    .wf-badge--approved { background: #dcfce7; color: #15803d; }
+    .wf-badge--selling { background: #dcfce7; color: #15803d; }
+    .wf-badge--sales-paused { background: #ffedd5; color: #c2410c; }
+    .wf-badge--sales-ended { background: #f3f4f6; color: #6b7280; }
+    .wf-badge--rejected { background: #fee2e2; color: #dc2626; }
+    /* Form — 카드 분리형 영역 */
+    .form-section { margin-bottom: 20px; padding: 20px 24px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .form-section h2 { font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 16px; padding: 6px 12px; background: #f1f5f9; border-left: 3px solid #2563eb; border-radius: 4px; }
+    .form-section--readonly { background: #f9fafb; border-color: #e2e8f0; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 13px; font-weight: 600; color: #374151; }
+    .form-group label .required { color: #dc2626; margin-left: 2px; }
+    .readonly-field { background: #f9fafb; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 13px; color: #6b7280; }
+    .form-buttons { display: flex; justify-content: center; gap: 8px; margin-top: 20px; padding: 16px 24px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; }
+    /* wf-content 배경 (카드가 구분되도록) */
+    .wf-content { background: #f4f6f8; }
+    /* 탭 콘텐츠 */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    /* 디스크립션 탭별 콘텐츠 */
+    .desc-content { display: none; }
+    .desc-content.active { display: block; }
+    /* 이미지 placeholder */
+    .img-placeholder { width: 120px; height: 120px; background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 12px; }
+    .img-placeholder-sm { width: 80px; height: 80px; }
+    .img-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    /* 상세 콘텐츠 placeholder */
+    .detail-placeholder { background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 8px; padding: 40px; text-align: center; color: #94a3b8; min-height: 300px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    /* 모달 */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.show { display: flex; }
+    .modal-box { background: #fff; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); width: 400px; }
+    .modal-header { padding: 16px 20px; font-weight: 700; font-size: 15px; border-bottom: 1px solid #eee; }
+    .modal-body { padding: 20px; font-size: 14px; color: #555; }
+    .modal-footer { padding: 12px 20px; border-top: 1px solid #eee; text-align: right; display: flex; gap: 8px; justify-content: flex-end; }
+    /* 조회 팝업 */
+    .popup-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1000; align-items: center; justify-content: center; }
+    .popup-overlay.show { display: flex; }
+    .popup-box { background: #fff; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); width: 440px; max-height: 480px; display: flex; flex-direction: column; }
+    .popup-header { padding: 14px 18px; font-weight: 700; font-size: 14px; border-bottom: 1px solid #eee; }
+    .popup-body { padding: 14px 18px; flex: 1; overflow-y: auto; }
+    .popup-body .search-row { display: flex; gap: 6px; margin-bottom: 12px; }
+    .popup-body .search-row input { flex: 1; }
+    .popup-list { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .popup-list th { background: #f7f8fa; padding: 6px 8px; border-bottom: 2px solid #ddd; text-align: left; font-weight: 600; }
+    .popup-list td { padding: 6px 8px; border-bottom: 1px solid #eee; }
+    .popup-footer { padding: 12px 18px; border-top: 1px solid #eee; text-align: right; display: flex; gap: 6px; justify-content: flex-end; }
+    /* 라디오 그룹 */
+    .radio-group { display: flex; gap: 16px; align-items: center; padding: 8px 0; }
+    .radio-label { display: flex; align-items: center; gap: 4px; font-size: 13px; cursor: pointer; }
+    .radio-label input[type="radio"] { margin: 0; }
+    /* 체크박스 그룹 */
+    .checkbox-group { display: flex; gap: 16px; align-items: center; padding: 8px 0; }
+    .checkbox-label { display: flex; align-items: center; gap: 4px; font-size: 13px; cursor: pointer; }
+    .checkbox-label input[type="checkbox"] { margin: 0; }
+    /* 날짜 범위 */
+    .date-range { display: flex; gap: 8px; align-items: center; }
+    .date-range .separator { font-size: 13px; color: #6b7280; }
+    /* 카테고리 셀렉트 */
+    .category-selects { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+    /* 수량 필드 */
+    .qty-field { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .qty-field .radio-group { padding: 0; }
+    .qty-field input[type="number"] { width: 80px; }
+    .qty-field .unit-text { font-size: 13px; color: #374151; }
+    .qty-field .help-text { font-size: 11px; color: #9ca3af; width: 100%; margin-top: 2px; }
+    /* 입력 + 버튼 인라인 */
+    .input-with-btn { display: flex; gap: 6px; align-items: center; }
+    .input-with-btn input { flex: 1; }
+    /* 키워드 태그 */
+    .keyword-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; min-height: 28px; }
+    .keyword-tag { display: inline-flex; align-items: center; gap: 4px; background: #e0e7ff; color: #3730a3; padding: 4px 10px; border-radius: 14px; font-size: 12px; }
+    .keyword-tag .remove { cursor: pointer; font-weight: 700; color: #6366f1; margin-left: 2px; }
+    .keyword-tag .remove:hover { color: #dc2626; }
+    /* 고객사 섹션 비활성 */
+    .client-section.disabled { opacity: 0.4; pointer-events: none; }
+    /* 판매기간 인라인 */
+    .sale-period { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    /* 테이블 스크롤 */
+    .table-scroll { max-height: 280px; overflow-y: auto; }
+    /* 편집기 placeholder */
+    .editor-placeholder { background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 8px; padding: 40px; text-align: center; color: #94a3b8; min-height: 200px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    /* 고시 항목 행 추가/삭제 버튼 */
+    .notice-actions { display: flex; gap: 4px; }
+    /* 비활성 영역 */
+    .disabled-area { opacity: 0.4; pointer-events: none; }
+    /* 마진 인라인 */
+    .margin-field { display: flex; align-items: center; gap: 8px; }
+    .margin-field input[type="number"] { width: 80px; }
+  </style>
+</head>
+<body>
+
+<div class="spec-layout">
+  <!-- 좌측: 와이어프레임 -->
+  <div class="wf-layout">
+
+    <!-- GNB -->
+    <header class="wf-gnb" data-region="gnb">
+      <span class="gnb-logo">임직원 복지몰</span>
+      <div class="gnb-tabs">
+        <a class="gnb-tab gnb-tab--home" title="홈">&#x1F3E0;</a>
+        <span class="gnb-tab">티켓상품 목록 <button class="tab-close">&times;</button></span>
+        <span class="gnb-tab gnb-tab--active">티켓상품 상세 <button class="tab-close">&times;</button></span>
+      </div>
+      <span class="wf-ml-auto wf-text-sm">홍길동님 &#x2699; 로그아웃</span>
+    </header>
+
+    <!-- 아이콘 스트립 -->
+    <aside class="wf-icon-strip" data-region="icon-strip">
+      <button title="메뉴 토글" onclick="toggleLnb()">&#x2630;</button>
+      <button title="즐겨찾기">&#x2606;</button>
+      <button title="문서">&#x1F4CB;</button>
+      <button title="최근">&#x1F550;</button>
+    </aside>
+
+    <!-- LNB -->
+    <aside class="wf-lnb" data-region="lnb">
+      <div class="lnb-user">
+        <div class="lnb-user-name">홍길동 &#x2699;</div>
+        <div class="lnb-user-email">hong@company.co.kr &middot; 로그아웃</div>
+        <button class="lnb-close" onclick="toggleLnb()">&times;</button>
+      </div>
+      <div class="lnb-toggle-bar">
+        <span>전체메뉴보기</span>
+        <label class="lnb-switch"><input type="checkbox"><span class="slider"></span></label>
+        <span>메뉴필터기능</span>
+      </div>
+      <nav><ul>
+        <li><a href="#"><span class="menu-icon">&#x1F4CA;</span> 대시보드</a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F464;</span><span>회원 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F3F7;</span><span>카테고리 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item open"><a href="#"><span class="menu-icon">&#x1F4E6;</span><span>상품 관리</span><span class="arrow">&#x25B8;</span></a>
+          <ul class="lnb-submenu">
+            <li class="lnb-sub-header">배송상품 관리</li>
+            <li><a href="#">배송상품 목록</a></li>
+            <li class="lnb-sub-header">티켓상품 관리</li>
+            <li><a href="#" class="active">티켓상품 목록</a></li>
+            <li class="lnb-sub-header">상품 등록/승인 관리</li>
+            <li><a href="#">배송상품 승인 목록</a></li>
+            <li><a href="#">배송상품 등록/수정</a></li>
+            <li><a href="#">티켓상품 승인 목록</a></li>
+            <li><a href="#">티켓상품 등록/수정</a></li>
+          </ul>
+        </li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F69A;</span><span>주문배송 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F4AC;</span><span>클레임관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F4B0;</span><span>정산 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F381;</span><span>프로모션 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F5BC;</span><span>전시 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F4DD;</span><span>게시판 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F3A7;</span><span>CS 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x2699;</span><span>운영 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F3E2;</span><span>고객사 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F3EA;</span><span>판매사 관리</span><span class="arrow">&#x25B8;</span></a></li>
+      </ul></nav>
+    </aside>
+
+    <!-- Content -->
+    <main class="wf-content" data-region="content">
+      <h1>티켓상품 상세</h1>
+
+      <!-- 7개 탭 -->
+      <div class="wf-tabs">
+        <div class="wf-tab active" onclick="switchTab('basic')">기본정보</div>
+        <div class="wf-tab" onclick="switchTab('display')">전시정보</div>
+        <div class="wf-tab" onclick="switchTab('sales')">판매정보</div>
+        <div class="wf-tab" onclick="switchTab('option')">옵션/재고</div>
+        <div class="wf-tab" onclick="switchTab('issue')">발급정보</div>
+        <div class="wf-tab" onclick="switchTab('detail')">상세정보</div>
+        <div class="wf-tab" onclick="switchTab('notice')">상품정보제공고시</div>
+      </div>
+
+      <!-- ========== 탭 1: 기본정보 (편집 가능 폼) ========== -->
+      <div id="tab-basic" class="tab-content active">
+
+        <!-- 영역 1: 기본정보 -->
+        <div class="form-section">
+          <h2>기본정보</h2>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>상품명 <span class="required">*</span></label>
+              <input class="wf-input" type="text" value="신라호텔 디럭스 숙박권">
+            </div>
+            <div class="form-group">
+              <label>상품코드</label>
+              <div class="readonly-field">2026041200001</div>
+            </div>
+            <div class="form-group">
+              <label>판매사 상품코드</label>
+              <input class="wf-input" type="text" value="" placeholder="판매사 상품코드 입력">
+            </div>
+            <div class="form-group full">
+              <label>다국어 상품명</label>
+              <input class="wf-input" type="text" value="Shilla Hotel Deluxe Room Voucher" placeholder="영문 또는 다국어 상품명 입력">
+            </div>
+            <div class="form-group">
+              <label>판매사</label>
+              <div class="input-with-btn">
+                <input class="wf-input" type="text" value="(주)신라호텔" readonly id="vendorInput047">
+                <button class="wf-btn wf-btn--sm" onclick="openPopup047('vendorPopup047')">조회</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>하위업체</label>
+              <select class="wf-select" id="subVendorSelect047">
+                <option>신라호텔 서울</option>
+                <option>신라호텔 제주</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>상품키워드</label>
+              <div class="input-with-btn">
+                <input class="wf-input" type="text" id="keywordInput" placeholder="키워드 입력">
+                <button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addKeyword()">등록하기</button>
+              </div>
+              <div class="keyword-tags" id="keywordTags">
+                <span class="keyword-tag">호텔 <span class="remove" onclick="removeTag(this)">&times;</span></span>
+                <span class="keyword-tag">숙박권 <span class="remove" onclick="removeTag(this)">&times;</span></span>
+                <span class="keyword-tag">신라 <span class="remove" onclick="removeTag(this)">&times;</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 영역 1-A: 티켓정보 (신규) -->
+        <div class="form-section">
+          <h2>티켓정보</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>상품유형 <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="ticketProductType" value="GENERAL" checked onchange="toggleTicketType()"> 일반티켓</label>
+                <label class="radio-label"><input type="radio" name="ticketProductType" value="RESERVATION" onchange="toggleTicketType()"> 예약티켓</label>
+              </div>
+              <p class="wf-text-sm wf-text-muted" style="margin-top:2px;">승인완료 후 수정불가</p>
+            </div>
+            <div class="form-group">
+              <label>티켓 타입 <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="ticketType" value="MOBILE" checked> 모바일티켓</label>
+                <label class="radio-label"><input type="radio" name="ticketType" value="VOUCHER"> 바우처</label>
+              </div>
+              <p class="wf-text-sm wf-text-muted" style="margin-top:2px;">승인완료 후 수정불가</p>
+            </div>
+            <div class="form-group full">
+              <label>유효기간 <span class="required">*</span></label>
+              <div class="date-range">
+                <input class="wf-input" type="date" value="2026-04-12">
+                <span class="separator">~</span>
+                <input class="wf-input" type="date" value="2027-04-12">
+              </div>
+              <p class="wf-text-sm wf-text-muted" style="margin-top:2px;">승인완료 후 수정불가</p>
+            </div>
+            <div class="form-group">
+              <label>패스 타입</label>
+              <select class="wf-select">
+                <option value="">선택</option>
+                <option>1일권</option>
+                <option>시즌권</option>
+                <option>연간권</option>
+              </select>
+              <p class="wf-text-sm wf-text-muted" style="margin-top:2px;">승인완료 후 수정불가</p>
+            </div>
+            <div class="form-group">
+              <label>취소 가능일</label>
+              <div class="input-with-btn">
+                <input class="wf-input" type="number" value="3" min="0" style="width:80px;">
+                <span style="font-size:13px;color:#374151;">일</span>
+              </div>
+              <p class="wf-text-sm wf-text-muted" style="margin-top:2px;">승인완료 후 수정불가</p>
+            </div>
+            <div class="form-group full">
+              <label>이용필수규칙</label>
+              <textarea class="wf-input" rows="3" placeholder="이용 시 필수 안내사항 입력">체크인 15:00 / 체크아웃 11:00. 본인 확인 시 신분증 필수 지참. 노쇼 시 환불 불가.</textarea>
+              <p class="wf-text-sm wf-text-muted" style="margin-top:2px;">승인완료 후 수정불가</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 영역 2: 추가정보 -->
+        <div class="form-section">
+          <h2>추가정보</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>상품리뷰 등록</label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="review" value="Y" checked> 가능</label>
+                <label class="radio-label"><input type="radio" name="review" value="N"> 불가능</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Q&amp;A 등록</label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="qna" value="Y" checked> 가능</label>
+                <label class="radio-label"><input type="radio" name="qna" value="N"> 불가능</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>선물하기</label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="gift" value="Y" checked> 가능</label>
+                <label class="radio-label"><input type="radio" name="gift" value="N"> 불가능</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <!-- 빈 셀: 그리드 정렬용 -->
+            </div>
+            <div class="form-group full">
+              <label>최소 구매수량</label>
+              <div class="qty-field">
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="minQty" value="N" checked onchange="toggleQtyField('minQty')"> 사용안함</label>
+                  <label class="radio-label"><input type="radio" name="minQty" value="Y" onchange="toggleQtyField('minQty')"> 사용</label>
+                </div>
+                <input class="wf-input" type="number" id="minQtyInput" value="1" min="1" disabled>
+                <span class="unit-text">개 이상부터 구매 가능</span>
+                <span class="help-text">1회당 구매 가능한 최소 수량</span>
+              </div>
+            </div>
+            <div class="form-group full">
+              <label>최대 구매수량</label>
+              <div class="qty-field">
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="maxQty" value="N" checked onchange="toggleQtyField('maxQty')"> 사용안함</label>
+                  <label class="radio-label"><input type="radio" name="maxQty" value="Y" onchange="toggleQtyField('maxQty')"> 사용</label>
+                </div>
+                <input class="wf-input" type="number" id="maxQtyInput" value="10" min="1" disabled>
+                <span class="unit-text">개 이하까지 구매 가능</span>
+                <span class="help-text">1회당 구매 가능한 최대 수량</span>
+              </div>
+            </div>
+            <div class="form-group full">
+              <label>특가 구매수량</label>
+              <div class="qty-field">
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="specialQty" value="N" checked onchange="toggleQtyField('specialQty')"> 사용안함</label>
+                  <label class="radio-label"><input type="radio" name="specialQty" value="Y" onchange="toggleQtyField('specialQty')"> 사용</label>
+                </div>
+                <input class="wf-input" type="number" id="specialQtyInput" value="5" min="1" disabled>
+                <span class="unit-text">개 까지 구매 가능</span>
+                <span class="help-text">판매기간 동안 구매 가능한 수량</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 영역 3: 고객사 정보 -->
+        <div class="form-section">
+          <h2>고객사 정보</h2>
+          <div class="form-group">
+            <label>노출 제외 고객사</label>
+            <div class="radio-group">
+              <label class="radio-label"><input type="radio" name="clientExclude" value="N" checked onchange="toggleClientSection()"> 미등록</label>
+              <label class="radio-label"><input type="radio" name="clientExclude" value="Y" onchange="toggleClientSection()"> 등록</label>
+            </div>
+          </div>
+          <div class="client-section disabled" id="clientSection">
+            <div class="input-with-btn" style="margin-top:8px;">
+              <input class="wf-input" type="text" id="clientInput047" placeholder="고객사 선택" readonly>
+              <button class="wf-btn wf-btn--sm" onclick="openPopup047('clientPopup047')">조회</button>
+              <button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addClient()">등록</button>
+            </div>
+            <div class="keyword-tags" id="clientTags" style="margin-top:8px;"></div>
+          </div>
+        </div>
+
+        <!-- 영역 4: 등록정보 (조회 전용) -->
+        <div class="form-section form-section--readonly">
+          <h2>등록정보</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>승인상태</label>
+              <div class="readonly-field"><span class="wf-badge wf-badge--approved">승인완료</span></div>
+            </div>
+            <div class="form-group">
+              <label>반려사유</label>
+              <div class="readonly-field">-</div>
+            </div>
+            <div class="form-group">
+              <label>등록자</label>
+              <div class="readonly-field">홍길동</div>
+            </div>
+            <div class="form-group">
+              <label>등록일시</label>
+              <div class="readonly-field">2026-04-12 10:00</div>
+            </div>
+            <div class="form-group">
+              <label>승인자</label>
+              <div class="readonly-field">관리자</div>
+            </div>
+            <div class="form-group">
+              <label>승인일시</label>
+              <div class="readonly-field">2026-04-13 15:30</div>
+            </div>
+            <div class="form-group">
+              <label>수정자</label>
+              <div class="readonly-field">홍길동</div>
+            </div>
+            <div class="form-group">
+              <label>수정일시</label>
+              <div class="readonly-field">2026-04-14 09:20</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 영역 5: 판매상태 -->
+        <div class="form-section">
+          <h2>판매상태</h2>
+          <div class="form-group" style="max-width:240px;">
+            <label>판매상태 변경</label>
+            <select class="wf-select">
+              <option selected>판매중</option>
+              <option>판매일시중지</option>
+              <option>판매종료</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 영역 6: 승인 이력 (기본정보 탭에서만 표시) -->
+        <div class="form-section">
+          <h2>승인 이력</h2>
+          <table class="wf-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>요청일</th>
+                <th>처리일</th>
+                <th>처리자</th>
+                <th>처리상태</th>
+                <th>비고</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>2026-04-12</td>
+                <td>2026-04-13</td>
+                <td>관리자</td>
+                <td><span class="wf-badge wf-badge--approved">승인</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>2026-04-10</td>
+                <td>2026-04-11</td>
+                <td>관리자</td>
+                <td><span class="wf-badge wf-badge--rejected">반려</span></td>
+                <td>유효기간 설정 오류</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- ========== 탭 2: 전시정보 (편집 가능 폼) ========== -->
+      <div id="tab-display" class="tab-content">
+        <div class="form-section">
+          <h2>전시정보</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>전시여부 <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="displayYn" value="Y" checked> 전시</label>
+                <label class="radio-label"><input type="radio" name="displayYn" value="N"> 비전시</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>노출채널 <span class="required">*</span></label>
+              <div class="checkbox-group">
+                <label class="checkbox-label"><input type="checkbox" id="chAll" onchange="toggleChannelAll()"> 전체</label>
+                <label class="checkbox-label"><input type="checkbox" id="chPC" checked> PC</label>
+                <label class="checkbox-label"><input type="checkbox" id="chMobile" checked> 모바일</label>
+              </div>
+            </div>
+            <div class="form-group full">
+              <label>전시기간 <span class="required">*</span></label>
+              <div class="date-range">
+                <input class="wf-input" type="date" value="2026-04-12">
+                <span class="separator">~</span>
+                <input class="wf-input" type="date" value="2027-04-12">
+              </div>
+            </div>
+            <div class="form-group full">
+              <label>담당MD <span class="required">*</span></label>
+              <div class="input-with-btn">
+                <input class="wf-input" type="text" id="mdInput047" value="MD001(김담당)" readonly>
+                <button class="wf-btn wf-btn--sm" onclick="openPopup047('mdPopup047')">조회</button>
+              </div>
+            </div>
+            <div class="form-group full">
+              <label>표준카테고리 <span class="required">*</span></label>
+              <div class="category-selects">
+                <select class="wf-select">
+                  <option value="">대분류</option>
+                  <option selected>숙박</option>
+                  <option>레저</option>
+                  <option>외식</option>
+                </select>
+                <select class="wf-select">
+                  <option value="">중분류</option>
+                  <option selected>호텔</option>
+                  <option>리조트</option>
+                  <option>펜션</option>
+                </select>
+                <select class="wf-select">
+                  <option value="">소분류</option>
+                  <option selected>특급호텔</option>
+                  <option>비즈니스호텔</option>
+                  <option>부티크호텔</option>
+                </select>
+                <button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addDisplayCategory()">등록</button>
+              </div>
+            </div>
+            <div class="form-group full">
+              <label>전시카테고리 <span class="required">*</span></label>
+              <table class="wf-table" id="displayCategoryTable">
+                <thead>
+                  <tr>
+                    <th style="width:50px;">대표</th>
+                    <th>전시카테고리 경로</th>
+                    <th style="width:50px;">삭제</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="text-align:center;"><input type="radio" name="mainCategory" checked></td>
+                    <td>숙박 &gt; 호텔 &gt; 특급호텔</td>
+                    <td style="text-align:center;"><button class="wf-btn wf-btn--sm" onclick="removeDisplayCategory(this)">&times;</button></td>
+                  </tr>
+                  <tr>
+                    <td style="text-align:center;"><input type="radio" name="mainCategory"></td>
+                    <td>인기상품 &gt; 숙박 &gt; 호텔</td>
+                    <td style="text-align:center;"><button class="wf-btn wf-btn--sm" onclick="removeDisplayCategory(this)">&times;</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 탭 3: 판매정보 (편집 가능 폼 — 5개 영역) ========== -->
+      <div id="tab-sales" class="tab-content">
+
+        <!-- 영역 1: 판매정보 등록 -->
+        <div class="form-section">
+          <h2>판매정보 등록</h2>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>판매기간 <span class="required">*</span></label>
+              <div class="sale-period">
+                <label class="checkbox-label"><input type="checkbox" id="salePeriodUnlimit" onchange="toggleSalePeriod()"> 제한없음</label>
+                <div class="date-range">
+                  <input class="wf-input" type="date" id="saleStartDate" value="2026-04-12">
+                  <span class="separator">~</span>
+                  <input class="wf-input" type="date" id="saleEndDate" value="2027-04-12">
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>과세구분 <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="taxType" value="TAX" checked> 과세</label>
+                <label class="radio-label"><input type="radio" name="taxType" value="FREE"> 면세</label>
+                <label class="radio-label"><input type="radio" name="taxType" value="ZERO"> 영세</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>성인인증상품 <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="adultAuth" value="Y"> Yes</label>
+                <label class="radio-label"><input type="radio" name="adultAuth" value="N" checked> No</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 영역 2: 가격정보 -->
+        <div class="form-section">
+          <h2>가격정보</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>판매가(VAT포함) <span class="required">*</span></label>
+              <input class="wf-input" type="number" value="350000" placeholder="판매가 입력">
+            </div>
+            <div class="form-group">
+              <label>상품 마진율</label>
+              <div class="margin-field">
+                <label class="checkbox-label"><input type="checkbox" id="marginRateChk" onchange="toggleMarginRate()"> 설정</label>
+                <input class="wf-input" type="number" id="marginRateInput" value="10" disabled>
+                <span class="unit-text">%</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>상품 마진</label>
+              <div class="readonly-field">35,000원 (자동계산)</div>
+            </div>
+            <div class="form-group">
+              <label>계약 마진율</label>
+              <div class="readonly-field">10% (PO 계약값)</div>
+            </div>
+            <div class="form-group">
+              <label>계약 마진</label>
+              <div class="readonly-field">35,000원 (자동계산)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 영역 3: 할인 프로모션 정보 (readonly 테이블) -->
+        <div class="form-section form-section--readonly">
+          <h2>할인 프로모션 정보</h2>
+          <p class="wf-text-sm wf-text-muted" style="margin-bottom:8px;">승인완료 후 프로모션관리에서 등록</p>
+          <table class="wf-table">
+            <thead>
+              <tr>
+                <th>프로모션ID</th>
+                <th>프로모션명</th>
+                <th style="text-align:right;">판매가</th>
+                <th style="text-align:right;">할인가</th>
+                <th style="text-align:right;">할인율</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>PRM-002</td>
+                <td>봄맞이 호캉스 특가</td>
+                <td style="text-align:right;">350,000원</td>
+                <td style="text-align:right;">280,000원</td>
+                <td style="text-align:right;">20.0%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 영역 4: 쿠폰 프로모션 (readonly 테이블) -->
+        <div class="form-section form-section--readonly">
+          <h2>쿠폰 프로모션</h2>
+          <table class="wf-table">
+            <thead>
+              <tr>
+                <th>쿠폰ID</th>
+                <th>쿠폰명</th>
+                <th style="text-align:right;">정률(%)</th>
+                <th style="text-align:right;">정액(&#8361;)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>CPN-002</td>
+                <td>신규 회원 10% 할인 쿠폰</td>
+                <td style="text-align:right;">10%</td>
+                <td style="text-align:right;">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 영역 5: 적립금 프로모션 (readonly 테이블) -->
+        <div class="form-section form-section--readonly">
+          <h2>적립금 프로모션</h2>
+          <table class="wf-table">
+            <thead>
+              <tr>
+                <th>적립금ID</th>
+                <th>적립금명</th>
+                <th style="text-align:right;">정률(%)</th>
+                <th style="text-align:right;">정액(&#8361;)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>PNT-002</td>
+                <td>숙박 구매 적립금</td>
+                <td style="text-align:right;">2%</td>
+                <td style="text-align:right;">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- ========== 탭 4: 옵션/재고 (편집 가능 폼) ========== -->
+      <div id="tab-option" class="tab-content">
+        <div class="form-section">
+          <h2>옵션/재고 정보</h2>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>상품옵션 <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-label"><input type="radio" name="optionUse" value="NONE" checked onchange="toggleOptionUse()"> 사용안함</label>
+              <label class="radio-label"><input type="radio" name="optionUse" value="SINGLE" onchange="toggleOptionUse()"> 단일옵션</label>
+              <label class="radio-label"><input type="radio" name="optionUse" value="MULTI" onchange="toggleOptionUse()"> 복수옵션</label>
+            </div>
+          </div>
+
+          <!-- 사용안함 선택 시: 재고수량 직접 입력 -->
+          <div id="optionNoneArea">
+            <div class="form-group" style="max-width:240px;">
+              <label>재고수량 <span class="required">*</span></label>
+              <input class="wf-input" type="number" value="500" min="0">
+            </div>
+          </div>
+
+          <!-- 단일/복수옵션 선택 시 -->
+          <div id="optionUseArea" class="disabled-area">
+            <div style="margin-bottom:12px;">
+              <button class="wf-btn wf-btn--sm wf-btn--primary" onclick="openPopup047('optionPopup047')">옵션 등록</button>
+            </div>
+            <div class="table-scroll">
+              <table class="wf-table">
+                <thead>
+                  <tr>
+                    <th style="width:60px;">전시순서</th>
+                    <th>옵션ID</th>
+                    <th>옵션1</th>
+                    <th>옵션가격</th>
+                    <th style="text-align:right;">재고</th>
+                    <th style="width:120px;">판매상태</th>
+                    <th style="width:50px;">수정</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="text-align:center;">1</td>
+                    <td>OPT-001</td>
+                    <td>디럭스 더블</td>
+                    <td style="text-align:right;">0원</td>
+                    <td style="text-align:right;">200</td>
+                    <td><select class="wf-select" style="font-size:12px;padding:4px;">
+                      <option selected>판매중</option><option>판매일시중지</option><option>일시품절</option><option>품절</option><option>판매종료</option>
+                    </select></td>
+                    <td style="text-align:center;"><button class="wf-btn wf-btn--sm" onclick="openPopup047('optionPopup047')">수정</button></td>
+                  </tr>
+                  <tr>
+                    <td style="text-align:center;">2</td>
+                    <td>OPT-002</td>
+                    <td>디럭스 트윈</td>
+                    <td style="text-align:right;">0원</td>
+                    <td style="text-align:right;">150</td>
+                    <td><select class="wf-select" style="font-size:12px;padding:4px;">
+                      <option selected>판매중</option><option>판매일시중지</option><option>일시품절</option><option>품절</option><option>판매종료</option>
+                    </select></td>
+                    <td style="text-align:center;"><button class="wf-btn wf-btn--sm" onclick="openPopup047('optionPopup047')">수정</button></td>
+                  </tr>
+                  <tr>
+                    <td style="text-align:center;">3</td>
+                    <td>OPT-003</td>
+                    <td>프리미어 스위트</td>
+                    <td style="text-align:right;">+150,000원</td>
+                    <td style="text-align:right;">50</td>
+                    <td><select class="wf-select" style="font-size:12px;padding:4px;">
+                      <option selected>판매중</option><option>판매일시중지</option><option>일시품절</option><option>품절</option><option>판매종료</option>
+                    </select></td>
+                    <td style="text-align:center;"><button class="wf-btn wf-btn--sm" onclick="openPopup047('optionPopup047')">수정</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="form-group" style="margin-top:12px;max-width:240px;">
+              <label>재고수량</label>
+              <div class="readonly-field">400 (합산 자동)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 탭 5: 발급정보 (편집 가능 폼 — 단일 영역) ========== -->
+      <div id="tab-issue" class="tab-content">
+        <div class="form-section">
+          <h2>발급정보</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>발급방법</label>
+              <div class="readonly-field">모바일티켓</div>
+              <p class="wf-text-sm wf-text-muted" style="margin-top:2px;">시스템값. 티켓타입(기본정보) 연동</p>
+            </div>
+            <div class="form-group">
+              <label>배송비 정책</label>
+              <div class="readonly-field">무료</div>
+              <p class="wf-text-sm wf-text-muted" style="margin-top:2px;">시스템값. 티켓상품 무료 고정</p>
+            </div>
+            <div class="form-group full">
+              <label>교환/반품 기간 <span class="required">*</span></label>
+              <textarea class="wf-input" rows="3" maxlength="1000" placeholder="교환/반품 기간 안내 입력 (최대 1000자)">구매 후 7일 이내 미사용 시 전액 환불 가능. 유효기간 경과 후에는 환불 불가.</textarea>
+            </div>
+            <div class="form-group full">
+              <label>교환/반품 안내 <span class="required">*</span></label>
+              <textarea class="wf-input" rows="3" maxlength="1000" placeholder="교환/반품 안내 입력 (최대 1000자)">모바일티켓은 사용 전 고객센터(1588-0000)를 통해 환불 신청이 가능합니다. 부분 사용 시 잔여분에 대해서는 환불이 불가합니다.</textarea>
+            </div>
+            <div class="form-group full">
+              <label>교환/반품 불가 안내 <span class="required">*</span></label>
+              <textarea class="wf-input" rows="3" maxlength="1000" placeholder="교환/반품 불가 안내 입력 (최대 1000자)">유효기간 경과 후, 이미 사용된 티켓, 예약티켓 이용일 당일 취소 시 환불이 불가합니다.</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 탭 6: 상세정보 (편집 가능 폼 — 3개 영역) ========== -->
+      <div id="tab-detail" class="tab-content">
+
+        <!-- 영역 1: 대표 이미지 등록 -->
+        <div class="form-section">
+          <h2>대표 이미지 등록</h2>
+          <p class="wf-text-sm wf-text-muted" style="margin-bottom:8px;">이미지 최대 5개. 최초 등록 시 대표 자동 설정.</p>
+          <table class="wf-table" style="margin-bottom:12px;">
+            <thead>
+              <tr>
+                <th style="width:50px;">대표</th>
+                <th>파일명</th>
+                <th style="width:60px;">등록</th>
+                <th style="width:60px;">삭제</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;"><input type="radio" name="mainImage" checked></td>
+                <td>shilla_deluxe_room_01.jpg</td>
+                <td style="text-align:center;"><button class="wf-btn wf-btn--sm">등록</button></td>
+                <td style="text-align:center;"><button class="wf-btn wf-btn--sm">&times;</button></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><input type="radio" name="mainImage"></td>
+                <td>shilla_deluxe_room_02.jpg</td>
+                <td style="text-align:center;"><button class="wf-btn wf-btn--sm">등록</button></td>
+                <td style="text-align:center;"><button class="wf-btn wf-btn--sm">&times;</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="img-row">
+            <div class="img-placeholder"><span>120×120<br>미리보기</span></div>
+            <div class="img-placeholder"><span>120×120<br>미리보기</span></div>
+          </div>
+        </div>
+
+        <!-- 영역 2: 동영상 등록 -->
+        <div class="form-section">
+          <h2>동영상 등록</h2>
+          <p class="wf-text-sm wf-text-muted" style="margin-bottom:8px;">mp4 최대 1개. FO 노출 순서: 동영상 &gt; 이미지</p>
+          <table class="wf-table" style="margin-bottom:12px;">
+            <thead>
+              <tr>
+                <th>파일명</th>
+                <th style="width:60px;">등록</th>
+                <th style="width:60px;">삭제</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>shilla_hotel_intro.mp4</td>
+                <td style="text-align:center;"><button class="wf-btn wf-btn--sm">등록</button></td>
+                <td style="text-align:center;"><button class="wf-btn wf-btn--sm">&times;</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="img-placeholder" style="width:200px;height:120px;"><span>동영상<br>미리보기</span></div>
+        </div>
+
+        <!-- 영역 3: 상품상세설명 -->
+        <div class="form-section">
+          <h2>상품상세설명</h2>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>적용 범위</label>
+            <div class="radio-group">
+              <label class="radio-label"><input type="radio" name="detailScope" value="ALL" checked onchange="toggleDetailScope()"> 전체</label>
+              <label class="radio-label"><input type="radio" name="detailScope" value="PC" onchange="toggleDetailScope()"> PC</label>
+            </div>
+            <p class="wf-text-sm wf-text-muted" style="margin-top:4px;">"전체" 선택 시 PC 편집기 내용이 모바일에 자동 적용됩니다.</p>
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:8px;">PC HTML 편집기</label>
+            <div class="editor-placeholder">PC 상품 상세설명 편집기 영역<br>(HTML 에디터)</div>
+          </div>
+          <div id="mobileEditorArea" class="disabled-area">
+            <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:8px;">모바일 HTML 편집기</label>
+            <div class="editor-placeholder">모바일 상품 상세설명 편집기 영역<br>(HTML 에디터)</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========== 탭 7: 상품정보제공고시 (편집 가능 폼) ========== -->
+      <div id="tab-notice" class="tab-content">
+        <div class="form-section">
+          <h2>상품정보제공고시</h2>
+          <div class="form-grid" style="margin-bottom:16px;">
+            <div class="form-group">
+              <label>입력방식 <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="noticeMode" value="SYNC" checked onchange="toggleNoticeMode()"> 연동</label>
+                <label class="radio-label"><input type="radio" name="noticeMode" value="DIRECT" onchange="toggleNoticeMode()"> 직접입력</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>상품분류 <span class="required">*</span></label>
+              <select class="wf-select" id="noticeCategory">
+                <option value="">상품분류 선택</option>
+                <option selected>숙박 &gt; 호텔</option>
+                <option>레저 &gt; 체험</option>
+                <option>외식 &gt; 레스토랑</option>
+                <option>문화 &gt; 공연</option>
+              </select>
+            </div>
+          </div>
+          <p class="wf-text-sm wf-text-muted" style="margin-bottom:8px;">연동: 상품분류 선택 시 항목 자동 출력 (수정/추가/삭제 가능). 직접입력: 빈 상태에서 항목 직접 추가. 분류 변경 시 항목 초기화.</p>
+          <div class="table-scroll" id="noticeTableWrap" onscroll="loadMoreNoticeRows()" style="max-height:500px;overflow-y:auto;">
+            <table class="wf-table" id="noticeTable">
+              <thead>
+                <tr>
+                  <th style="width:50px;">번호</th>
+                  <th style="width:25%;">항목</th>
+                  <th>내용</th>
+                  <th style="width:70px;">추가/삭제</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input class="wf-input" type="text" value="1" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="서비스명"></td>
+                  <td><input class="wf-input" type="text" value="신라호텔 디럭스 숙박권"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="2" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="이용 가능 기간"></td>
+                  <td><input class="wf-input" type="text" value="2026-04-12 ~ 2027-04-12"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="3" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="이용 장소"></td>
+                  <td><input class="wf-input" type="text" value="서울특별시 중구 동호로 249 신라호텔"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="4" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="제공 서비스"></td>
+                  <td><input class="wf-input" type="text" value="디럭스룸 1박, 조식 2인 포함"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="5" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="이용 조건"></td>
+                  <td><input class="wf-input" type="text" value="사전 예약 필수, 성수기 제외"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="6" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="취소/환불 조건"></td>
+                  <td><input class="wf-input" type="text" value="이용 3일 전까지 취소 시 전액 환불"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="7" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="소비자상담 전화번호"></td>
+                  <td><input class="wf-input" type="text" value="신라호텔 예약센터 02-2233-3131"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="8" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="사업자 정보"></td>
+                  <td><input class="wf-input" type="text" value="(주)호텔신라 / 사업자등록번호 201-81-XXXXX"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="9" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="체크인/체크아웃"></td>
+                  <td><input class="wf-input" type="text" value="체크인 15:00 / 체크아웃 11:00"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="10" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="기타 유의사항"></td>
+                  <td><input class="wf-input" type="text" value="양도 불가, 현금 교환 불가, 분실 시 재발행 불가"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 하단 버튼 -->
+      <div class="form-buttons">
+        <button class="wf-btn" onclick="location.href='BO-PDM-041_티켓상품-목록-화면.html'">취소</button>
+        <button class="wf-btn" onclick="openModal('previewModal')">미리보기</button>
+        <button class="wf-btn wf-btn--primary" onclick="openModal('saveModal')">저장</button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- 우측: 디스크립션 패널 -->
+  <div class="spec-desc-panel">
+    <h3>BO-PDM-047 — 티켓상품 상세 화면</h3>
+    <p><strong>메뉴 경로:</strong> 상품 관리 &gt; 티켓상품 관리 &gt; 티켓상품 목록 &gt; 상품 상세</p>
+    <p><strong>Route:</strong> /bo/products/ticket/:id</p>
+    <hr style="margin:8px 0;">
+    <h4 style="font-size:13px;margin:8px 0 4px;">진입 흐름</h4>
+    <ul>
+      <li>티켓상품 목록(BO-PDM-041)에서 상품명 클릭</li>
+      <li>승인완료(APPROVED) 상품 대상</li>
+      <li><strong>목록 &rarr; 상세(편집) &rarr; 저장</strong> 플로우</li>
+    </ul>
+    <hr style="margin:8px 0;">
+
+    <!-- ===== 탭별 디스크립션 ===== -->
+    <div id="desc-basic" class="desc-content active">
+      <h4 style="font-size:13px;margin:8px 0 4px;">기본정보 탭 — 편집 가능 폼 (6개 영역)</h4>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.1 기본정보</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>상품명 *</strong> &mdash; input text (full width)
+          <br>&bull; <em>검증:</em> 필수. 최대 200자. 특수문자 허용
+        </li>
+        <li><strong>상품코드</strong> &mdash; readonly. 승인완료 시 자동 부여(13자리)</li>
+        <li><strong>판매사 상품코드</strong> &mdash; input text. 판매사 자체 관리 코드(선택)</li>
+        <li><strong>다국어 상품명</strong> &mdash; input text (full width). 영문/다국어(선택)</li>
+        <li><strong>판매사</strong> &mdash; readonly input + [조회] 팝업
+          <br>&bull; 팝업 선택 시 하위업체 select 자동 갱신
+          <br>&bull; <em>정책:</em> 승인완료 후 판매사 변경 불가
+        </li>
+        <li><strong>하위업체</strong> &mdash; select. 판매사 선택 후 활성화</li>
+        <li><strong>상품키워드</strong> &mdash; input + [등록하기] &rarr; 태그(chip) 출력
+          <br>&bull; <em>정책:</em> 최대 10개. FO 검색 키워드로 활용
+        </li>
+      </ol>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.1-A 티켓정보 (티켓 전용)</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>상품유형 *</strong> &mdash; radio (일반티켓 / 예약티켓). 기본값: 일반티켓
+          <br>&bull; <em>정책:</em> 승인완료 후 수정불가
+        </li>
+        <li><strong>티켓 타입 *</strong> &mdash; radio (모바일티켓 / 바우처). 승인완료 후 수정불가
+          <br>&bull; 발급정보 탭의 발급방법 필드와 연동
+        </li>
+        <li><strong>유효기간 *</strong> &mdash; date-range (시작 ~ 종료). 승인완료 후 수정불가</li>
+        <li><strong>패스 타입</strong> &mdash; select (1일권/시즌권/연간권 등). 승인완료 후 수정불가</li>
+        <li><strong>취소 가능일</strong> &mdash; number input (일). 승인완료 후 수정불가</li>
+        <li><strong>이용필수규칙</strong> &mdash; textarea. 승인완료 후 수정불가
+          <br>&bull; FO 상품 상세에 이용 안내로 노출
+        </li>
+      </ol>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.2 추가정보</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>상품리뷰 등록</strong> &mdash; radio (가능/불가능). 기본값: 가능</li>
+        <li><strong>Q&amp;A 등록</strong> &mdash; radio (가능/불가능). 기본값: 가능</li>
+        <li><strong>선물하기</strong> &mdash; radio (가능/불가능). 기본값: 가능</li>
+        <li><strong>최소 구매수량</strong> &mdash; radio(사용안함/사용) + number input</li>
+        <li><strong>최대 구매수량</strong> &mdash; radio(사용안함/사용) + number input</li>
+        <li><strong>특가 구매수량</strong> &mdash; radio(사용안함/사용) + number input</li>
+      </ol>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.3 고객사 정보</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>노출 제외 고객사</strong> &mdash; radio (미등록/등록). 기본값: 미등록</li>
+        <li><strong>고객사 입력</strong> &mdash; readonly input + [조회] + [등록]</li>
+        <li><strong>등록 목록</strong> &mdash; 태그(chip) 형태. &times; 클릭 삭제</li>
+      </ol>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.4 등록정보 (readonly)</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>승인상태</strong> &mdash; Badge 표시(승인완료/반려 등)</li>
+        <li><strong>반려사유</strong> &mdash; 반려 시에만 값 표시, 정상이면 "-"</li>
+        <li><strong>등록자 / 등록일시</strong> &mdash; 최초 등록 정보</li>
+        <li><strong>승인자 / 승인일시</strong> &mdash; 최종 승인 정보</li>
+        <li><strong>수정자 / 수정일시</strong> &mdash; 마지막 수정 정보</li>
+      </ol>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.5 판매상태</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>판매상태 변경</strong> &mdash; select (판매중/판매일시중지/판매종료)
+          <br>&bull; <em>전환 규칙:</em> BO-PDM-001 정책 준용
+        </li>
+      </ol>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.6 승인 이력</h4>
+      <p style="font-size:11px;margin:2px 0;line-height:1.6;">
+        &bull; <em>표시 위치:</em> 기본정보 탭에서만 표시<br>
+        &bull; <em>테이블 열:</em> No | 요청일 | 처리일 | 처리자 | 처리상태(Badge) | 비고<br>
+        &bull; <em>정렬:</em> 최신순(요청일 desc)
+      </p>
+
+      <hr style="margin:8px 0;">
+      <h4 style="font-size:12px;margin:6px 0 4px;color:#6b7280;">팝업 2개</h4>
+      <p style="font-size:11px;margin:2px 0;">판매사 조회(vendorPopup047), 고객사 조회(clientPopup047)</p>
+    </div>
+
+    <div id="desc-display" class="desc-content">
+      <h4 style="font-size:13px;margin:8px 0 4px;">전시정보 탭 — 편집 가능 폼 (6필드)</h4>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">2.1 전시정보</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>전시여부 *</strong> &mdash; radio (전시 / 비전시). 기본값: 전시</li>
+        <li><strong>노출채널 *</strong> &mdash; checkbox (전체 / PC / 모바일)</li>
+        <li><strong>전시기간 *</strong> &mdash; date-range (시작일 ~ 종료일)</li>
+        <li><strong>담당MD *</strong> &mdash; readonly input + [조회] 팝업</li>
+        <li><strong>표준카테고리 *</strong> &mdash; 3단 select (대/중/소분류) + [등록]
+          <br>&bull; 대분류: 숙박/레저/외식 등 티켓 카테고리
+        </li>
+        <li><strong>전시카테고리 *</strong> &mdash; 테이블 (대표 라디오 / 경로 / 삭제)</li>
+      </ol>
+
+      <hr style="margin:8px 0;">
+      <h4 style="font-size:12px;margin:6px 0 4px;color:#6b7280;">팝업 1개</h4>
+      <p style="font-size:11px;margin:2px 0;">담당MD 조회(mdPopup047)</p>
+    </div>
+
+    <div id="desc-sales" class="desc-content">
+      <h4 style="font-size:13px;margin:8px 0 4px;">판매정보 탭 — 편집 가능 폼 (5개 영역)</h4>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">3.1 판매정보 등록</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>판매기간 *</strong> &mdash; checkbox "제한없음" + date-range</li>
+        <li><strong>과세구분 *</strong> &mdash; radio 3종 (과세/면세/영세). 기본값: 과세</li>
+        <li><strong>성인인증상품 *</strong> &mdash; radio (Yes/No). 기본값: No</li>
+      </ol>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">3.2 가격정보</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>판매가(VAT포함) *</strong> &mdash; input number</li>
+        <li><strong>상품 마진율</strong> &mdash; checkbox + input number (%)</li>
+        <li><strong>상품 마진</strong> &mdash; readonly (자동계산)</li>
+        <li><strong>계약 마진율</strong> &mdash; readonly (PO 계약값)</li>
+        <li><strong>계약 마진</strong> &mdash; readonly (자동계산)</li>
+      </ol>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">3.3~3.5 프로모션 (readonly)</h4>
+      <p style="font-size:11px;margin:2px 0;line-height:1.6;">
+        할인 프로모션 / 쿠폰 프로모션 / 적립금 프로모션 &mdash; 046과 동일 구조
+      </p>
+    </div>
+
+    <div id="desc-option" class="desc-content">
+      <h4 style="font-size:13px;margin:8px 0 4px;">옵션/재고 탭 — 편집 가능 폼</h4>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">4.1 옵션/재고 정보</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>상품옵션 *</strong> &mdash; radio (사용안함/단일옵션/복수옵션). 기본값: 사용안함</li>
+        <li>"사용안함": 재고수량 직접 입력</li>
+        <li>"단일/복수옵션": [옵션 등록] 팝업 + 옵션 목록 테이블</li>
+      </ol>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">4.2 옵션 등록 팝업 (optionPopup047)</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li>상품코드(readonly), 상품명(readonly), 옵션여부(readonly)</li>
+        <li>옵션 속성 등록 테이블: 번호/옵션ID/옵션명/등록&middot;삭제</li>
+      </ol>
+    </div>
+
+    <div id="desc-issue" class="desc-content">
+      <h4 style="font-size:13px;margin:8px 0 4px;">발급정보 탭 — 편집 가능 폼 (단일 영역)</h4>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">5.1 발급정보</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>발급방법</strong> &mdash; readonly. 기본정보 티켓타입 연동
+          <br>&bull; "모바일티켓" 또는 "바우처" 자동 표시
+        </li>
+        <li><strong>배송비 정책</strong> &mdash; readonly. "무료" 고정
+          <br>&bull; 티켓상품은 배송비 없음
+        </li>
+        <li><strong>교환/반품 기간 *</strong> &mdash; textarea (최대 1000자)
+          <br>&bull; FO 상품 상세에 노출
+        </li>
+        <li><strong>교환/반품 안내 *</strong> &mdash; textarea (최대 1000자)
+          <br>&bull; 환불 절차 및 조건 안내
+        </li>
+        <li><strong>교환/반품 불가 안내 *</strong> &mdash; textarea (최대 1000자)
+          <br>&bull; 환불 불가 사유 안내
+        </li>
+      </ol>
+    </div>
+
+    <div id="desc-detail" class="desc-content">
+      <h4 style="font-size:13px;margin:8px 0 4px;">상세정보 탭 — 편집 가능 폼 (3개 영역)</h4>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">6.1 대표 이미지 등록</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li>이미지 최대 5개. 최초 등록 시 대표 자동 설정</li>
+        <li>테이블: 대표(라디오) | 파일명 | [등록] | [삭제]</li>
+      </ol>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">6.2 동영상 등록</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li>mp4 최대 1개. FO 노출: 동영상 &gt; 이미지</li>
+      </ol>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">6.3 상품상세설명</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li>적용 범위: 전체/PC. PC HTML 편집기 + 모바일 편집기</li>
+      </ol>
+    </div>
+
+    <div id="desc-notice" class="desc-content">
+      <h4 style="font-size:13px;margin:8px 0 4px;">상품정보제공고시 탭 — 편집 가능 폼</h4>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">7.1 상품정보제공고시</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>입력방식 *</strong> &mdash; radio (연동/직접입력)</li>
+        <li><strong>상품분류 *</strong> &mdash; select (티켓 카테고리 기준)</li>
+        <li><strong>편집 테이블</strong> &mdash; 번호/항목/내용/+/- 버튼</li>
+      </ol>
+    </div>
+
+    <hr style="margin:8px 0;">
+    <h4 style="font-size:13px;margin:8px 0 4px;">하단 공통</h4>
+    <ul>
+      <li><strong>승인 이력:</strong> 기본정보 탭에서만 표시 (영역 1.6)</li>
+      <li><strong>취소:</strong> BO-PDM-041 티켓상품 목록 이동</li>
+      <li><strong>미리보기:</strong> placeholder 모달</li>
+      <li><strong>저장:</strong> 저장 확인 모달 (primary)</li>
+    </ul>
+    <hr style="margin:8px 0;">
+    <h4 style="font-size:13px;margin:8px 0 4px;">샘플 데이터</h4>
+    <p>신라호텔 디럭스 숙박권 (상품코드: 2026041200001)</p>
+  </div>
+</div>
+
+<!-- ===== 판매사 조회 팝업 ===== -->
+<div class="popup-overlay" id="vendorPopup047">
+  <div class="popup-box">
+    <div class="popup-header">판매사 조회</div>
+    <div class="popup-body">
+      <div class="search-row">
+        <input class="wf-input" type="text" placeholder="판매사명 검색">
+        <button class="wf-btn wf-btn--sm wf-btn--primary">검색</button>
+      </div>
+      <table class="popup-list">
+        <thead><tr><th style="width:30px;"></th><th>코드</th><th>판매사명</th></tr></thead>
+        <tbody>
+          <tr><td><input type="radio" name="vendor047" checked></td><td>V010</td><td>(주)신라호텔</td></tr>
+          <tr><td><input type="radio" name="vendor047"></td><td>V011</td><td>(주)롯데호텔</td></tr>
+          <tr><td><input type="radio" name="vendor047"></td><td>V012</td><td>(주)인터컨티넨탈</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="popup-footer">
+      <button class="wf-btn" onclick="closePopup047('vendorPopup047')">취소</button>
+      <button class="wf-btn wf-btn--primary" onclick="closePopup047('vendorPopup047')">선택</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 담당MD 조회 팝업 ===== -->
+<div class="popup-overlay" id="mdPopup047">
+  <div class="popup-box">
+    <div class="popup-header">담당MD 조회</div>
+    <div class="popup-body">
+      <div class="search-row">
+        <input class="wf-input" type="text" placeholder="MD명 검색">
+        <button class="wf-btn wf-btn--sm wf-btn--primary">검색</button>
+      </div>
+      <table class="popup-list">
+        <thead><tr><th style="width:30px;"></th><th>MD코드</th><th>MD명</th></tr></thead>
+        <tbody>
+          <tr><td><input type="radio" name="md047" checked></td><td>MD001</td><td>김담당</td></tr>
+          <tr><td><input type="radio" name="md047"></td><td>MD002</td><td>이담당</td></tr>
+          <tr><td><input type="radio" name="md047"></td><td>MD003</td><td>박담당</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="popup-footer">
+      <button class="wf-btn" onclick="closePopup047('mdPopup047')">취소</button>
+      <button class="wf-btn wf-btn--primary" onclick="selectMd047()">선택</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 고객사 조회 팝업 ===== -->
+<div class="popup-overlay" id="clientPopup047">
+  <div class="popup-box">
+    <div class="popup-header">고객사 조회</div>
+    <div class="popup-body">
+      <div class="search-row">
+        <input class="wf-input" type="text" placeholder="고객사명 검색">
+        <button class="wf-btn wf-btn--sm wf-btn--primary">검색</button>
+      </div>
+      <table class="popup-list">
+        <thead><tr><th style="width:30px;"></th><th>코드</th><th>고객사명</th></tr></thead>
+        <tbody>
+          <tr><td><input type="radio" name="client047"></td><td>C001</td><td>(주)현대자동차</td></tr>
+          <tr><td><input type="radio" name="client047"></td><td>C002</td><td>(주)SK하이닉스</td></tr>
+          <tr><td><input type="radio" name="client047"></td><td>C003</td><td>(주)카카오</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="popup-footer">
+      <button class="wf-btn" onclick="closePopup047('clientPopup047')">취소</button>
+      <button class="wf-btn wf-btn--primary" onclick="closePopup047('clientPopup047')">선택</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 옵션 등록 팝업 ===== -->
+<div class="popup-overlay" id="optionPopup047">
+  <div class="popup-box" style="width:480px;">
+    <div class="popup-header">옵션 등록</div>
+    <div class="popup-body">
+      <div class="form-grid" style="margin-bottom:12px;">
+        <div class="form-group">
+          <label>상품코드</label>
+          <div class="readonly-field">2026041200001</div>
+        </div>
+        <div class="form-group">
+          <label>상품명</label>
+          <div class="readonly-field">신라호텔 디럭스 숙박권</div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label>옵션여부</label>
+        <div class="readonly-field">단일옵션</div>
+      </div>
+      <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:8px;">옵션 속성 등록</label>
+      <table class="popup-list">
+        <thead><tr><th style="width:40px;">번호</th><th>옵션ID</th><th>옵션명</th><th style="width:60px;"></th></tr></thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>OPT-001</td>
+            <td><input class="wf-input" type="text" value="디럭스 더블" maxlength="15" style="width:100%;"></td>
+            <td><button class="wf-btn wf-btn--sm">&times;</button></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>OPT-002</td>
+            <td><input class="wf-input" type="text" value="디럭스 트윈" maxlength="15" style="width:100%;"></td>
+            <td><button class="wf-btn wf-btn--sm">&times;</button></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>(자동)</td>
+            <td><input class="wf-input" type="text" value="" maxlength="15" placeholder="옵션명 입력 (15자)" style="width:100%;"></td>
+            <td><button class="wf-btn wf-btn--sm wf-btn--primary">등록</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="popup-footer">
+      <button class="wf-btn" onclick="closePopup047('optionPopup047')">닫기</button>
+      <button class="wf-btn wf-btn--primary" onclick="closePopup047('optionPopup047')">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 미리보기 모달 -->
+<div class="modal-overlay" id="previewModal">
+  <div class="modal-box">
+    <div class="modal-header">미리보기</div>
+    <div class="modal-body">
+      <p>상품 미리보기 기능은 추후 제공 예정입니다.</p>
+      <p class="wf-text-sm wf-text-muted" style="margin-top:8px;">FO 화면 기반 미리보기가 구현될 예정입니다.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="wf-btn" onclick="closeModal('previewModal')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 저장 확인 모달 -->
+<div class="modal-overlay" id="saveModal">
+  <div class="modal-box">
+    <div class="modal-header">저장 확인</div>
+    <div class="modal-body">
+      <p>변경된 상품 정보를 저장하시겠습니까?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="wf-btn" onclick="closeModal('saveModal')">취소</button>
+      <button class="wf-btn wf-btn--primary" onclick="closeModal('saveModal')">저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleLnb(){document.querySelector('.wf-layout').classList.toggle('lnb-collapsed')}
+document.querySelectorAll('.lnb-menu-item > a').forEach(function(b){b.addEventListener('click',function(e){e.preventDefault();var li=this.parentElement;if(li.querySelector('.lnb-submenu'))li.classList.toggle('open')})});
+function switchTab(id){document.querySelectorAll('.wf-tab').forEach(function(t){t.classList.remove('active')});event.target.classList.add('active');document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});document.getElementById('tab-'+id).classList.add('active');document.querySelectorAll('.desc-content').forEach(function(d){d.classList.remove('active')});var desc=document.getElementById('desc-'+id);if(desc)desc.classList.add('active')}
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function openPopup047(id){document.getElementById(id).classList.add('show')}
+function closePopup047(id){document.getElementById(id).classList.remove('show')}
+function addKeyword(){var i=document.getElementById('keywordInput'),v=i.value.trim();if(!v)return;var t=document.createElement('span');t.className='keyword-tag';t.innerHTML=v+' <span class="remove" onclick="removeTag(this)">&times;</span>';document.getElementById('keywordTags').appendChild(t);i.value=''}
+function removeTag(el){el.parentElement.remove()}
+function toggleQtyField(n){var v=document.querySelector('input[name="'+n+'"]:checked').value;document.getElementById(n+'Input').disabled=(v==='N')}
+function toggleClientSection(){var v=document.querySelector('input[name="clientExclude"]:checked').value;document.getElementById('clientSection').className='client-section'+(v==='N'?' disabled':'')}
+function addClient(){var p=document.getElementById('clientPopup047'),c=p.querySelector('input[name="client047"]:checked');if(!c)return;var n=c.closest('tr').cells[2].textContent,t=document.createElement('span');t.className='keyword-tag';t.innerHTML=n+' <span class="remove" onclick="removeTag(this)">&times;</span>';document.getElementById('clientTags').appendChild(t)}
+function toggleChannelAll(){var a=document.getElementById('chAll'),pc=document.getElementById('chPC'),mb=document.getElementById('chMobile');pc.checked=a.checked;mb.checked=a.checked;pc.disabled=a.checked;mb.disabled=a.checked}
+function addDisplayCategory(){var ss=document.querySelectorAll('.category-selects select'),path=[];ss.forEach(function(s){if(s.value)path.push(s.options[s.selectedIndex].text)});if(path.length<3)return;var tb=document.querySelector('#displayCategoryTable tbody'),tr=document.createElement('tr'),first=tb.rows.length===0;tr.innerHTML='<td style="text-align:center;"><input type="radio" name="mainCategory"'+(first?' checked':'')+'></td><td>'+path.join(' &gt; ')+'</td><td style="text-align:center;"><button class="wf-btn wf-btn--sm" onclick="removeDisplayCategory(this)">&times;</button></td>';tb.appendChild(tr)}
+function removeDisplayCategory(el){el.closest('tr').remove()}
+function selectMd047(){var p=document.getElementById('mdPopup047'),c=p.querySelector('input[name="md047"]:checked');if(!c)return;var r=c.closest('tr');document.getElementById('mdInput047').value=r.cells[1].textContent+'('+r.cells[2].textContent+')';closePopup047('mdPopup047')}
+function toggleSalePeriod(){var c=document.getElementById('salePeriodUnlimit');document.getElementById('saleStartDate').disabled=c.checked;document.getElementById('saleEndDate').disabled=c.checked}
+function toggleMarginRate(){var c=document.getElementById('marginRateChk');document.getElementById('marginRateInput').disabled=!c.checked}
+function toggleOptionUse(){var v=document.querySelector('input[name="optionUse"]:checked').value;var none=document.getElementById('optionNoneArea'),use=document.getElementById('optionUseArea');if(v==='NONE'){none.style.display='';use.className='disabled-area'}else{none.style.display='none';use.className=''}}
+function toggleDetailScope(){var v=document.querySelector('input[name="detailScope"]:checked').value;document.getElementById('mobileEditorArea').className=(v==='ALL'?'disabled-area':'')}
+function toggleNoticeMode(){var v=document.querySelector('input[name="noticeMode"]:checked').value;var tb=document.querySelector('#noticeTable tbody');if(v==='DIRECT'){tb.innerHTML='';addNoticeRow()}}
+function addNoticeRow(){var tb=document.querySelector('#noticeTable tbody'),n=tb.rows.length+1;var tr=document.createElement('tr');tr.innerHTML='<td><input class="wf-input" type="text" value="'+n+'" style="width:40px;text-align:center;"></td><td><input class="wf-input" type="text" value="" placeholder="항목명"></td><td><input class="wf-input" type="text" value="" placeholder="내용 입력"></td><td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>';tb.appendChild(tr)}
+function removeNoticeRow(el){var tr=el.closest('tr'),tb=tr.parentElement;if(tb.rows.length>1)tr.remove()}
+function toggleTicketType(){var v=document.querySelector('input[name="ticketProductType"]:checked').value}
+</script>
+
+</body>
+</html>
