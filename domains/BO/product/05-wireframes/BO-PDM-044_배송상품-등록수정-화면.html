@@ -7,7 +7,7 @@
   <meta name="wfr-title"   content="배송상품 등록수정 화면">
   <meta name="wfr-domain"  content="product">
   <meta name="wfr-route"   content="/bo/products/delivery/form">
-  <meta name="wfr-version" content="2.0">
+  <meta name="wfr-version" content="2.1">
   <title>BO-PDM-044 — 배송상품 등록수정 화면 | 임직원 복지몰</title>
   <link rel="stylesheet" href="../../../../_wireframe/base.css">
   <style>
@@ -493,7 +493,7 @@
             <div class="form-group full">
               <label>담당MD <span class="required">*</span></label>
               <div class="input-with-btn">
-                <input class="wf-input" type="text" id="mdInput044" placeholder="담당MD 선택" readonly>
+                <input class="wf-input" type="text" id="mdInput044" value="MD001(김담당)" placeholder="담당MD 선택" readonly>
                 <button class="wf-btn wf-btn--sm" onclick="openPopup044('mdPopup044')">조회</button>
               </div>
             </div>
@@ -502,15 +502,21 @@
               <div class="category-selects">
                 <select class="wf-select">
                   <option value="">대분류</option>
-                  <option>가전</option>
+                  <option selected>가전</option>
                   <option>식품</option>
                   <option>패션</option>
                 </select>
                 <select class="wf-select">
                   <option value="">중분류</option>
+                  <option selected>냉장고</option>
+                  <option>세탁기</option>
+                  <option>에어컨</option>
                 </select>
                 <select class="wf-select">
                   <option value="">소분류</option>
+                  <option selected>양문형</option>
+                  <option>미니</option>
+                  <option>김치냉장고</option>
                 </select>
                 <button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addDisplayCategory044()">등록</button>
               </div>
@@ -526,7 +532,16 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td colspan="3" style="text-align:center;color:#9ca3af;padding:16px;">카테고리를 등록해주세요</td></tr>
+                  <tr>
+                    <td style="text-align:center;"><input type="radio" name="mainCategory044" checked></td>
+                    <td>인기상품 &gt; 주방가전 &gt; 냉장고</td>
+                    <td style="text-align:center;"><button class="wf-btn wf-btn--sm" onclick="removeDisplayCategory044(this)">&times;</button></td>
+                  </tr>
+                  <tr>
+                    <td style="text-align:center;"><input type="radio" name="mainCategory044"></td>
+                    <td>가전디지털 &gt; 냉장고 &gt; 양문형</td>
+                    <td style="text-align:center;"><button class="wf-btn wf-btn--sm" onclick="removeDisplayCategory044(this)">&times;</button></td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -576,27 +591,27 @@
           <div class="form-grid">
             <div class="form-group">
               <label>판매가(VAT포함) <span class="required">*</span></label>
-              <input class="wf-input" type="number" placeholder="판매가 입력">
+              <input class="wf-input" type="number" value="2890000" placeholder="판매가 입력">
             </div>
             <div class="form-group">
               <label>상품 마진율</label>
               <div class="margin-field">
                 <label class="checkbox-label"><input type="checkbox" id="marginRateChk044" onchange="toggleMarginRate044()"> 설정</label>
-                <input class="wf-input" type="number" id="marginRateInput044" value="" disabled>
+                <input class="wf-input" type="number" id="marginRateInput044" value="15" disabled>
                 <span class="unit-text">%</span>
               </div>
             </div>
             <div class="form-group">
               <label>상품 마진</label>
-              <div class="readonly-field">- (자동계산)</div>
+              <div class="readonly-field">433,500원 (자동계산)</div>
             </div>
             <div class="form-group">
               <label>계약 마진율</label>
-              <div class="readonly-field">- (PO 계약값)</div>
+              <div class="readonly-field">12% (PO 계약값)</div>
             </div>
             <div class="form-group">
               <label>계약 마진</label>
-              <div class="readonly-field">- (자동계산)</div>
+              <div class="readonly-field">346,800원 (자동계산)</div>
             </div>
           </div>
         </div>
@@ -660,7 +675,7 @@
           <div id="optionNoneArea044">
             <div class="form-group" style="max-width:240px;">
               <label>재고수량 <span class="required">*</span></label>
-              <input class="wf-input" type="number" value="0" min="0">
+              <input class="wf-input" type="number" value="150" min="0">
             </div>
           </div>
 
@@ -682,13 +697,56 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:16px;">옵션을 등록해주세요</td></tr>
+                  <tr>
+                    <td style="text-align:center;">1</td>
+                    <td>OPT-001</td>
+                    <td>코타 화이트</td>
+                    <td style="text-align:right;">0원</td>
+                    <td style="text-align:right;">50</td>
+                    <td><select class="wf-select" style="font-size:12px;padding:4px;">
+                      <option selected>판매중</option><option>판매일시중지</option><option>일시품절</option><option>품절</option><option>판매종료</option>
+                    </select></td>
+                    <td style="text-align:center;"><button class="wf-btn wf-btn--sm" onclick="openPopup044('optionSinglePopup044')">수정</button></td>
+                  </tr>
+                  <tr>
+                    <td style="text-align:center;">2</td>
+                    <td>OPT-002</td>
+                    <td>코타 차콜</td>
+                    <td style="text-align:right;">0원</td>
+                    <td style="text-align:right;">45</td>
+                    <td><select class="wf-select" style="font-size:12px;padding:4px;">
+                      <option selected>판매중</option><option>판매일시중지</option><option>일시품절</option><option>품절</option><option>판매종료</option>
+                    </select></td>
+                    <td style="text-align:center;"><button class="wf-btn wf-btn--sm" onclick="openPopup044('optionSinglePopup044')">수정</button></td>
+                  </tr>
+                  <tr>
+                    <td style="text-align:center;">3</td>
+                    <td>OPT-003</td>
+                    <td>글램 핑크</td>
+                    <td style="text-align:right;">+50,000원</td>
+                    <td style="text-align:right;">30</td>
+                    <td><select class="wf-select" style="font-size:12px;padding:4px;">
+                      <option selected>판매중</option><option>판매일시중지</option><option>일시품절</option><option>품절</option><option>판매종료</option>
+                    </select></td>
+                    <td style="text-align:center;"><button class="wf-btn wf-btn--sm" onclick="openPopup044('optionSinglePopup044')">수정</button></td>
+                  </tr>
+                  <tr>
+                    <td style="text-align:center;">4</td>
+                    <td>OPT-004</td>
+                    <td>새틴 그레이</td>
+                    <td style="text-align:right;">0원</td>
+                    <td style="text-align:right;">25</td>
+                    <td><select class="wf-select" style="font-size:12px;padding:4px;">
+                      <option>판매중</option><option selected>판매일시중지</option><option>일시품절</option><option>품절</option><option>판매종료</option>
+                    </select></td>
+                    <td style="text-align:center;"><button class="wf-btn wf-btn--sm" onclick="openPopup044('optionSinglePopup044')">수정</button></td>
+                  </tr>
                 </tbody>
               </table>
             </div>
             <div class="form-group" style="margin-top:12px;max-width:240px;">
               <label>재고수량</label>
-              <div class="readonly-field">0 (합산 자동)</div>
+              <div class="readonly-field">150 (합산 자동)</div>
             </div>
           </div>
         </div>
@@ -704,19 +762,20 @@
               <label>출고 배송정보 <span class="required">*</span></label>
               <select class="wf-select" style="max-width:360px;">
                 <option value="">출고지 선택</option>
-                <option>삼성전자 수원 물류센터</option>
+                <option selected>삼성전자 수원 물류센터</option>
                 <option>삼성전자 광주 물류센터</option>
+                <option>삼성전자 구미 물류센터</option>
               </select>
             </div>
-            <div class="form-group"><label>택배사명</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>출고 배송지ID</label><div class="readonly-field">-</div></div>
-            <div class="form-group full"><label>출고지 주소</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>합배송</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>배송비 정책</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>기본 배송비</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>도서산간 배송비</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>제주 배송비</label><div class="readonly-field">-</div></div>
-            <div class="form-group full"><label>배송 안내</label><div class="readonly-field">-</div></div>
+            <div class="form-group"><label>택배사명</label><div class="readonly-field">CJ대한통운</div></div>
+            <div class="form-group"><label>출고 배송지ID</label><div class="readonly-field">SHP-001</div></div>
+            <div class="form-group full"><label>출고지 주소</label><div class="readonly-field">경기도 수원시 영통구 삼성로 129 (물류동 1층)</div></div>
+            <div class="form-group"><label>합배송</label><div class="readonly-field">가능</div></div>
+            <div class="form-group"><label>배송비 정책</label><div class="readonly-field">무료</div></div>
+            <div class="form-group"><label>기본 배송비</label><div class="readonly-field">0원</div></div>
+            <div class="form-group"><label>도서산간 배송비</label><div class="readonly-field">5,000원</div></div>
+            <div class="form-group"><label>제주 배송비</label><div class="readonly-field">3,000원</div></div>
+            <div class="form-group full"><label>배송 안내</label><div class="readonly-field" style="white-space:pre-line;">제품 배송 후 설치기사 방문 설치 (1~2일 소요). 대형 가전은 직접 배송으로 진행됩니다.</div></div>
           </div>
         </div>
 
@@ -727,18 +786,19 @@
               <label>반품 회수지 <span class="required">*</span></label>
               <select class="wf-select" style="max-width:360px;">
                 <option value="">회수지 선택</option>
-                <option>삼성전자 수원 반품센터</option>
+                <option selected>삼성전자 수원 반품센터</option>
+                <option>삼성전자 광주 반품센터</option>
               </select>
             </div>
-            <div class="form-group"><label>택배사명</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>반품 배송지ID</label><div class="readonly-field">-</div></div>
-            <div class="form-group full"><label>회수지 주소</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>반품 배송비</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>자동회수 가능</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>도서산간 반품 배송비</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>제주 반품 배송비</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>반품 기간</label><div class="readonly-field">-</div></div>
-            <div class="form-group full"><label>반품 안내</label><div class="readonly-field">-</div></div>
+            <div class="form-group"><label>택배사명</label><div class="readonly-field">CJ대한통운</div></div>
+            <div class="form-group"><label>반품 배송지ID</label><div class="readonly-field">RTN-001</div></div>
+            <div class="form-group full"><label>회수지 주소</label><div class="readonly-field">경기도 수원시 영통구 삼성로 129 (반품동 B1)</div></div>
+            <div class="form-group"><label>반품 배송비</label><div class="readonly-field">50,000원</div></div>
+            <div class="form-group"><label>자동회수 가능</label><div class="readonly-field">가능</div></div>
+            <div class="form-group"><label>도서산간 반품 배송비</label><div class="readonly-field">55,000원</div></div>
+            <div class="form-group"><label>제주 반품 배송비</label><div class="readonly-field">53,000원</div></div>
+            <div class="form-group"><label>반품 기간</label><div class="readonly-field">수령 후 7일 이내</div></div>
+            <div class="form-group full"><label>반품 안내</label><div class="readonly-field">대형 가전 반품 시 설치기사 회수 방문 필요. 고객센터 접수 후 진행.</div></div>
           </div>
         </div>
 
@@ -749,19 +809,20 @@
               <label>교환 회수지 <span class="required">*</span></label>
               <select class="wf-select" style="max-width:360px;">
                 <option value="">회수지 선택</option>
-                <option>삼성전자 수원 반품센터</option>
+                <option selected>삼성전자 수원 반품센터</option>
+                <option>삼성전자 광주 반품센터</option>
               </select>
             </div>
-            <div class="form-group"><label>택배사명</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>교환 배송지ID</label><div class="readonly-field">-</div></div>
-            <div class="form-group full"><label>회수지 주소</label><div class="readonly-field">-</div></div>
-            <div class="form-group full"><label>교환 출고지 주소</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>교환 배송비</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>자동회수 가능</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>도서산간 교환 배송비</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>제주 교환 배송비</label><div class="readonly-field">-</div></div>
-            <div class="form-group"><label>교환 기간</label><div class="readonly-field">-</div></div>
-            <div class="form-group full"><label>교환 안내</label><div class="readonly-field">-</div></div>
+            <div class="form-group"><label>택배사명</label><div class="readonly-field">CJ대한통운</div></div>
+            <div class="form-group"><label>교환 배송지ID</label><div class="readonly-field">EXC-001</div></div>
+            <div class="form-group full"><label>회수지 주소</label><div class="readonly-field">경기도 수원시 영통구 삼성로 129 (반품동 B1)</div></div>
+            <div class="form-group full"><label>교환 출고지 주소</label><div class="readonly-field">경기도 수원시 영통구 삼성로 129 (물류동 1층)</div></div>
+            <div class="form-group"><label>교환 배송비</label><div class="readonly-field">100,000원</div></div>
+            <div class="form-group"><label>자동회수 가능</label><div class="readonly-field">가능</div></div>
+            <div class="form-group"><label>도서산간 교환 배송비</label><div class="readonly-field">110,000원</div></div>
+            <div class="form-group"><label>제주 교환 배송비</label><div class="readonly-field">106,000원</div></div>
+            <div class="form-group"><label>교환 기간</label><div class="readonly-field">수령 후 7일 이내</div></div>
+            <div class="form-group full"><label>교환 안내</label><div class="readonly-field">교환 신청 시 동일 상품 옵션 변경만 가능. 고객센터 접수 후 설치기사 방문 교환.</div></div>
           </div>
         </div>
 
@@ -776,10 +837,22 @@
           <table class="wf-table" style="margin-bottom:12px;">
             <thead><tr><th style="width:50px;">대표</th><th>파일명</th><th style="width:60px;">등록</th><th style="width:60px;">삭제</th></tr></thead>
             <tbody>
-              <tr><td colspan="4" style="text-align:center;color:#9ca3af;padding:16px;">이미지를 등록해주세요</td></tr>
+              <tr>
+                <td style="text-align:center;"><input type="radio" name="mainImage044" checked></td>
+                <td>bespoke_rf85_white_01.jpg</td>
+                <td style="text-align:center;"><button class="wf-btn wf-btn--sm">등록</button></td>
+                <td style="text-align:center;"><button class="wf-btn wf-btn--sm">&times;</button></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><input type="radio" name="mainImage044"></td>
+                <td>bespoke_rf85_charcoal_02.jpg</td>
+                <td style="text-align:center;"><button class="wf-btn wf-btn--sm">등록</button></td>
+                <td style="text-align:center;"><button class="wf-btn wf-btn--sm">&times;</button></td>
+              </tr>
             </tbody>
           </table>
           <div class="img-row">
+            <div class="img-placeholder"><span>120x120<br>미리보기</span></div>
             <div class="img-placeholder"><span>120x120<br>미리보기</span></div>
           </div>
         </div>
@@ -790,9 +863,14 @@
           <table class="wf-table" style="margin-bottom:12px;">
             <thead><tr><th>파일명</th><th style="width:60px;">등록</th><th style="width:60px;">삭제</th></tr></thead>
             <tbody>
-              <tr><td colspan="3" style="text-align:center;color:#9ca3af;padding:16px;">동영상을 등록해주세요</td></tr>
+              <tr>
+                <td>bespoke_rf85_intro.mp4</td>
+                <td style="text-align:center;"><button class="wf-btn wf-btn--sm">등록</button></td>
+                <td style="text-align:center;"><button class="wf-btn wf-btn--sm">&times;</button></td>
+              </tr>
             </tbody>
           </table>
+          <div class="img-placeholder" style="width:200px;height:120px;"><span>동영상<br>미리보기</span></div>
         </div>
 
         <div class="form-section">
@@ -833,22 +911,143 @@
               <label>상품분류 <span class="required">*</span></label>
               <select class="wf-select" id="noticeCategory044">
                 <option value="">상품분류 선택</option>
-                <option>가전 &gt; 냉장고</option>
+                <option selected>가전 &gt; 냉장고</option>
                 <option>가전 &gt; 세탁기</option>
+                <option>가전 &gt; 에어컨</option>
                 <option>식품 &gt; 가공식품</option>
                 <option>패션 &gt; 의류</option>
               </select>
             </div>
           </div>
           <p class="wf-text-sm wf-text-muted" style="margin-bottom:8px;">연동: 상품분류 선택 시 항목 자동 출력. 직접입력: 빈 상태에서 항목 직접 추가. 분류 변경 시 항목 초기화.</p>
-          <div class="table-scroll" style="max-height:500px;overflow-y:auto;">
+          <div class="table-scroll" id="noticeTableWrap044" onscroll="loadMoreNoticeRows044()" style="max-height:500px;overflow-y:auto;">
             <table class="wf-table" id="noticeTable044">
               <thead><tr><th style="width:50px;">번호</th><th style="width:25%;">항목</th><th>내용</th><th style="width:70px;">추가/삭제</th></tr></thead>
               <tbody>
-                <tr><td colspan="4" style="text-align:center;color:#9ca3af;padding:16px;">상품분류를 선택하면 항목이 자동 출력됩니다</td></tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="1" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="품명 및 모델명"></td>
+                  <td><input class="wf-input" type="text" value="삼성 비스포크 냉장고 RF85A9121AP"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="2" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="인증/허가 사항"></td>
+                  <td><input class="wf-input" type="text" value="전기용품안전인증 제 XXX호"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="3" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="정격전압/소비전력"></td>
+                  <td><input class="wf-input" type="text" value="220V / 60Hz"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="4" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="에너지소비효율등급"></td>
+                  <td><input class="wf-input" type="text" value="1등급"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="5" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="동일모델 출시년월"></td>
+                  <td><input class="wf-input" type="text" value="2026년 3월"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="6" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="제조자/수입자"></td>
+                  <td><input class="wf-input" type="text" value="삼성전자(주)"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="7" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="제조국"></td>
+                  <td><input class="wf-input" type="text" value="한국"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="8" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="크기/중량"></td>
+                  <td><input class="wf-input" type="text" value="912 x 1853 x 916mm / 130kg"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="9" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="품질보증기준"></td>
+                  <td><input class="wf-input" type="text" value="제품 1년, 핵심부품 10년"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr>
+                  <td><input class="wf-input" type="text" value="10" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="A/S 책임자와 전화번호"></td>
+                  <td><input class="wf-input" type="text" value="삼성전자서비스 1588-3366"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="11" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="냉각방식"></td>
+                  <td><input class="wf-input" type="text" value="간냉식(무풍냉각)"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="12" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="용량"></td>
+                  <td><input class="wf-input" type="text" value="냉장 507L / 냉동 317L / 총 874L"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="13" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="냉매"></td>
+                  <td><input class="wf-input" type="text" value="R-600a"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="14" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="색상"></td>
+                  <td><input class="wf-input" type="text" value="코타 화이트"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="15" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="설치비용"></td>
+                  <td><input class="wf-input" type="text" value="무료 (기본 설치 포함)"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="16" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="부가기능"></td>
+                  <td><input class="wf-input" type="text" value="정수기 필터, 스마트싱스 연동"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="17" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="소음"></td>
+                  <td><input class="wf-input" type="text" value="25dB"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="18" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="KC인증번호"></td>
+                  <td><input class="wf-input" type="text" value="R-R-SEC-RF85A912"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="19" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="전자파적합등록번호"></td>
+                  <td><input class="wf-input" type="text" value="KCC-CRI-SEC-RF85A912"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="20" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="상품별 추가표시사항"></td>
+                  <td><input class="wf-input" type="text" value="냉장고 전용 표시사항 해당 없음"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow044()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow044(this)">-</button></div></td>
+                </tr>
               </tbody>
             </table>
           </div>
+          <p id="noticeLoadMore044" class="wf-text-sm" style="text-align:center;color:#6b7280;margin-top:6px;cursor:default;">스크롤하여 더 보기 (10 / 20)</p>
         </div>
       </div>
 
@@ -1387,6 +1586,23 @@ function toggleDetailScope044() {
 function toggleNoticeMode044() { /* placeholder */ }
 function addNoticeRow044() { /* placeholder */ }
 function removeNoticeRow044(el) { el.closest('tr').remove(); }
+
+/* ===== 고시 lazy-load ===== */
+function loadMoreNoticeRows044() {
+  var wrap = document.getElementById('noticeTableWrap044');
+  if (!wrap) return;
+  if (wrap.scrollTop + wrap.clientHeight >= wrap.scrollHeight - 20) {
+    var hidden = wrap.querySelectorAll('tr[style*="display:none"]');
+    var cnt = 0;
+    for (var i = 0; i < hidden.length && cnt < 5; i++, cnt++) {
+      hidden[i].style.display = '';
+    }
+    var total = wrap.querySelectorAll('tbody tr').length;
+    var visible = total - wrap.querySelectorAll('tr[style*="display:none"]').length;
+    var el = document.getElementById('noticeLoadMore044');
+    if (el) el.textContent = visible >= total ? '모든 항목이 표시되었습니다 (' + total + ' / ' + total + ')' : '스크롤하여 더 보기 (' + visible + ' / ' + total + ')';
+  }
+}
 </script>
 
 </body>

@@ -4,7 +4,7 @@ title: "배송상품 등록수정 화면"
 type: wireframe
 domain: product
 status: draft
-version: "2.0"
+version: "2.1"
 created: 2026-04-13
 updated: 2026-04-17
 author: "기획자"
