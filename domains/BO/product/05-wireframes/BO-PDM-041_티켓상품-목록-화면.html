@@ -7,22 +7,79 @@
   <meta name="wfr-title"   content="티켓상품 목록 화면">
   <meta name="wfr-domain"  content="product">
   <meta name="wfr-route"   content="/bo/products/ticket">
-  <meta name="wfr-version" content="1.0">
+  <meta name="wfr-version" content="2.0">
   <title>BO-PDM-041 — 티켓상품 목록 화면 | 임직원 복지몰</title>
   <link rel="stylesheet" href="../../../../_wireframe/base.css">
   <style>
-    /* 승인상태 badge */
-    .wf-badge--registering { background: #f3f4f6; color: #6b7280; }
-    .wf-badge--pending { background: #dbeafe; color: #1d4ed8; }
-    .wf-badge--withdrawn { background: #ffedd5; color: #c2410c; }
-    .wf-badge--approved { background: #dcfce7; color: #15803d; }
-    .wf-badge--rejected { background: #fee2e2; color: #dc2626; }
     /* 판매상태 badge */
     .wf-badge--selling { background: #dcfce7; color: #15803d; }
     .wf-badge--sales-paused { background: #ffedd5; color: #c2410c; }
     .wf-badge--temp-out { background: #fef9c3; color: #a16207; }
     .wf-badge--out-of-stock { background: #fee2e2; color: #dc2626; }
     .wf-badge--sales-ended { background: #f3f4f6; color: #6b7280; }
+    /* 전시여부 badge */
+    .wf-badge--display-on { background: #dcfce7; color: #15803d; }
+    .wf-badge--display-off { background: #f3f4f6; color: #6b7280; }
+
+    /* 필터 테이블형 레이아웃 */
+    .filter-grid { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 12px; background: #fafbfc; border: 1px solid #d0d0d0; border-radius: 8px; overflow: hidden; }
+    .filter-grid th { background: #f0f1f3; font-weight: 600; font-size: 13px; color: #555; padding: 10px 14px; border-bottom: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0; text-align: left; white-space: nowrap; width: 110px; vertical-align: middle; }
+    .filter-grid td { padding: 8px 12px; border-bottom: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0; vertical-align: middle; }
+    .filter-grid tr:last-child th, .filter-grid tr:last-child td { border-bottom: none; }
+    .filter-grid td:last-child { border-right: none; }
+    .filter-grid .wf-select, .filter-grid .wf-input { padding: 6px 10px; font-size: 13px; }
+    .filter-grid .wf-select { padding-right: 26px; }
+    .filter-grid label.cb-label { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; margin-right: 10px; cursor: pointer; white-space: nowrap; }
+    .filter-grid label.radio-label { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; margin-right: 8px; cursor: pointer; white-space: nowrap; }
+    .filter-actions { text-align: right; margin-bottom: 16px; }
+
+    /* 테이블 가로 스크롤 */
+    .table-scroll-wrap { overflow-x: auto; overflow-y: auto; max-height: 460px; border: 1px solid #d0d0d0; border-radius: 8px; }
+    .table-scroll-wrap .wf-table { min-width: 2200px; margin: 0; border-collapse: separate; border-spacing: 0; }
+    .table-scroll-wrap .wf-table th { border-bottom: 2px solid #d0d0d0; border-right: 1px solid #d0d0d0; text-align: center; position: sticky; top: 0; z-index: 2; background: #f7f8fa; }
+    .table-scroll-wrap .wf-table th:last-child { border-right: none; }
+    .table-scroll-wrap .wf-table td { border-bottom: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0; }
+    .table-scroll-wrap .wf-table tr:last-child td { border-bottom: none; }
+    .table-scroll-wrap .wf-table td:last-child { border-right: none; }
+    .table-scroll-wrap .wf-table th, .table-scroll-wrap .wf-table td { font-size: 13px; padding: 10px 10px; white-space: nowrap; text-align: center; }
+    .table-scroll-wrap .wf-table td:nth-child(4), .table-scroll-wrap .wf-table td:nth-child(13), .table-scroll-wrap .wf-table td:nth-child(14) { text-align: left; }
+    .table-scroll-wrap .wf-table td:nth-child(9), .table-scroll-wrap .wf-table td:nth-child(10) { text-align: right; }
+    .table-scroll-wrap .wf-table td a { white-space: nowrap; }
+
+    /* 조회 팝업 모달 */
+    .popup-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1000; align-items: center; justify-content: center; }
+    .popup-overlay.show { display: flex; }
+    .popup-box { background: #fff; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); width: 440px; max-height: 480px; display: flex; flex-direction: column; }
+    .popup-header { padding: 14px 18px; font-weight: 700; font-size: 14px; border-bottom: 1px solid #eee; }
+    .popup-body { padding: 14px 18px; flex: 1; overflow-y: auto; }
+    .popup-body .search-row { display: flex; gap: 6px; margin-bottom: 12px; }
+    .popup-body .search-row input { flex: 1; }
+    .popup-list { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .popup-list th { background: #f7f8fa; padding: 6px 8px; border-bottom: 2px solid #ddd; text-align: left; font-weight: 600; }
+    .popup-list td { padding: 6px 8px; border-bottom: 1px solid #eee; }
+    .popup-footer { padding: 12px 18px; border-top: 1px solid #eee; text-align: right; display: flex; gap: 6px; justify-content: flex-end; }
+
+    /* disabled 상태 스타일 */
+    .filter-disabled th, .filter-disabled td { opacity: 0.4; pointer-events: none; }
+
+    /* 디스크립션 번호 마커 */
+    .desc-num { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 4px; background: #e74c3c; color: #fff; border-radius: 9px; font-size: 9px; font-weight: 700; line-height: 1; vertical-align: middle; flex-shrink: 0; }
+    .filter-grid th .desc-num { margin-right: 4px; }
+    .section-marker { display: inline-flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+    .section-marker .desc-num { font-size: 10px; min-width: 20px; height: 20px; }
+
+    /* 디스크립션 패널 내부 스타일 */
+    .spec-desc-panel .desc-block { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #ffe58f; }
+    .spec-desc-panel .desc-block:last-child { border-bottom: none; margin-bottom: 0; }
+    .spec-desc-panel .desc-title { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #333; }
+    .spec-desc-panel .desc-title .desc-num { min-width: 20px; height: 20px; font-size: 10px; }
+    .spec-desc-panel .desc-sub { font-size: 11px; color: #666; margin: 4px 0 2px 26px; }
+    .spec-desc-panel .desc-block ul { font-size: 11px; margin: 2px 0 4px 26px; padding-left: 14px; }
+    .spec-desc-panel .desc-block li { margin-bottom: 2px; color: #444; }
+    .spec-desc-panel .desc-block .policy { background: #fff8e1; border-left: 3px solid #f59e0b; padding: 4px 8px; margin: 4px 0 4px 26px; font-size: 11px; color: #92400e; }
+    .spec-desc-panel .desc-col-table { width: 100%; font-size: 10px; border-collapse: collapse; margin: 6px 0; }
+    .spec-desc-panel .desc-col-table th { background: #f5f5f5; border: 1px solid #ddd; padding: 3px 5px; text-align: left; font-weight: 600; }
+    .spec-desc-panel .desc-col-table td { border: 1px solid #ddd; padding: 3px 5px; }
   </style>
 </head>
 <body>
@@ -96,84 +153,143 @@
       <h1>티켓상품 목록</h1>
 
       <section data-component="BO-PDM-025" data-title="티켓상품 목록 테이블" data-action="BO-PDM-038">
-        <!-- 검색 필터 -->
-        <!-- 카테고리 필터 (최상단) -->
-        <div class="wf-filter-row" style="flex-direction:column;align-items:stretch;gap:8px;">
-          <div class="wf-flex wf-gap">
-            <label class="wf-text-sm" style="white-space:nowrap;">카테고리</label>
-            <select class="wf-select" style="width:130px;">
-              <option>표준카테고리</option>
-              <option>전시카테고리</option>
-            </select>
-            <select class="wf-select" style="width:140px;">
-              <option>1차 전체</option>
-              <option>숙박/여행</option>
-              <option>문화/레저</option>
-              <option>외식/카페</option>
-              <option>뷰티/헬스</option>
-              <option>교육/체험</option>
-            </select>
-            <select class="wf-select" style="width:140px;" disabled>
-              <option>2차 전체</option>
-            </select>
-            <select class="wf-select" style="width:140px;" disabled>
-              <option>3차 전체</option>
-            </select>
-          </div>
-        </div>
-        <!-- 일반 필터 -->
-        <div class="wf-filter-row">
-          <label class="wf-text-sm">상품코드</label>
-          <input class="wf-input" type="text" placeholder="TKT-YYYY-NNNN">
-          <label class="wf-text-sm">요청코드</label>
-          <input class="wf-input" type="text" placeholder="REQ-YYYY-NNNN">
-          <label class="wf-text-sm">상품유형</label>
-          <select class="wf-select">
-            <option>전체</option>
-            <option>쿠폰형</option>
-            <option>예약형</option>
-          </select>
-          <label class="wf-text-sm">승인상태</label>
-          <select class="wf-select">
-            <option>전체</option>
-            <option>등록중</option>
-            <option>승인대기</option>
-            <option>승인완료</option>
-            <option>반려</option>
-            <option>승인철회</option>
-          </select>
-          <label class="wf-text-sm">판매상태</label>
-          <select class="wf-select">
-            <option>전체</option>
-            <option>판매중</option>
-            <option>판매일시중지</option>
-            <option>일시품절</option>
-            <option>품절</option>
-            <option>판매종료</option>
-          </select>
-        </div>
-        <div class="wf-filter-row">
-          <label class="wf-text-sm">판매사</label>
-          <select class="wf-select">
-            <option>전체</option>
-            <option>판매사A</option>
-            <option>판매사B</option>
-          </select>
-          <label class="wf-text-sm">상품명</label>
-          <input class="wf-input" type="text" placeholder="상품명 검색">
-          <label class="wf-text-sm">판매가</label>
-          <input class="wf-input" type="number" placeholder="최소" style="width:80px;"> ~ <input class="wf-input" type="number" placeholder="최대" style="width:80px;"> 원
-          <label class="wf-text-sm">등록기간</label>
-          <input class="wf-input" type="date"> ~ <input class="wf-input" type="date">
-        </div>
-        <div style="text-align:right;margin-top:4px;">
-          <button class="wf-btn">초기화</button>
+
+        <!-- ===== 검색 필터 (테이블형 2열) ===== -->
+        <table class="filter-grid" id="filterGrid">
+          <colgroup>
+            <col style="width:12%;">
+            <col style="width:38%;">
+            <col style="width:12%;">
+            <col style="width:38%;">
+          </colgroup>
+          <!-- 1. 카테고리 (전체 행) -->
+          <tr class="filter-row" data-filter="1">
+            <th><span class="desc-num">1</span>카테고리</th>
+            <td colspan="3">
+              <select class="wf-select" style="width:120px;">
+                <option>표준카테고리</option>
+                <option>전시카테고리</option>
+              </select>
+              <select class="wf-select" style="width:130px;">
+                <option>1차 전체</option>
+                <option>숙박</option>
+                <option>여행</option>
+                <option>문화</option>
+                <option>레저</option>
+                <option>외식</option>
+                <option>뷰티</option>
+                <option>교육</option>
+              </select>
+              <select class="wf-select" style="width:130px;" disabled>
+                <option>2차 전체</option>
+              </select>
+              <select class="wf-select" style="width:130px;" disabled>
+                <option>3차 전체</option>
+              </select>
+            </td>
+          </tr>
+          <!-- 2. 판매사 / 3. MD -->
+          <tr class="filter-row" data-filter="2-3">
+            <th><span class="desc-num">2</span>판매사</th>
+            <td>
+              <input class="wf-input" type="text" placeholder="판매사 선택" style="width:120px;" readonly id="vendorInput">
+              <button class="wf-btn wf-btn--sm" onclick="openPopup('vendorPopup')">조회</button>
+              <select class="wf-select" style="width:120px;" disabled id="subVendorSelect">
+                <option>하위업체 전체</option>
+              </select>
+            </td>
+            <th><span class="desc-num">3</span>MD</th>
+            <td>
+              <input class="wf-input" type="text" placeholder="MD 선택" style="width:120px;" readonly id="mdInput">
+              <button class="wf-btn wf-btn--sm" onclick="openPopup('mdPopup')">조회</button>
+            </td>
+          </tr>
+          <!-- 4. 외부연동 여부 / 6. 상품유형 -->
+          <tr class="filter-row" data-filter="4-6">
+            <th><span class="desc-num">4</span>외부연동 여부</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" name="extLink" value="all" checked onchange="toggleAllCb(this, 'extLink')"> 전체</label>
+              <label class="cb-label"><input type="checkbox" name="extLink" value="direct" onchange="toggleItemCb(this, 'extLink')"> 직접등록</label>
+              <label class="cb-label"><input type="checkbox" name="extLink" value="external" onchange="toggleItemCb(this, 'extLink')"> 외부연동</label>
+            </td>
+            <th><span class="desc-num">6</span>상품유형</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" name="prodType" value="all" checked onchange="toggleAllCb(this, 'prodType')"> 전체</label>
+              <label class="cb-label"><input type="checkbox" name="prodType" value="normal" onchange="toggleItemCb(this, 'prodType')"> 일반티켓</label>
+              <label class="cb-label"><input type="checkbox" name="prodType" value="reservation" onchange="toggleItemCb(this, 'prodType')"> 예약티켓</label>
+            </td>
+          </tr>
+          <!-- 5. 기간 조회 (전체 행) -->
+          <tr class="filter-row" data-filter="5">
+            <th><span class="desc-num">5</span>기간 조회</th>
+            <td colspan="3">
+              <select class="wf-select" style="width:110px;" id="dateType">
+                <option>상품등록일</option>
+                <option>최종수정일</option>
+              </select>
+              <input class="wf-input" type="date" value="2026-04-07" id="dateFrom" style="width:130px;">
+              <span style="margin:0 4px;">~</span>
+              <input class="wf-input" type="date" value="2026-04-14" id="dateTo" style="width:130px;">
+              <span style="margin-left:12px;">
+                <label class="radio-label"><input type="radio" name="quickDate" value="today" onchange="setQuickDate(this.value)"> 오늘</label>
+                <label class="radio-label"><input type="radio" name="quickDate" value="7d" checked onchange="setQuickDate(this.value)"> 최근 7일</label>
+                <label class="radio-label"><input type="radio" name="quickDate" value="1m" onchange="setQuickDate(this.value)"> 1개월</label>
+                <label class="radio-label"><input type="radio" name="quickDate" value="3m" onchange="setQuickDate(this.value)"> 3개월</label>
+                <label class="radio-label"><input type="radio" name="quickDate" value="1y" onchange="setQuickDate(this.value)"> 1년</label>
+              </span>
+            </td>
+          </tr>
+          <!-- 7. 판매상태 / 8. 전시여부 -->
+          <tr class="filter-row" data-filter="7-8">
+            <th><span class="desc-num">7</span>판매상태</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" name="saleStatus" value="all" checked onchange="toggleAllCb(this, 'saleStatus')"> 전체</label>
+              <label class="cb-label"><input type="checkbox" name="saleStatus" value="selling" onchange="toggleItemCb(this, 'saleStatus')"> 판매중</label>
+              <label class="cb-label"><input type="checkbox" name="saleStatus" value="paused" onchange="toggleItemCb(this, 'saleStatus')"> 일시중지</label>
+              <label class="cb-label"><input type="checkbox" name="saleStatus" value="tempOut" onchange="toggleItemCb(this, 'saleStatus')"> 일시품절</label>
+              <label class="cb-label"><input type="checkbox" name="saleStatus" value="outOfStock" onchange="toggleItemCb(this, 'saleStatus')"> 품절</label>
+              <label class="cb-label"><input type="checkbox" name="saleStatus" value="ended" onchange="toggleItemCb(this, 'saleStatus')"> 판매종료</label>
+            </td>
+            <th><span class="desc-num">8</span>전시여부</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" name="display" value="all" checked onchange="toggleAllCb(this, 'display')"> 전체</label>
+              <label class="cb-label"><input type="checkbox" name="display" value="on" onchange="toggleItemCb(this, 'display')"> 전시</label>
+              <label class="cb-label"><input type="checkbox" name="display" value="off" onchange="toggleItemCb(this, 'display')"> 비전시</label>
+            </td>
+          </tr>
+          <!-- 9. 노출 채널 -->
+          <tr class="filter-row" data-filter="9">
+            <th><span class="desc-num">9</span>노출 채널</th>
+            <td colspan="3">
+              <label class="cb-label"><input type="checkbox" name="channel" value="all" checked onchange="toggleAllCb(this, 'channel')"> 전체</label>
+              <label class="cb-label"><input type="checkbox" name="channel" value="pc" onchange="toggleItemCb(this, 'channel')"> PC</label>
+              <label class="cb-label"><input type="checkbox" name="channel" value="mobile" onchange="toggleItemCb(this, 'channel')"> 모바일</label>
+            </td>
+          </tr>
+          <!-- 10. 검색어 (단독 행) -->
+          <tr data-filter="10">
+            <th><span class="desc-num">10</span>검색어</th>
+            <td colspan="3">
+              <select class="wf-select" style="width:110px;" id="searchType" onchange="toggleSearchMode()">
+                <option value="">사용안함</option>
+                <option value="name">상품명</option>
+                <option value="code">상품코드</option>
+                <option value="reqCode">상품키</option>
+              </select>
+              <input class="wf-input" type="text" placeholder="검색어 입력" style="width:280px;" id="searchKeyword" disabled>
+            </td>
+          </tr>
+        </table>
+        <!-- 11. 검색/초기화 버튼 -->
+        <div class="filter-actions" style="text-align:center;">
+          <span class="desc-num" style="margin-right:6px;">11</span>
+          <button class="wf-btn" onclick="resetFilters()">초기화</button>
           <button class="wf-btn wf-btn--primary">검색</button>
         </div>
 
-        <!-- 상단 툴바 -->
-        <div class="wf-flex-between wf-mb wf-mt">
-          <span class="wf-text-sm wf-text-muted">검색결과 <strong>87</strong>건</span>
+        <!-- 12. 상단 툴바 -->
+        <div class="wf-flex-between wf-mb">
+          <span class="wf-text-sm wf-text-muted"><span class="desc-num" style="margin-right:4px;">12</span>검색결과 <strong>128</strong>건</span>
           <select class="wf-select">
             <option>20건</option>
             <option>50건</option>
@@ -181,247 +297,628 @@
           </select>
         </div>
 
-        <!-- 테이블 -->
-        <table class="wf-table">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>상품코드</th>
-              <th>요청코드</th>
-              <th>상품명</th>
-              <th>상품유형</th>
-              <th>판매상태</th>
-              <th>판매사</th>
-              <th>판매기간</th>
-              <th>등록일</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>TKT-2026-0001</td>
-              <td>REQ-2026-0101</td>
-              <td><a href="#">[판매사A] 제주 리조트 숙박권</a></td>
-              <td>예약형</td>
-              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
-              <td>판매사A</td>
-              <td>2026-04-01 ~ 2026-12-31</td>
-              <td>2026-04-01</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>TKT-2026-0002</td>
-              <td>REQ-2026-0102</td>
-              <td><a href="#">[판매사B] 영화 관람권 2매</a></td>
-              <td>쿠폰형</td>
-              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
-              <td>판매사B</td>
-              <td>2026-03-01 ~ 2026-12-31</td>
-              <td>2026-03-01</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>TKT-2026-0003</td>
-              <td>REQ-2026-0103</td>
-              <td><a href="#">[판매사A] 스파 이용권</a></td>
-              <td>쿠폰형</td>
-              <td><span class="wf-badge wf-badge--sales-paused">판매일시중지</span></td>
-              <td>판매사A</td>
-              <td>2026-04-05 ~ 2026-09-30</td>
-              <td>2026-04-05</td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>TKT-2026-0004</td>
-              <td>REQ-2026-0104</td>
-              <td><a href="#">[판매사C] 놀이공원 자유이용권</a></td>
-              <td>예약형</td>
-              <td><span class="wf-badge wf-badge--temp-out">일시품절</span></td>
-              <td>판매사C</td>
-              <td>2026-05-01 ~ 2026-10-31</td>
-              <td>2026-04-10</td>
-            </tr>
-            <tr>
-              <td>5</td>
-              <td>TKT-2026-0005</td>
-              <td>REQ-2026-0105</td>
-              <td><a href="#">[판매사D] 크리스마스 디너 쿠폰</a></td>
-              <td>쿠폰형</td>
-              <td><span class="wf-badge wf-badge--sales-ended">판매종료</span></td>
-              <td>판매사D</td>
-              <td>2025-12-01 ~ 2025-12-31</td>
-              <td>2025-11-15</td>
-            </tr>
-            <tr>
-              <td>6</td>
-              <td>TKT-2026-0006</td>
-              <td>REQ-2026-0106</td>
-              <td><a href="#">[판매사B] 커피 교환권 10매</a></td>
-              <td>쿠폰형</td>
-              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
-              <td>판매사B</td>
-              <td>2026-03-01 ~ 2026-12-31</td>
-              <td>2026-03-01</td>
-            </tr>
-            <tr>
-              <td>7</td>
-              <td>TKT-2026-0007</td>
-              <td>REQ-2026-0107</td>
-              <td><a href="#">[판매사E] 강원도 펜션 1박 숙박권</a></td>
-              <td>예약형</td>
-              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
-              <td>판매사E</td>
-              <td>2026-04-01 ~ 2026-11-30</td>
-              <td>2026-04-01</td>
-            </tr>
-            <tr>
-              <td>8</td>
-              <td>TKT-2026-0008</td>
-              <td>REQ-2026-0108</td>
-              <td><a href="#">[판매사A] 골프장 라운딩 이용권</a></td>
-              <td>예약형</td>
-              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
-              <td>판매사A</td>
-              <td>2026-04-10 ~ 2026-10-31</td>
-              <td>2026-04-10</td>
-            </tr>
-            <tr>
-              <td>9</td>
-              <td>TKT-2026-0009</td>
-              <td>REQ-2026-0109</td>
-              <td><a href="#">[판매사C] 뷔페 식사권 2인</a></td>
-              <td>쿠폰형</td>
-              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
-              <td>판매사C</td>
-              <td>2026-02-01 ~ 2026-12-31</td>
-              <td>2026-02-01</td>
-            </tr>
-            <tr>
-              <td>10</td>
-              <td>TKT-2026-0010</td>
-              <td>REQ-2026-0110</td>
-              <td><a href="#">[판매사D] 워터파크 입장권</a></td>
-              <td>예약형</td>
-              <td><span class="wf-badge wf-badge--sales-paused">판매일시중지</span></td>
-              <td>판매사D</td>
-              <td>2026-06-01 ~ 2026-09-30</td>
-              <td>2026-04-01</td>
-            </tr>
-            <tr>
-              <td>11</td>
-              <td>TKT-2026-0011</td>
-              <td>REQ-2026-0111</td>
-              <td><a href="#">[판매사B] 온라인 강좌 수강권</a></td>
-              <td>쿠폰형</td>
-              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
-              <td>판매사B</td>
-              <td>2026-03-15 ~ 2026-12-31</td>
-              <td>2026-03-15</td>
-            </tr>
-            <tr>
-              <td>12</td>
-              <td>TKT-2026-0012</td>
-              <td>REQ-2026-0112</td>
-              <td><a href="#">[판매사E] 렌터카 1일 이용권</a></td>
-              <td>쿠폰형</td>
-              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
-              <td>판매사E</td>
-              <td>2026-04-01 ~ 2026-12-31</td>
-              <td>2026-04-01</td>
-            </tr>
-            <tr>
-              <td>13</td>
-              <td>TKT-2026-0013</td>
-              <td>REQ-2026-0113</td>
-              <td><a href="#">[판매사A] 미술관 연간 회원권</a></td>
-              <td>쿠폰형</td>
-              <td><span class="wf-badge wf-badge--out-of-stock">품절</span></td>
-              <td>판매사A</td>
-              <td>2026-01-01 ~ 2026-12-31</td>
-              <td>2026-01-01</td>
-            </tr>
-            <tr>
-              <td>14</td>
-              <td>TKT-2026-0014</td>
-              <td>REQ-2026-0114</td>
-              <td><a href="#">[판매사C] 요가 클래스 10회권</a></td>
-              <td>예약형</td>
-              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
-              <td>판매사C</td>
-              <td>2026-04-01 ~ 2026-09-30</td>
-              <td>2026-04-01</td>
-            </tr>
-            <tr>
-              <td>15</td>
-              <td>TKT-2026-0015</td>
-              <td>REQ-2026-0115</td>
-              <td><a href="#">[판매사D] 프리미엄 세차 쿠폰 5매</a></td>
-              <td>쿠폰형</td>
-              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
-              <td>판매사D</td>
-              <td>2026-03-01 ~ 2026-12-31</td>
-              <td>2026-03-01</td>
-            </tr>
-            <tr>
-              <td>16</td>
-              <td>TKT-2026-0016</td>
-              <td>REQ-2026-0116</td>
-              <td><a href="#">[판매사E] 호텔 조식 뷔페 2인권</a></td>
-              <td>쿠폰형</td>
-              <td><span class="wf-badge wf-badge--temp-out">일시품절</span></td>
-              <td>판매사E</td>
-              <td>2026-04-01 ~ 2026-12-31</td>
-              <td>2026-04-01</td>
-            </tr>
-            <tr>
-              <td>17</td>
-              <td>TKT-2026-0017</td>
-              <td>REQ-2026-0117</td>
-              <td><a href="#">[판매사B] 플라워 클래스 체험권</a></td>
-              <td>예약형</td>
-              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
-              <td>판매사B</td>
-              <td>2026-04-10 ~ 2026-10-31</td>
-              <td>2026-04-10</td>
-            </tr>
-            <tr>
-              <td>18</td>
-              <td>TKT-2026-0018</td>
-              <td>REQ-2026-0118</td>
-              <td><a href="#">[판매사A] 한정판 뮤지컬 티켓</a></td>
-              <td>예약형</td>
-              <td><span class="wf-badge wf-badge--sales-ended">판매종료</span></td>
-              <td>판매사A</td>
-              <td>2026-01-01 ~ 2026-03-31</td>
-              <td>2026-01-01</td>
-            </tr>
-            <tr>
-              <td>19</td>
-              <td>TKT-2026-0019</td>
-              <td>REQ-2026-0119</td>
-              <td><a href="#">[판매사C] 베이킹 클래스 1일 체험</a></td>
-              <td>예약형</td>
-              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
-              <td>판매사C</td>
-              <td>2026-04-01 ~ 2026-12-31</td>
-              <td>2026-04-01</td>
-            </tr>
-            <tr>
-              <td>20</td>
-              <td>TKT-2026-0020</td>
-              <td>REQ-2026-0120</td>
-              <td><a href="#">[판매사D] 사진관 촬영 쿠폰</a></td>
-              <td>쿠폰형</td>
-              <td><span class="wf-badge wf-badge--selling">판매중</span></td>
-              <td>판매사D</td>
-              <td>2026-02-15 ~ 2026-12-31</td>
-              <td>2026-02-15</td>
-            </tr>
-          </tbody>
-        </table>
+        <!-- ===== 13. 테이블 (26컬럼, 가로 스크롤) ===== -->
+        <div style="margin-bottom:4px;"><span class="desc-num">13</span> <span style="font-size:11px;color:#999;">목록 테이블 (26컬럼, 가로 스크롤)</span></div>
+        <div class="table-scroll-wrap">
+          <table class="wf-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>상품코드</th>
+                <th>상품키</th>
+                <th>상품명</th>
+                <th>외부연동여부</th>
+                <th>상품유형</th>
+                <th>전시여부</th>
+                <th>노출채널</th>
+                <th>판매가(&#8361;)</th>
+                <th>즉시할인가(&#8361;)</th>
+                <th>판매상태</th>
+                <th>과세구분</th>
+                <th>표준카테고리</th>
+                <th>전시카테고리</th>
+                <th>판매사</th>
+                <th>하위업체</th>
+                <th>상품등록일</th>
+                <th>상품수정일</th>
+                <th>판매시작일</th>
+                <th>판매종료일</th>
+                <th>MD</th>
+                <th>상품등록자</th>
+                <th>상품수정자</th>
+                <th>상품승인자</th>
+                <th>복사</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 샘플 1: 예약티켓, 판매중, 전시, PC+모바일 -->
+              <tr>
+                <td>1</td>
+                <td>2026041000001</td>
+                <td>00001</td>
+                <td><a href="#">[판매사A] 제주 리조트 숙박권 2박3일</a></td>
+                <td>직접등록</td>
+                <td>예약티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 350,000</td>
+                <td style="text-align:right;">&#8361; 299,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>숙박 &gt; 리조트 &gt; 국내리조트</td>
+                <td>여행/숙박 &gt; 리조트 &gt; 제주</td>
+                <td>판매사A</td>
+                <td>하위A-1</td>
+                <td>2026-04-10</td>
+                <td>2026-04-12</td>
+                <td>2026-04-10</td>
+                <td>2026-12-31</td>
+                <td>김담당</td>
+                <td>이등록</td>
+                <td>이등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 2: 일반티켓, 판매중, 전시, 외부연동 -->
+              <tr>
+                <td>2</td>
+                <td>2026032000002</td>
+                <td>00002</td>
+                <td><a href="#">[판매사B] 영화 관람권 2매</a></td>
+                <td>외부연동</td>
+                <td>일반티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 24,000</td>
+                <td style="text-align:right;">&#8361; 19,800</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>면세</td>
+                <td>문화 &gt; 영화 &gt; 관람권</td>
+                <td>문화/레저 &gt; 영화 &gt; 관람권</td>
+                <td>판매사B</td>
+                <td>하위B-1</td>
+                <td>2026-03-20</td>
+                <td>2026-04-08</td>
+                <td>2026-03-01</td>
+                <td>2026-12-31</td>
+                <td>박담당</td>
+                <td>최등록</td>
+                <td>최등록</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 3: 일반티켓, 판매일시중지, 전시, 모바일 -->
+              <tr>
+                <td>3</td>
+                <td>2026040800003</td>
+                <td>00003</td>
+                <td><a href="#">[판매사A] 프리미엄 스파 이용권</a></td>
+                <td>직접등록</td>
+                <td>일반티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>모바일</td>
+                <td style="text-align:right;">&#8361; 89,000</td>
+                <td style="text-align:right;">—</td>
+                <td><span class="wf-badge wf-badge--sales-paused">판매일시중지</span></td>
+                <td>과세</td>
+                <td>뷰티 &gt; 스파 &gt; 데이스파</td>
+                <td>뷰티/헬스 &gt; 스파 &gt; 프리미엄</td>
+                <td>판매사A</td>
+                <td>—</td>
+                <td>2026-04-08</td>
+                <td>2026-04-11</td>
+                <td>2026-04-05</td>
+                <td>2026-09-30</td>
+                <td>김담당</td>
+                <td>이등록</td>
+                <td>김담당</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 4: 예약티켓, 일시품절, 전시, 외부연동 -->
+              <tr>
+                <td>4</td>
+                <td>2026021500004</td>
+                <td>00004</td>
+                <td><a href="#">[판매사C] 놀이공원 자유이용권</a></td>
+                <td>외부연동</td>
+                <td>예약티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 52,000</td>
+                <td style="text-align:right;">&#8361; 44,000</td>
+                <td><span class="wf-badge wf-badge--temp-out">일시품절</span></td>
+                <td>과세</td>
+                <td>레저 &gt; 테마파크 &gt; 놀이공원</td>
+                <td>문화/레저 &gt; 테마파크 &gt; 놀이공원</td>
+                <td>판매사C</td>
+                <td>하위C-1</td>
+                <td>2026-02-15</td>
+                <td>2026-04-01</td>
+                <td>2026-05-01</td>
+                <td>2026-10-31</td>
+                <td>박담당</td>
+                <td>최등록</td>
+                <td>최등록</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 5: 일반티켓, 판매종료, 비전시 -->
+              <tr>
+                <td>5</td>
+                <td>2026011000005</td>
+                <td>00005</td>
+                <td><a href="#">[판매사B] 크리스마스 디너 쿠폰</a></td>
+                <td>직접등록</td>
+                <td>일반티켓</td>
+                <td><span class="wf-badge wf-badge--display-off">비전시</span></td>
+                <td>PC</td>
+                <td style="text-align:right;">&#8361; 120,000</td>
+                <td style="text-align:right;">—</td>
+                <td><span class="wf-badge wf-badge--sales-ended">판매종료</span></td>
+                <td>과세</td>
+                <td>외식 &gt; 레스토랑 &gt; 파인다이닝</td>
+                <td>외식/카페 &gt; 특별식사 &gt; 디너</td>
+                <td>판매사B</td>
+                <td>—</td>
+                <td>2026-01-10</td>
+                <td>2026-03-31</td>
+                <td>2025-12-01</td>
+                <td>2025-12-31</td>
+                <td>김담당</td>
+                <td>이등록</td>
+                <td>이등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm" disabled style="opacity:0.4;">판매종료</button></td>
+              </tr>
+              <!-- 샘플 6: 일반티켓, 판매중, 전시, 외부연동 -->
+              <tr>
+                <td>6</td>
+                <td>2026040500006</td>
+                <td>00006</td>
+                <td><a href="#">[판매사C] 커피 교환권 10매 세트</a></td>
+                <td>외부연동</td>
+                <td>일반티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 45,000</td>
+                <td style="text-align:right;">&#8361; 39,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>면세</td>
+                <td>외식 &gt; 카페 &gt; 커피교환권</td>
+                <td>외식/카페 &gt; 카페 &gt; 커피</td>
+                <td>판매사C</td>
+                <td>하위C-1</td>
+                <td>2026-04-05</td>
+                <td>2026-04-10</td>
+                <td>2026-03-01</td>
+                <td>2026-12-31</td>
+                <td>김담당</td>
+                <td>이등록</td>
+                <td>이등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 7: 예약티켓, 판매중, 전시, PC -->
+              <tr>
+                <td>7</td>
+                <td>2026040300007</td>
+                <td>00007</td>
+                <td><a href="#">[판매사A] 강원도 펜션 1박 숙박권</a></td>
+                <td>직접등록</td>
+                <td>예약티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC</td>
+                <td style="text-align:right;">&#8361; 180,000</td>
+                <td style="text-align:right;">&#8361; 149,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>숙박 &gt; 펜션 &gt; 강원</td>
+                <td>여행/숙박 &gt; 펜션 &gt; 강원도</td>
+                <td>판매사A</td>
+                <td>하위A-2</td>
+                <td>2026-04-03</td>
+                <td>2026-04-09</td>
+                <td>2026-04-01</td>
+                <td>2026-11-30</td>
+                <td>박담당</td>
+                <td>최등록</td>
+                <td>최등록</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 8: 예약티켓, 판매중, 전시, PC+모바일 -->
+              <tr>
+                <td>8</td>
+                <td>2026040100008</td>
+                <td>00008</td>
+                <td><a href="#">[판매사B] 골프장 라운딩 이용권</a></td>
+                <td>직접등록</td>
+                <td>예약티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 250,000</td>
+                <td style="text-align:right;">—</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>레저 &gt; 골프 &gt; 라운딩</td>
+                <td>문화/레저 &gt; 골프 &gt; 이용권</td>
+                <td>판매사B</td>
+                <td>하위B-1</td>
+                <td>2026-04-01</td>
+                <td>2026-04-07</td>
+                <td>2026-04-10</td>
+                <td>2026-10-31</td>
+                <td>김담당</td>
+                <td>이등록</td>
+                <td>김담당</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 9: 일반티켓, 판매중, 전시, 외부연동 -->
+              <tr>
+                <td>9</td>
+                <td>2026033000009</td>
+                <td>00009</td>
+                <td><a href="#">[판매사C] 호텔 뷔페 식사권 2인</a></td>
+                <td>외부연동</td>
+                <td>일반티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 98,000</td>
+                <td style="text-align:right;">&#8361; 85,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>외식 &gt; 뷔페 &gt; 호텔뷔페</td>
+                <td>외식/카페 &gt; 뷔페 &gt; 호텔</td>
+                <td>판매사C</td>
+                <td>하위C-1</td>
+                <td>2026-03-30</td>
+                <td>2026-04-05</td>
+                <td>2026-02-01</td>
+                <td>2026-12-31</td>
+                <td>박담당</td>
+                <td>최등록</td>
+                <td>박담당</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 10: 예약티켓, 판매일시중지, 전시 -->
+              <tr>
+                <td>10</td>
+                <td>2026032500010</td>
+                <td>00010</td>
+                <td><a href="#">[판매사A] 워터파크 자유이용 입장권</a></td>
+                <td>직접등록</td>
+                <td>예약티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 58,000</td>
+                <td style="text-align:right;">&#8361; 48,000</td>
+                <td><span class="wf-badge wf-badge--sales-paused">판매일시중지</span></td>
+                <td>과세</td>
+                <td>레저 &gt; 워터파크 &gt; 자유이용</td>
+                <td>문화/레저 &gt; 워터파크 &gt; 입장권</td>
+                <td>판매사A</td>
+                <td>하위A-1</td>
+                <td>2026-03-25</td>
+                <td>2026-04-10</td>
+                <td>2026-06-01</td>
+                <td>2026-09-30</td>
+                <td>김담당</td>
+                <td>최등록</td>
+                <td>이등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 11: 일반티켓, 판매중, 전시, 모바일 -->
+              <tr>
+                <td>11</td>
+                <td>2026032000011</td>
+                <td>00011</td>
+                <td><a href="#">[판매사B] 프로그래밍 온라인 강좌 수강권</a></td>
+                <td>직접등록</td>
+                <td>일반티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>모바일</td>
+                <td style="text-align:right;">&#8361; 150,000</td>
+                <td style="text-align:right;">—</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>면세</td>
+                <td>교육 &gt; 온라인강좌 &gt; IT</td>
+                <td>교육/체험 &gt; 온라인 &gt; 강좌</td>
+                <td>판매사B</td>
+                <td>—</td>
+                <td>2026-03-20</td>
+                <td>2026-04-02</td>
+                <td>2026-03-15</td>
+                <td>2026-12-31</td>
+                <td>박담당</td>
+                <td>이등록</td>
+                <td>이등록</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 12: 예약티켓, 판매중, 전시, 외부연동 -->
+              <tr>
+                <td>12</td>
+                <td>2026031500012</td>
+                <td>00012</td>
+                <td><a href="#">[판매사C] 렌터카 1일 이용권 (소형)</a></td>
+                <td>외부연동</td>
+                <td>예약티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 65,000</td>
+                <td style="text-align:right;">&#8361; 55,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>여행 &gt; 렌터카 &gt; 소형</td>
+                <td>여행/숙박 &gt; 렌터카 &gt; 1일</td>
+                <td>판매사C</td>
+                <td>하위C-1</td>
+                <td>2026-03-15</td>
+                <td>2026-04-01</td>
+                <td>2026-04-01</td>
+                <td>2026-12-31</td>
+                <td>김담당</td>
+                <td>최등록</td>
+                <td>최등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 13: 일반티켓, 품절, 전시 -->
+              <tr>
+                <td>13</td>
+                <td>2026031000013</td>
+                <td>00013</td>
+                <td><a href="#">[판매사A] 미술관 연간 회원권</a></td>
+                <td>직접등록</td>
+                <td>일반티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 200,000</td>
+                <td style="text-align:right;">—</td>
+                <td><span class="wf-badge wf-badge--out-of-stock">품절</span></td>
+                <td>면세</td>
+                <td>문화 &gt; 미술관 &gt; 회원권</td>
+                <td>문화/레저 &gt; 전시 &gt; 미술관</td>
+                <td>판매사A</td>
+                <td>하위A-1</td>
+                <td>2026-03-10</td>
+                <td>2026-04-08</td>
+                <td>2026-01-01</td>
+                <td>2026-12-31</td>
+                <td>박담당</td>
+                <td>이등록</td>
+                <td>박담당</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 14: 예약티켓, 판매중, 전시, PC -->
+              <tr>
+                <td>14</td>
+                <td>2026030500014</td>
+                <td>00014</td>
+                <td><a href="#">[판매사B] 요가 클래스 10회권</a></td>
+                <td>직접등록</td>
+                <td>예약티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC</td>
+                <td style="text-align:right;">&#8361; 180,000</td>
+                <td style="text-align:right;">&#8361; 159,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>면세</td>
+                <td>뷰티 &gt; 피트니스 &gt; 요가</td>
+                <td>뷰티/헬스 &gt; 운동 &gt; 요가</td>
+                <td>판매사B</td>
+                <td>—</td>
+                <td>2026-03-05</td>
+                <td>2026-03-28</td>
+                <td>2026-04-01</td>
+                <td>2026-09-30</td>
+                <td>김담당</td>
+                <td>최등록</td>
+                <td>최등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 15: 일반티켓, 판매중, 비전시, 외부연동 -->
+              <tr>
+                <td>15</td>
+                <td>2026030100015</td>
+                <td>00015</td>
+                <td><a href="#">[판매사C] 프리미엄 세차 쿠폰 5매</a></td>
+                <td>외부연동</td>
+                <td>일반티켓</td>
+                <td><span class="wf-badge wf-badge--display-off">비전시</span></td>
+                <td>PC</td>
+                <td style="text-align:right;">&#8361; 75,000</td>
+                <td style="text-align:right;">&#8361; 59,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>레저 &gt; 자동차 &gt; 세차</td>
+                <td>문화/레저 &gt; 자동차 &gt; 세차</td>
+                <td>판매사C</td>
+                <td>하위C-1</td>
+                <td>2026-03-01</td>
+                <td>2026-04-05</td>
+                <td>2026-03-01</td>
+                <td>2026-12-31</td>
+                <td>박담당</td>
+                <td>최등록</td>
+                <td>박담당</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 16: 일반티켓, 일시품절, 전시 -->
+              <tr>
+                <td>16</td>
+                <td>2026022000016</td>
+                <td>00016</td>
+                <td><a href="#">[판매사A] 호텔 조식 뷔페 2인권</a></td>
+                <td>직접등록</td>
+                <td>일반티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 68,000</td>
+                <td style="text-align:right;">—</td>
+                <td><span class="wf-badge wf-badge--temp-out">일시품절</span></td>
+                <td>과세</td>
+                <td>외식 &gt; 뷔페 &gt; 조식</td>
+                <td>외식/카페 &gt; 뷔페 &gt; 조식</td>
+                <td>판매사A</td>
+                <td>하위A-1</td>
+                <td>2026-02-20</td>
+                <td>2026-03-15</td>
+                <td>2026-04-01</td>
+                <td>2026-12-31</td>
+                <td>김담당</td>
+                <td>이등록</td>
+                <td>김담당</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 17: 예약티켓, 판매중, 전시, 외부연동 -->
+              <tr>
+                <td>17</td>
+                <td>2026021500017</td>
+                <td>00017</td>
+                <td><a href="#">[판매사B] 플라워 클래스 체험권</a></td>
+                <td>외부연동</td>
+                <td>예약티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 55,000</td>
+                <td style="text-align:right;">&#8361; 45,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>면세</td>
+                <td>교육 &gt; 체험 &gt; 플로리스트</td>
+                <td>교육/체험 &gt; 원데이클래스 &gt; 플라워</td>
+                <td>판매사B</td>
+                <td>하위B-1</td>
+                <td>2026-02-15</td>
+                <td>2026-03-20</td>
+                <td>2026-04-10</td>
+                <td>2026-10-31</td>
+                <td>박담당</td>
+                <td>최등록</td>
+                <td>최등록</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 18: 예약티켓, 판매종료, 비전시 -->
+              <tr>
+                <td>18</td>
+                <td>2026020100018</td>
+                <td>00018</td>
+                <td><a href="#">[판매사A] 한정판 뮤지컬 티켓 S석</a></td>
+                <td>직접등록</td>
+                <td>예약티켓</td>
+                <td><span class="wf-badge wf-badge--display-off">비전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 130,000</td>
+                <td style="text-align:right;">—</td>
+                <td><span class="wf-badge wf-badge--sales-ended">판매종료</span></td>
+                <td>면세</td>
+                <td>문화 &gt; 공연 &gt; 뮤지컬</td>
+                <td>문화/레저 &gt; 공연 &gt; 뮤지컬</td>
+                <td>판매사A</td>
+                <td>—</td>
+                <td>2026-02-01</td>
+                <td>2026-03-31</td>
+                <td>2026-01-01</td>
+                <td>2026-03-31</td>
+                <td>김담당</td>
+                <td>이등록</td>
+                <td>이등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm" disabled style="opacity:0.4;">판매종료</button></td>
+              </tr>
+              <!-- 샘플 19: 예약티켓, 판매중, 전시, 모바일 -->
+              <tr>
+                <td>19</td>
+                <td>2026012000019</td>
+                <td>00019</td>
+                <td><a href="#">[판매사C] 베이킹 클래스 1일 체험</a></td>
+                <td>직접등록</td>
+                <td>예약티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>모바일</td>
+                <td style="text-align:right;">&#8361; 48,000</td>
+                <td style="text-align:right;">—</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>면세</td>
+                <td>교육 &gt; 체험 &gt; 베이킹</td>
+                <td>교육/체험 &gt; 원데이클래스 &gt; 쿠킹</td>
+                <td>판매사C</td>
+                <td>—</td>
+                <td>2026-01-20</td>
+                <td>2026-03-31</td>
+                <td>2026-04-01</td>
+                <td>2026-12-31</td>
+                <td>박담당</td>
+                <td>이등록</td>
+                <td>박담당</td>
+                <td>김승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+              <!-- 샘플 20: 일반티켓, 판매중, 전시, 외부연동 -->
+              <tr>
+                <td>20</td>
+                <td>2026011500020</td>
+                <td>00020</td>
+                <td><a href="#">[판매사B] 사진관 촬영 쿠폰</a></td>
+                <td>외부연동</td>
+                <td>일반티켓</td>
+                <td><span class="wf-badge wf-badge--display-on">전시</span></td>
+                <td>PC+모바일</td>
+                <td style="text-align:right;">&#8361; 39,000</td>
+                <td style="text-align:right;">&#8361; 32,000</td>
+                <td><span class="wf-badge wf-badge--selling">판매중</span></td>
+                <td>과세</td>
+                <td>문화 &gt; 사진 &gt; 촬영권</td>
+                <td>문화/레저 &gt; 사진 &gt; 촬영</td>
+                <td>판매사B</td>
+                <td>하위B-1</td>
+                <td>2026-01-15</td>
+                <td>2026-02-28</td>
+                <td>2026-02-15</td>
+                <td>2026-12-31</td>
+                <td>김담당</td>
+                <td>최등록</td>
+                <td>최등록</td>
+                <td>박승인</td>
+                <td><button class="wf-btn wf-btn--sm">상품복사</button></td>
+                <td><button class="wf-btn wf-btn--sm wf-btn--danger">판매종료</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-        <!-- 페이지네이션 -->
+        <!-- 14. 페이지네이션 -->
         <div class="wf-pagination">
+          <span class="desc-num" style="margin-right:6px;">14</span>
           <button class="wf-pagination-btn">&laquo;</button>
           <button class="wf-pagination-btn">&lsaquo;</button>
           <button class="wf-pagination-btn active">1</button>
@@ -436,169 +933,304 @@
     </main>
   </div>
 
-  <!-- 우측: 디스크립션 패널 -->
+  <!-- ===== 조회 팝업: 판매사 ===== -->
+  <div class="popup-overlay" id="vendorPopup">
+    <div class="popup-box">
+      <div class="popup-header"><span class="desc-num">15</span> 판매사 조회</div>
+      <div class="popup-body">
+        <div class="search-row">
+          <input class="wf-input" type="text" placeholder="판매사명 검색">
+          <button class="wf-btn wf-btn--sm wf-btn--primary">검색</button>
+        </div>
+        <table class="popup-list">
+          <thead><tr><th style="width:30px;"></th><th>코드</th><th>판매사명</th></tr></thead>
+          <tbody>
+            <tr><td><input type="radio" name="vendorSel"></td><td>VND-001</td><td>판매사A</td></tr>
+            <tr><td><input type="radio" name="vendorSel"></td><td>VND-002</td><td>판매사B</td></tr>
+            <tr><td><input type="radio" name="vendorSel"></td><td>VND-003</td><td>판매사C</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="popup-footer">
+        <button class="wf-btn" onclick="closePopup('vendorPopup')">취소</button>
+        <button class="wf-btn wf-btn--primary" onclick="selectPopup('vendorPopup')">선택</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 조회 팝업: MD ===== -->
+  <div class="popup-overlay" id="mdPopup">
+    <div class="popup-box">
+      <div class="popup-header"><span class="desc-num">16</span> MD 조회</div>
+      <div class="popup-body">
+        <div class="search-row">
+          <input class="wf-input" type="text" placeholder="MD 담당자명 검색">
+          <button class="wf-btn wf-btn--sm wf-btn--primary">검색</button>
+        </div>
+        <table class="popup-list">
+          <thead><tr><th style="width:30px;"></th><th>코드</th><th>담당자명</th></tr></thead>
+          <tbody>
+            <tr><td><input type="radio" name="mdSel"></td><td>MD-001</td><td>김담당</td></tr>
+            <tr><td><input type="radio" name="mdSel"></td><td>MD-002</td><td>박담당</td></tr>
+            <tr><td><input type="radio" name="mdSel"></td><td>MD-003</td><td>이담당</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="popup-footer">
+        <button class="wf-btn" onclick="closePopup('mdPopup')">취소</button>
+        <button class="wf-btn wf-btn--primary" onclick="selectPopup('mdPopup')">선택</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 우측: 디스크립션 패널 ===== -->
   <div class="spec-desc-panel">
     <h3>BO-PDM-041 — 티켓상품 목록 화면</h3>
     <p><strong>메뉴 경로:</strong> 상품 관리 &gt; 티켓상품 관리 &gt; 티켓상품 목록</p>
     <p><strong>Route:</strong> /bo/products/ticket</p>
     <p><strong>진입 조건:</strong> BO 관리자 로그인 상태, 상품 조회 권한 보유</p>
-    <hr style="margin:8px 0;">
+    <p><strong>관련 문서:</strong> BO-PDM-025 (컴포넌트), BO-PDM-038 (액션)</p>
+    <p style="font-size:11px;color:#888;margin-top:4px;">페이지 진입 시 전체 조건 초기화 상태로 자동 조회 (trigger: load) · 기본 정렬: 상품등록일 DESC · 기본 출력건수: 20건</p>
+    <hr style="margin:10px 0;">
 
-    <p><strong>관련 문서</strong></p>
-    <ul>
-      <li>컴포넌트: BO-PDM-025 (티켓상품 목록 테이블)</li>
-      <li>액션: BO-PDM-038 (상품 목록 조회)</li>
-    </ul>
-    <hr style="margin:8px 0;">
+    <!-- ① 카테고리 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">1</span> 카테고리</div>
+      <p class="desc-sub">UI: 셀렉트 4개 가로 배치 — [카테고리유형] [1차] [2차] [3차]</p>
+      <ul>
+        <li>카테고리유형: <strong>표준카테고리</strong>(기본값) / 전시카테고리</li>
+        <li>카테고리유형 변경 시 하위 1·2·3차 옵션 목록 갱신 및 초기화</li>
+        <li>순차 연동: 1차 선택 → 2차 활성화, 2차 선택 → 3차 활성화</li>
+        <li>상위 depth 변경 시 하위 depth "N차 전체"로 리셋</li>
+        <li>미선택 시 해당 depth 이하 전체 검색</li>
+        <li>1차 옵션: 숙박 / 여행 / 문화 / 레저 / 외식 / 뷰티 / 교육</li>
+      </ul>
+      <div class="policy">정책: 카테고리 데이터는 카테고리 관리 화면에서 관리되며, 최대 3depth까지 지원한다. 표준/전시 카테고리는 독립 트리 구조.</div>
+    </div>
 
-    <h4 style="font-size:13px;margin:8px 0 4px;">화면 로드 동작</h4>
-    <ul>
-      <li>페이지 진입 시 전체 조건 초기화 상태로 자동 조회 (trigger: load)</li>
-      <li>기본 정렬: 등록일 DESC</li>
-      <li>기본 출력건수: 20건</li>
-    </ul>
-    <hr style="margin:8px 0;">
+    <!-- ② 판매사 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">2</span> 판매사</div>
+      <p class="desc-sub">UI: 텍스트(readonly) + [조회] 버튼 + 하위업체 드롭박스</p>
+      <ul>
+        <li>[조회] 클릭 → 판매사 조회 팝업(<span class="desc-num" style="font-size:8px;min-width:14px;height:14px;">15</span>) 호출</li>
+        <li>팝업에서 선택 완료 시 텍스트 필드에 판매사명 반영</li>
+        <li>판매사 선택 후 → 우측 <strong>하위업체 드롭박스 활성화</strong></li>
+        <li>판매사 미선택 시 하위업체 드롭박스 disabled 유지</li>
+        <li>하위업체 드롭박스: "하위업체 전체"(기본값) + 해당 판매사의 하위업체 목록</li>
+      </ul>
+      <div class="policy">정책: 판매사는 판매사 관리 메뉴에서 등록·관리. 하위업체는 판매사에 종속되며, 판매사 1건에 N개 하위업체 매핑 가능.</div>
+    </div>
 
-    <h4 style="font-size:13px;margin:8px 0 4px;">1. 검색/필터 영역 (10개 조건)</h4>
+    <!-- ③ MD -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">3</span> MD</div>
+      <p class="desc-sub">UI: 텍스트(readonly) + [조회] 버튼</p>
+      <ul>
+        <li>[조회] 클릭 → MD 조회 팝업(<span class="desc-num" style="font-size:8px;min-width:14px;height:14px;">16</span>) 호출</li>
+        <li>팝업에서 선택 완료 시 텍스트 필드에 MD 담당자명 반영</li>
+        <li>미선택 시 전체 MD 대상 검색</li>
+      </ul>
+      <div class="policy">정책: MD는 BO 관리자 중 상품 담당 역할자. 상품 등록 시 MD 필수 지정. 운영 관리 &gt; 담당자 관리에서 MD 목록 관리.</div>
+    </div>
 
-    <p style="font-size:12px;margin:6px 0 2px;"><strong>1-1. 카테고리 (최상단 배치)</strong></p>
-    <ul>
-      <li>UI: 셀렉트 4개 가로 배치 — [카테고리유형] [1차] [2차] [3차]</li>
-      <li>카테고리유형: 표준카테고리(기본값) / 전시카테고리</li>
-      <li>카테고리유형 변경 시 1차·2차·3차 옵션 목록 갱신 및 초기화</li>
-      <li>1차 선택 시 2차 활성화, 2차 선택 시 3차 활성화 (순차 연동)</li>
-      <li>상위 depth 변경 시 하위 depth 초기화 (전체로 리셋)</li>
-      <li>미선택 시 "N차 전체"로 해당 depth 이하 전체 검색</li>
-    </ul>
+    <!-- ④ 외부연동 여부 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">4</span> 외부연동 여부</div>
+      <p class="desc-sub">UI: 체크박스 그룹</p>
+      <ul>
+        <li>옵션: <strong>전체</strong>(기본 체크) / 직접등록 / 외부연동</li>
+        <li>"전체" 체크 시 → 개별 항목 모두 해제</li>
+        <li>개별 항목 체크 시 → "전체" 자동 해제</li>
+        <li>모든 개별 항목 해제 시 → "전체" 자동 체크 (빈 선택 방지)</li>
+        <li>복수 선택 가능 (직접등록 + 외부연동 = 전체와 동일)</li>
+      </ul>
+      <div class="policy">정책: 직접등록은 BO에서 수동 등록한 상품, 외부연동은 API/피드로 자동 연동된 상품. 외부연동 상품은 일부 필드 수정 제한.</div>
+    </div>
 
-    <p style="font-size:12px;margin:6px 0 2px;"><strong>1-2. 상품코드</strong></p>
-    <ul>
-      <li>UI: 텍스트 입력 (placeholder: TKT-YYYY-NNNN)</li>
-      <li>완전 일치 검색 (exact match)</li>
-      <li>미입력 시 전체</li>
-    </ul>
+    <!-- ⑤ 기간 조회 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">5</span> 기간 조회</div>
+      <p class="desc-sub">UI: 기간유형 셀렉트 + 시작일~종료일 데이트피커 + 퀵선택 라디오</p>
+      <ul>
+        <li>기간유형: <strong>상품등록일</strong>(기본값) / 최종수정일</li>
+        <li>퀵선택 라디오: 오늘 / <strong>최근 7일</strong>(기본) / 1개월 / 3개월 / 1년</li>
+        <li>라디오 선택 시 시작일·종료일 자동 계산 (종료일 = 오늘 기준)</li>
+        <li>데이트피커 직접 수정 시 퀵선택 라디오 선택 해제</li>
+        <li>시작일 > 종료일 입력 시 "시작일이 종료일보다 클 수 없습니다" 알림</li>
+      </ul>
+      <div class="policy">정책: 기간 검색은 필수. 페이지 로드 시 최근 7일이 기본 적용되어 초기 조회 범위를 제한한다.</div>
+    </div>
 
-    <p style="font-size:12px;margin:6px 0 2px;"><strong>1-3. 요청코드</strong></p>
-    <ul>
-      <li>UI: 텍스트 입력 (placeholder: REQ-YYYY-NNNN)</li>
-      <li>완전 일치 검색 (exact match)</li>
-      <li>미입력 시 전체</li>
-    </ul>
+    <!-- ⑥ 상품유형 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">6</span> 상품유형</div>
+      <p class="desc-sub">UI: 체크박스 그룹</p>
+      <ul>
+        <li>옵션: <strong>전체</strong>(기본 체크) / 일반티켓 / 예약티켓</li>
+        <li>체크박스 "전체" 토글 로직 동일 (④번 참조)</li>
+      </ul>
+      <div class="policy">정책: 일반티켓 = 즉시 사용 가능한 쿠폰/교환권, 예약티켓 = 날짜/시간 예약 필요 상품. 예약티켓은 예약 일정 관리 필요.</div>
+    </div>
 
-    <p style="font-size:12px;margin:6px 0 2px;"><strong>1-4. 상품유형</strong></p>
-    <ul>
-      <li>UI: 셀렉트</li>
-      <li>옵션: 전체(기본값) / 쿠폰형 / 예약형</li>
-    </ul>
+    <!-- ⑦ 판매상태 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">7</span> 판매상태</div>
+      <p class="desc-sub">UI: 체크박스 그룹</p>
+      <ul>
+        <li>옵션: <strong>전체</strong>(기본 체크) / 판매중 / 판매일시중지 / 일시품절 / 품절 / 판매종료</li>
+        <li>복수 선택 가능 (OR 조건)</li>
+        <li>체크박스 "전체" 토글 로직 동일 (④번 참조)</li>
+      </ul>
+      <div class="policy">정책: 판매상태 전이 — 판매중 ↔ 판매일시중지 ↔ 일시품절, 판매중 → 품절, 모든상태 → 판매종료(비가역). 판매종료 상품은 FO 비노출.</div>
+      <table class="desc-col-table">
+        <thead><tr><th>상태</th><th>코드</th><th>Badge 색상</th></tr></thead>
+        <tbody>
+          <tr><td><span class="wf-badge wf-badge--selling">판매중</span></td><td>SELLING</td><td>Green</td></tr>
+          <tr><td><span class="wf-badge wf-badge--sales-paused">판매일시중지</span></td><td>SALES_PAUSED</td><td>Orange</td></tr>
+          <tr><td><span class="wf-badge wf-badge--temp-out">일시품절</span></td><td>TEMP_OUT_OF_STOCK</td><td>Yellow</td></tr>
+          <tr><td><span class="wf-badge wf-badge--out-of-stock">품절</span></td><td>OUT_OF_STOCK</td><td>Red</td></tr>
+          <tr><td><span class="wf-badge wf-badge--sales-ended">판매종료</span></td><td>SALES_ENDED</td><td>Gray</td></tr>
+        </tbody>
+      </table>
+    </div>
 
-    <p style="font-size:12px;margin:6px 0 2px;"><strong>1-5. 승인상태</strong></p>
-    <ul>
-      <li>UI: 셀렉트</li>
-      <li>옵션: 전체(기본값) / 등록중(REGISTERING) / 승인대기(PENDING) / 승인완료(APPROVED) / 반려(REJECTED) / 승인철회(WITHDRAWN)</li>
-    </ul>
+    <!-- ⑧ 전시여부 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">8</span> 전시여부</div>
+      <p class="desc-sub">UI: 체크박스 그룹</p>
+      <ul>
+        <li>옵션: <strong>전체</strong>(기본 체크) / 전시 / 비전시</li>
+        <li>체크박스 "전체" 토글 로직 동일 (④번 참조)</li>
+      </ul>
+      <div class="policy">정책: 전시 = FO에 노출, 비전시 = FO 비노출 (관리자만 조회 가능). 판매종료 상품은 자동 비전시 전환.</div>
+      <table class="desc-col-table">
+        <thead><tr><th>상태</th><th>Badge 색상</th></tr></thead>
+        <tbody>
+          <tr><td><span class="wf-badge wf-badge--display-on">전시</span></td><td>Green</td></tr>
+          <tr><td><span class="wf-badge wf-badge--display-off">비전시</span></td><td>Gray</td></tr>
+        </tbody>
+      </table>
+    </div>
 
-    <p style="font-size:12px;margin:6px 0 2px;"><strong>1-6. 판매상태</strong></p>
-    <ul>
-      <li>UI: 셀렉트</li>
-      <li>옵션: 전체(기본값) / 판매중(SELLING) / 판매일시중지(SALES_PAUSED) / 일시품절(TEMP_OUT_OF_STOCK) / 품절(OUT_OF_STOCK) / 판매종료(SALES_ENDED)</li>
-    </ul>
+    <!-- ⑨ 노출 채널 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">9</span> 노출 채널</div>
+      <p class="desc-sub">UI: 체크박스 그룹</p>
+      <ul>
+        <li>옵션: <strong>전체</strong>(기본 체크) / PC / 모바일</li>
+        <li>체크박스 "전체" 토글 로직 동일 (④번 참조)</li>
+      </ul>
+      <div class="policy">정책: 상품 등록 시 노출 채널을 PC/모바일/PC+모바일 중 선택. 채널별 가격·프로모션 차등 적용 가능.</div>
+    </div>
 
-    <p style="font-size:12px;margin:6px 0 2px;"><strong>1-7. 판매사</strong></p>
-    <ul>
-      <li>UI: 셀렉트</li>
-      <li>옵션: 전체(기본값) + DB에서 조회한 개별 판매사 목록</li>
-      <li>판매사 목록은 페이지 로드 시 API 호출로 세팅</li>
-    </ul>
+    <!-- ⑩ 검색어 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">10</span> 검색어</div>
+      <p class="desc-sub">UI: 드롭박스 + 텍스트 입력</p>
+      <ul>
+        <li>드롭박스: <strong>사용안함</strong>(기본) / 상품명 / 상품코드 / 상품키</li>
+        <li>검색 방식: 상품명 = 부분일치(LIKE), 상품코드·상품키 = 완전일치(exact)</li>
+      </ul>
+      <div class="policy">핵심 정책: "사용안함" 외 항목 선택 시 → <strong>1~9번 필터 전체 비활성화(disabled)</strong>, 검색어 입력 필드만 활성. "사용안함" 재선택 시 모든 필터 활성화 복원. 검색어 모드는 단일 키워드로 빠르게 상품을 찾기 위한 전용 모드.</div>
+    </div>
 
-    <p style="font-size:12px;margin:6px 0 2px;"><strong>1-8. 상품명</strong></p>
-    <ul>
-      <li>UI: 텍스트 입력</li>
-      <li>부분 일치 검색 (LIKE '%keyword%')</li>
-      <li>최소 2자 이상 입력 권장 (미만 시 경고 없이 검색 허용)</li>
-    </ul>
+    <!-- ⑪ 검색/초기화 버튼 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">11</span> 검색 / 초기화 버튼</div>
+      <ul>
+        <li><strong>[검색]</strong>: 현재 필터 조건으로 목록 재조회, 페이지 1로 초기화</li>
+        <li><strong>[초기화]</strong>: 모든 필터를 기본값으로 리셋 후 자동 재조회</li>
+      </ul>
+      <div class="policy">정책: 초기화 시 기간 조회는 "최근 7일"로 복원. 검색어 모드도 "사용안함"으로 리셋되어 전체 필터 활성화.</div>
+    </div>
 
-    <p style="font-size:12px;margin:6px 0 2px;"><strong>1-9. 판매가</strong></p>
-    <ul>
-      <li>UI: 숫자 입력 2개 (최소 ~ 최대), 단위: 원</li>
-      <li>최소만 입력: 해당 금액 이상 검색</li>
-      <li>최대만 입력: 해당 금액 이하 검색</li>
-      <li>양쪽 입력: 범위 검색 (최소 ≤ 판매가 ≤ 최대)</li>
-      <li>최소 > 최대 입력 시 "최소 금액이 최대 금액보다 클 수 없습니다" 알림</li>
-    </ul>
+    <!-- ⑫ 상단 툴바 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">12</span> 상단 툴바</div>
+      <ul>
+        <li>좌측: "검색결과 <strong>N</strong>건" — 현재 필터 조건에 매칭되는 총 건수</li>
+        <li>우측: 출력건수 셀렉트 — <strong>20건</strong>(기본) / 50건 / 100건</li>
+        <li>출력건수 변경 시 페이지 1로 초기화 후 재조회</li>
+      </ul>
+    </div>
 
-    <p style="font-size:12px;margin:6px 0 2px;"><strong>1-10. 등록기간</strong></p>
-    <ul>
-      <li>UI: 날짜 선택 2개 (시작일 ~ 종료일)</li>
-      <li>시작일만 입력: 해당일 이후 검색</li>
-      <li>종료일만 입력: 해당일 이전 검색</li>
-      <li>양쪽 입력: 기간 범위 검색</li>
-      <li>시작일 > 종료일 입력 시 "시작일이 종료일보다 클 수 없습니다" 알림</li>
-    </ul>
+    <!-- ⑬ 목록 테이블 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">13</span> 목록 테이블 (26컬럼)</div>
+      <p class="desc-sub">가로 스크롤 적용 (min-width: 2200px) · 기본 정렬: 상품등록일 DESC · 데이터 없을 시 "조회된 상품이 없습니다." 표시</p>
+      <table class="desc-col-table">
+        <thead><tr><th style="width:20px;">#</th><th style="width:70px;">컬럼</th><th>설명 / 정책</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>No</td><td>행 번호. 현재 페이지 기준 자동 채번 ((page-1)*size + index)</td></tr>
+          <tr><td>2</td><td>상품코드</td><td>13자리 (YYYYMMDD + 5자리 시퀀스). 상품 등록 시 시스템 자동 생성. 변경 불가.</td></tr>
+          <tr><td>3</td><td>상품키</td><td>5자리 자동증가번호 (00001~). PK 역할, 시스템 자동 채번. 변경 불가.</td></tr>
+          <tr><td>4</td><td>상품명</td><td><strong>링크</strong> — 클릭 시 티켓상품 상세 화면(BO-PDM-047) 이동. 상품 상태에 따라 수정 또는 조회 모드 진입. 판매종료 상품은 조회 전용.</td></tr>
+          <tr><td>5</td><td>외부연동여부</td><td>직접등록 / 외부연동. 외부연동 상품은 원본 시스템에서 관리되므로 일부 필드 수정 제한.</td></tr>
+          <tr><td>6</td><td>상품유형</td><td>일반티켓 / 예약티켓. 예약티켓은 날짜·시간 예약 일정 관리 필요.</td></tr>
+          <tr><td>7</td><td>전시여부</td><td>전시(Green Badge) / 비전시(Gray Badge). FO 노출 여부 결정.</td></tr>
+          <tr><td>8</td><td>노출채널</td><td>PC / 모바일 / PC+모바일. 채널별 노출 설정.</td></tr>
+          <tr><td>9</td><td>판매가</td><td>금액(원), 우측 정렬, 천단위 콤마. 세금 포함 최종 판매 금액.</td></tr>
+          <tr><td>10</td><td>즉시할인가</td><td>금액(원), 미설정 시 "—" 표시. 즉시할인 적용된 실제 결제 금액.</td></tr>
+          <tr><td>11</td><td>판매상태</td><td>Badge 표시. 상태별 색상 구분 (⑦번 참조).</td></tr>
+          <tr><td>12</td><td>과세구분</td><td>과세 / 면세 / 영세. 세금계산서 발행 유형 결정.</td></tr>
+          <tr><td>13</td><td>표준카테고리</td><td>depth &gt; 구분 경로. 통계·정산 기준 카테고리.</td></tr>
+          <tr><td>14</td><td>전시카테고리</td><td>depth &gt; 구분 경로. FO 노출 기준 카테고리.</td></tr>
+          <tr><td>15</td><td>판매사</td><td>판매사명. 정산·CS 귀속 기준.</td></tr>
+          <tr><td>16</td><td>하위업체</td><td>하위업체명, 없으면 "—". 실제 운영·재고 관리 주체.</td></tr>
+          <tr><td>17</td><td>상품등록일</td><td>YYYY-MM-DD. 최초 등록 시점.</td></tr>
+          <tr><td>18</td><td>상품수정일</td><td>YYYY-MM-DD. 마지막 수정 시점.</td></tr>
+          <tr><td>19</td><td>판매시작일</td><td>YYYY-MM-DD. 판매 개시 예정일.</td></tr>
+          <tr><td>20</td><td>판매종료일</td><td>YYYY-MM-DD. 판매 종료 예정일. 해당일 자정에 자동 판매종료 처리.</td></tr>
+          <tr><td>21</td><td>MD</td><td>MD 담당자명. 상품 운영 책임자.</td></tr>
+          <tr><td>22</td><td>상품등록자</td><td>최초 등록한 관리자명.</td></tr>
+          <tr><td>23</td><td>상품수정자</td><td>마지막 수정한 관리자명.</td></tr>
+          <tr><td>24</td><td>상품승인자</td><td>최종 승인 처리한 관리자명.</td></tr>
+          <tr><td>25</td><td>복사</td><td>[상품복사] 버튼 — 클릭 시 해당 상품 정보를 복사한 신규 등록 화면으로 이동.</td></tr>
+          <tr><td>26</td><td>관리</td><td>[판매종료] 버튼 — 클릭 시 확인 다이얼로그 후 즉시 판매종료 처리. 이미 판매종료 상태면 버튼 비활성.</td></tr>
+        </tbody>
+      </table>
+    </div>
 
-    <p style="font-size:12px;margin:6px 0 2px;"><strong>버튼</strong></p>
-    <ul>
-      <li>[검색]: 현재 필터 조건으로 목록 재조회, 페이지 1로 초기화</li>
-      <li>[초기화]: 모든 필터 조건을 기본값으로 리셋 후 재조회</li>
-    </ul>
-    <hr style="margin:8px 0;">
+    <!-- ⑭ 페이지네이션 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">14</span> 페이지네이션</div>
+      <ul>
+        <li>하단 중앙 배치</li>
+        <li>구성: [처음] [이전] 1 2 3 … [다음] [끝]</li>
+        <li>현재 페이지 번호 활성(파란 배경) 표시</li>
+        <li>페이지 변경 시 현재 필터 조건 유지한 채 해당 페이지 조회</li>
+        <li>첫 페이지에서 [처음][이전] 비활성, 마지막 페이지에서 [다음][끝] 비활성</li>
+      </ul>
+    </div>
 
-    <h4 style="font-size:13px;margin:8px 0 4px;">2. 상단 툴바</h4>
-    <ul>
-      <li>좌측: "검색결과 <strong>N</strong>건" — 현재 필터 조건에 매칭되는 총 건수 표시</li>
-      <li>우측: 출력건수 셀렉트 (20건(기본) / 50건 / 100건)</li>
-      <li>출력건수 변경 시 페이지 1로 초기화 후 재조회</li>
-    </ul>
-    <hr style="margin:8px 0;">
+    <!-- ⑮ 판매사 조회 팝업 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">15</span> 판매사 조회 팝업</div>
+      <p class="desc-sub">호출: ②번 필터 [조회] 버튼 클릭</p>
+      <ul>
+        <li>구조: 검색 입력 + [검색] → 코드/판매사명 라디오 목록 → [취소] [선택]</li>
+        <li>검색: 판매사명 기준 부분 일치 (LIKE)</li>
+        <li>[선택]: 라디오 선택된 판매사명을 필터 입력 필드에 반영</li>
+        <li>[취소]: 팝업 닫기 (값 변경 없음)</li>
+        <li>선택 완료 후 하위업체 드롭박스 목록 갱신 및 활성화</li>
+      </ul>
+      <div class="policy">정책: 활성(active) 상태인 판매사만 팝업 목록에 노출. 비활성 판매사는 조회 불가.</div>
+    </div>
 
-    <h4 style="font-size:13px;margin:8px 0 4px;">3. 목록 테이블 (9컬럼)</h4>
-    <table style="width:100%;font-size:11px;border-collapse:collapse;margin:4px 0;">
-      <thead><tr style="background:#f5f5f5;">
-        <th style="border:1px solid #ddd;padding:3px 4px;text-align:left;">컬럼</th>
-        <th style="border:1px solid #ddd;padding:3px 4px;text-align:left;">설명</th>
-      </tr></thead>
-      <tbody>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;">No</td><td style="border:1px solid #ddd;padding:3px 4px;">행 번호 (현재 페이지 기준 자동 채번)</td></tr>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;">상품코드</td><td style="border:1px solid #ddd;padding:3px 4px;">TKT-YYYY-NNNN 형식, 텍스트 표시</td></tr>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;">요청코드</td><td style="border:1px solid #ddd;padding:3px 4px;">REQ-YYYY-NNNN 형식, 텍스트 표시</td></tr>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;">상품명</td><td style="border:1px solid #ddd;padding:3px 4px;"><strong>링크</strong> — 클릭 시 등록/수정 화면(BO-PDM-045)으로 이동. 상품 상태에 따라 수정 또는 조회 모드로 진입</td></tr>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;">상품유형</td><td style="border:1px solid #ddd;padding:3px 4px;">쿠폰형 / 예약형</td></tr>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;">판매상태</td><td style="border:1px solid #ddd;padding:3px 4px;">Badge 표시 — 상태별 색상 구분 (하단 Badge 정의 참조)</td></tr>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;">판매사</td><td style="border:1px solid #ddd;padding:3px 4px;">판매사명 텍스트</td></tr>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;">판매기간</td><td style="border:1px solid #ddd;padding:3px 4px;">YYYY-MM-DD ~ YYYY-MM-DD 형식</td></tr>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;">등록일</td><td style="border:1px solid #ddd;padding:3px 4px;">YYYY-MM-DD 형식</td></tr>
-      </tbody>
-    </table>
-    <ul>
-      <li>데이터 없을 시: "조회된 상품이 없습니다." 안내 메시지 표시</li>
-      <li>기본 정렬: 등록일 DESC (최신 등록 순)</li>
-    </ul>
-    <hr style="margin:8px 0;">
+    <!-- ⑯ MD 조회 팝업 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">16</span> MD 조회 팝업</div>
+      <p class="desc-sub">호출: ③번 필터 [조회] 버튼 클릭</p>
+      <ul>
+        <li>구조: 검색 입력 + [검색] → 코드/담당자명 라디오 목록 → [취소] [선택]</li>
+        <li>검색: 담당자명 기준 부분 일치</li>
+        <li>[선택]: 선택된 담당자명을 필터 입력 필드에 반영</li>
+        <li>[취소]: 팝업 닫기</li>
+      </ul>
+      <div class="policy">정책: 현재 재직 중인 MD 담당자만 목록에 노출. 퇴직·비활성 담당자는 제외.</div>
+    </div>
 
-    <h4 style="font-size:13px;margin:8px 0 4px;">4. 페이지네이션</h4>
-    <ul>
-      <li>하단 중앙 배치</li>
-      <li>구성: [이전] 1 2 3 4 5 … [다음]</li>
-      <li>현재 페이지 번호 활성(bold) 표시</li>
-      <li>페이지 변경 시 현재 필터 조건 유지한 채 해당 페이지 조회</li>
-      <li>첫 페이지에서 [이전] 비활성, 마지막 페이지에서 [다음] 비활성</li>
-    </ul>
-    <hr style="margin:8px 0;">
-
-    <h4 style="font-size:13px;margin:8px 0 4px;">5. 판매상태 Badge 정의</h4>
-    <table style="width:100%;font-size:11px;border-collapse:collapse;margin:4px 0;">
-      <thead><tr style="background:#f5f5f5;">
-        <th style="border:1px solid #ddd;padding:3px 4px;">Badge</th>
-        <th style="border:1px solid #ddd;padding:3px 4px;">코드</th>
-        <th style="border:1px solid #ddd;padding:3px 4px;">색상</th>
-      </tr></thead>
-      <tbody>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;"><span class="wf-badge wf-badge--selling">판매중</span></td><td style="border:1px solid #ddd;padding:3px 4px;">SELLING</td><td style="border:1px solid #ddd;padding:3px 4px;">Green</td></tr>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;"><span class="wf-badge wf-badge--sales-paused">판매일시중지</span></td><td style="border:1px solid #ddd;padding:3px 4px;">SALES_PAUSED</td><td style="border:1px solid #ddd;padding:3px 4px;">Orange</td></tr>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;"><span class="wf-badge wf-badge--temp-out">일시품절</span></td><td style="border:1px solid #ddd;padding:3px 4px;">TEMP_OUT_OF_STOCK</td><td style="border:1px solid #ddd;padding:3px 4px;">Yellow</td></tr>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;"><span class="wf-badge wf-badge--out-of-stock">품절</span></td><td style="border:1px solid #ddd;padding:3px 4px;">OUT_OF_STOCK</td><td style="border:1px solid #ddd;padding:3px 4px;">Red</td></tr>
-        <tr><td style="border:1px solid #ddd;padding:3px 4px;"><span class="wf-badge wf-badge--sales-ended">판매종료</span></td><td style="border:1px solid #ddd;padding:3px 4px;">SALES_ENDED</td><td style="border:1px solid #ddd;padding:3px 4px;">Gray</td></tr>
-      </tbody>
-    </table>
   </div>
 </div>
 
@@ -615,6 +1247,97 @@ document.querySelectorAll('.lnb-menu-item > a').forEach(function(btn) {
     if (li.querySelector('.lnb-submenu')) li.classList.toggle('open');
   });
 });
+
+/* 체크박스 "전체" 토글 */
+function toggleAllCb(allCb, groupName) {
+  if (allCb.checked) {
+    document.querySelectorAll('input[name="' + groupName + '"]').forEach(function(cb) {
+      if (cb.value !== 'all') cb.checked = false;
+    });
+  } else {
+    allCb.checked = true;
+  }
+}
+function toggleItemCb(itemCb, groupName) {
+  var allCb = document.querySelector('input[name="' + groupName + '"][value="all"]');
+  if (itemCb.checked) {
+    allCb.checked = false;
+  }
+  var anyChecked = false;
+  document.querySelectorAll('input[name="' + groupName + '"]').forEach(function(cb) {
+    if (cb.value !== 'all' && cb.checked) anyChecked = true;
+  });
+  if (!anyChecked) allCb.checked = true;
+}
+
+/* 검색어 모드 전환 */
+function toggleSearchMode() {
+  var sel = document.getElementById('searchType');
+  var keyword = document.getElementById('searchKeyword');
+  var rows = document.querySelectorAll('.filter-grid tr.filter-row');
+  if (sel.value !== '') {
+    keyword.disabled = false;
+    keyword.focus();
+    rows.forEach(function(row) { row.classList.add('filter-disabled'); });
+  } else {
+    keyword.disabled = true;
+    keyword.value = '';
+    rows.forEach(function(row) { row.classList.remove('filter-disabled'); });
+  }
+}
+
+/* 기간 퀵선택 */
+function setQuickDate(value) {
+  var today = new Date(2026, 3, 14);
+  var from = new Date(today);
+  switch(value) {
+    case 'today': break;
+    case '7d': from.setDate(today.getDate() - 7); break;
+    case '1m': from.setMonth(today.getMonth() - 1); break;
+    case '3m': from.setMonth(today.getMonth() - 3); break;
+    case '1y': from.setFullYear(today.getFullYear() - 1); break;
+  }
+  document.getElementById('dateFrom').value = fmt(from);
+  document.getElementById('dateTo').value = fmt(today);
+}
+function fmt(d) {
+  var y = d.getFullYear();
+  var m = String(d.getMonth() + 1).padStart(2, '0');
+  var dd = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + dd;
+}
+
+/* 조회 팝업 open/close/select */
+function openPopup(id) { document.getElementById(id).classList.add('show'); }
+function closePopup(id) { document.getElementById(id).classList.remove('show'); }
+function selectPopup(id) {
+  var popup = document.getElementById(id);
+  var selected = popup.querySelector('input[type="radio"]:checked');
+  if (!selected) { alert('항목을 선택해주세요.'); return; }
+  var name = selected.closest('tr').querySelectorAll('td')[2].textContent;
+  if (id === 'vendorPopup') {
+    document.getElementById('vendorInput').value = name;
+    document.getElementById('subVendorSelect').disabled = false;
+  } else if (id === 'mdPopup') {
+    document.getElementById('mdInput').value = name;
+  }
+  closePopup(id);
+}
+
+/* 초기화 */
+function resetFilters() {
+  document.getElementById('searchType').value = '';
+  document.getElementById('searchKeyword').value = '';
+  document.getElementById('searchKeyword').disabled = true;
+  document.getElementById('vendorInput').value = '';
+  document.getElementById('mdInput').value = '';
+  document.getElementById('subVendorSelect').disabled = true;
+  document.querySelectorAll('.filter-grid tr.filter-row').forEach(function(r) { r.classList.remove('filter-disabled'); });
+  document.querySelectorAll('.filter-grid input[type="checkbox"][value="all"]').forEach(function(cb) { cb.checked = true; });
+  document.querySelectorAll('.filter-grid input[type="checkbox"]:not([value="all"])').forEach(function(cb) { cb.checked = false; });
+  document.querySelector('input[name="quickDate"][value="7d"]').checked = true;
+  setQuickDate('7d');
+}
 </script>
 
 </body>
