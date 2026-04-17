@@ -1028,7 +1028,7 @@
             </div>
           </div>
           <p class="wf-text-sm wf-text-muted" style="margin-bottom:8px;">연동: 상품분류 선택 시 항목 자동 출력 (수정/추가/삭제 가능). 직접입력: 빈 상태에서 항목 직접 추가. 분류 변경 시 항목 초기화.</p>
-          <div class="table-scroll" id="noticeTableWrap">
+          <div class="table-scroll" id="noticeTableWrap" onscroll="loadMoreNoticeRows()" style="max-height:500px;overflow-y:auto;">
             <table class="wf-table" id="noticeTable">
               <thead>
                 <tr>
@@ -1099,9 +1099,70 @@
                   <td><input class="wf-input" type="text" value="삼성전자서비스 1588-3366"></td>
                   <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
                 </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="11" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="냉각방식"></td>
+                  <td><input class="wf-input" type="text" value="간냉식(무풍냉각)"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="12" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="용량"></td>
+                  <td><input class="wf-input" type="text" value="냉장 507L / 냉동 317L / 총 874L"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="13" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="냉매"></td>
+                  <td><input class="wf-input" type="text" value="R-600a"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="14" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="색상"></td>
+                  <td><input class="wf-input" type="text" value="코타 화이트"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="15" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="설치비용"></td>
+                  <td><input class="wf-input" type="text" value="무료 (기본 설치 포함)"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="16" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="부가기능"></td>
+                  <td><input class="wf-input" type="text" value="정수기 필터, 스마트싱스 연동"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="17" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="소음"></td>
+                  <td><input class="wf-input" type="text" value="25dB"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="18" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="KC인증번호"></td>
+                  <td><input class="wf-input" type="text" value="R-R-SEC-RF85A912"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="19" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="전자파적합등록번호"></td>
+                  <td><input class="wf-input" type="text" value="KCC-CRI-SEC-RF85A912"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
+                <tr style="display:none">
+                  <td><input class="wf-input" type="text" value="20" style="width:40px;text-align:center;"></td>
+                  <td><input class="wf-input" type="text" value="상품별 추가표시사항"></td>
+                  <td><input class="wf-input" type="text" value="냉장고 전용 표시사항 해당 없음"></td>
+                  <td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>
+                </tr>
               </tbody>
             </table>
           </div>
+          <p id="noticeLoadMore" class="wf-text-sm" style="text-align:center;color:#6b7280;margin-top:6px;cursor:default;">스크롤하여 더 보기 (10 / 20)</p>
         </div>
       </div>
 
@@ -1551,14 +1612,15 @@
           <br>&bull; <strong>[-] 버튼:</strong> 해당 행 삭제. 마지막 1행은 삭제 불가
           <br>&bull; <em>검증:</em> 항목명·내용 모두 빈 값이면 저장 시 해당 행 제외(경고 없음)
           <br>&bull; <em>정책:</em> 전자상거래법 품목별 필수 항목 누락 시 저장 경고("필수 고시 항목이 누락되었습니다. 저장하시겠습니까?" confirm)
-          <br>&bull; <em>스크롤:</em> 10행 초과 시 세로 스크롤 적용(max-height: 280px)
+          <br>&bull; <em>스크롤:</em> 기본 10행 노출. 스크롤 시 5건씩 추가 표시(lazy-load). 테이블 영역 max-height: 500px
+          <br>&bull; <em>안내:</em> 하단 "스크롤하여 더 보기 (노출 수 / 전체 수)" 표시. 전체 노출 완료 시 자동 숨김
           <br>&bull; <em>최대:</em> 30행. 초과 시 추가 불가
         </li>
       </ol>
 
       <h4 style="font-size:12px;margin:10px 0 4px;color:#6b7280;">7.1.1 표준 고시 항목 예시 (가전 &gt; 냉장고)</h4>
       <p style="font-size:11px;margin:2px 0;line-height:1.6;">
-        품명 및 모델명 / 인증·허가 사항 / 정격전압·소비전력 / 에너지소비효율등급 / 동일모델 출시년월 / 제조자·수입자 / 제조국 / 크기·중량 / 품질보증기준 / A/S 책임자와 전화번호
+        품명 및 모델명 / 인증·허가 사항 / 정격전압·소비전력 / 에너지소비효율등급 / 동일모델 출시년월 / 제조자·수입자 / 제조국 / 크기·중량 / 품질보증기준 / A/S 책임자와 전화번호 / 냉각방식 / 용량 / 냉매 / 색상 / 설치비용 / 부가기능 / 소음 / KC인증번호 / 전자파적합등록번호 / 상품별 추가표시사항
       </p>
     </div>
 
@@ -1777,8 +1839,10 @@ function toggleMarginRate(){var c=document.getElementById('marginRateChk');docum
 function toggleOptionUse(){var v=document.querySelector('input[name="optionUse"]:checked').value;var none=document.getElementById('optionNoneArea'),use=document.getElementById('optionUseArea');if(v==='NONE'){none.style.display='';use.className='disabled-area'}else{none.style.display='none';use.className=''}}
 function toggleDetailScope(){var v=document.querySelector('input[name="detailScope"]:checked').value;document.getElementById('mobileEditorArea').className=(v==='ALL'?'disabled-area':'')}
 function toggleNoticeMode(){var v=document.querySelector('input[name="noticeMode"]:checked').value;var tb=document.querySelector('#noticeTable tbody');if(v==='DIRECT'){tb.innerHTML='';addNoticeRow()}}
-function addNoticeRow(){var tb=document.querySelector('#noticeTable tbody'),n=tb.rows.length+1;var tr=document.createElement('tr');tr.innerHTML='<td><input class="wf-input" type="text" value="'+n+'" style="width:40px;text-align:center;"></td><td><input class="wf-input" type="text" value="" placeholder="항목명"></td><td><input class="wf-input" type="text" value="" placeholder="내용 입력"></td><td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>';tb.appendChild(tr)}
-function removeNoticeRow(el){var tr=el.closest('tr'),tb=tr.parentElement;if(tb.rows.length>1)tr.remove()}
+function addNoticeRow(){var tb=document.querySelector('#noticeTable tbody'),n=tb.rows.length+1;var tr=document.createElement('tr');tr.innerHTML='<td><input class="wf-input" type="text" value="'+n+'" style="width:40px;text-align:center;"></td><td><input class="wf-input" type="text" value="" placeholder="항목명"></td><td><input class="wf-input" type="text" value="" placeholder="내용 입력"></td><td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>';tb.appendChild(tr);updateNoticeCount()}
+function removeNoticeRow(el){var tr=el.closest('tr'),tb=tr.parentElement;if(tb.rows.length>1)tr.remove();updateNoticeCount()}
+function loadMoreNoticeRows(){var wrap=document.getElementById('noticeTableWrap');if(wrap.scrollTop+wrap.clientHeight>=wrap.scrollHeight-10){var hidden=document.querySelectorAll('#noticeTable tbody tr[style*="display:none"]');var count=Math.min(5,hidden.length);for(var i=0;i<count;i++)hidden[i].style.display='';updateNoticeCount()}}
+function updateNoticeCount(){var total=document.querySelectorAll('#noticeTable tbody tr').length;var hiddenCount=document.querySelectorAll('#noticeTable tbody tr[style*="display:none"]').length;var visible=total-hiddenCount;var el=document.getElementById('noticeLoadMore');if(!el)return;if(visible>=total){el.style.display='none'}else{el.textContent='스크롤하여 더 보기 ('+visible+' / '+total+')';el.style.display=''}}
 </script>
 
 </body>
