@@ -7,7 +7,7 @@
   <meta name="wfr-title"   content="배송상품 등록수정 화면">
   <meta name="wfr-domain"  content="product">
   <meta name="wfr-route"   content="/bo/products/delivery/form">
-  <meta name="wfr-version" content="2.1">
+  <meta name="wfr-version" content="2.2">
   <title>BO-PDM-044 — 배송상품 등록수정 화면 | 임직원 복지몰</title>
   <link rel="stylesheet" href="../../../../_wireframe/base.css">
   <style>
@@ -33,14 +33,7 @@
     /* 탭 콘텐츠 */
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-    /* 모드 탭 */
-    .mode-tabs { display: flex; gap: 0; margin-bottom: 12px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
-    .mode-tab { flex: 1; padding: 10px 16px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; border-right: 1px solid #e5e7eb; color: #6b7280; background: #f9fafb; transition: all 0.15s; }
-    .mode-tab:last-child { border-right: none; }
-    .mode-tab.active { background: #2563eb; color: #fff; }
-    .mode-tab:hover:not(.active) { background: #eef2ff; color: #4338ca; }
-    /* 콘텐츠 탭 disabled */
-    .wf-tab.tab-disabled { opacity: 0.4; pointer-events: none; cursor: not-allowed; }
+    /* (삭제: 모드 탭, 콘텐츠 탭 disabled — v2.2) */
     /* 디스크립션 탭별 콘텐츠 */
     .desc-content { display: none; }
     .desc-content.active { display: block; }
@@ -107,14 +100,8 @@
     .notice-actions { display: flex; gap: 4px; }
     /* 비활성 영역 */
     .disabled-area { opacity: 0.4; pointer-events: none; }
-    /* 프로모션 안내 */
-    .promo-notice { padding: 24px; text-align: center; color: #9ca3af; font-size: 13px; background: #f9fafb; border: 1px dashed #e5e7eb; border-radius: 8px; }
-    /* 순차 저장 진행 표시 */
-    .seq-progress { display: flex; gap: 4px; margin-bottom: 12px; padding: 10px 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 12px; color: #6b7280; align-items: center; }
-    .seq-dot { width: 8px; height: 8px; border-radius: 50%; background: #e5e7eb; }
-    .seq-dot.done { background: #22c55e; }
-    .seq-dot.current { background: #2563eb; }
-    .seq-label { margin-left: 2px; margin-right: 8px; }
+    /* (삭제: 프로모션 안내 — v2.2) */
+    /* (삭제: 순차 저장 진행 표시 — v2.2) */
   </style>
 </head>
 <body>
@@ -188,34 +175,15 @@
     <main class="wf-content" data-region="content">
       <h1>배송상품 등록/수정</h1>
 
-      <!-- 모드 전환 탭 -->
-      <div class="mode-tabs" data-component="BO-PDM-020" data-action="BO-PDM-030,031,032,033,034,03A">
-        <div class="mode-tab active" onclick="switchMode('register')">등록 모드</div>
-        <div class="mode-tab" onclick="switchMode('editReg')">수정(REGISTERING)</div>
-        <div class="mode-tab" onclick="switchMode('editApproved')">수정(APPROVED)</div>
-        <div class="mode-tab" onclick="switchMode('viewPending')">조회(PENDING)</div>
-      </div>
-
-      <!-- 순차 저장 진행 표시 (등록 모드 전용) -->
-      <div class="seq-progress" id="seqProgress">
-        <span class="seq-dot current"></span><span class="seq-label">기본정보</span>
-        <span class="seq-dot"></span><span class="seq-label">전시정보</span>
-        <span class="seq-dot"></span><span class="seq-label">판매정보</span>
-        <span class="seq-dot"></span><span class="seq-label">옵션/재고</span>
-        <span class="seq-dot"></span><span class="seq-label">배송정보</span>
-        <span class="seq-dot"></span><span class="seq-label">상세정보</span>
-        <span class="seq-dot"></span><span class="seq-label">고시</span>
-      </div>
-
-      <!-- 7개 콘텐츠 탭 -->
-      <div class="wf-tabs" id="contentTabs">
-        <div class="wf-tab active" onclick="switchTab044('basic')">기본정보</div>
-        <div class="wf-tab tab-disabled" onclick="switchTab044('display')">전시정보</div>
-        <div class="wf-tab tab-disabled" onclick="switchTab044('sales')">판매정보</div>
-        <div class="wf-tab tab-disabled" onclick="switchTab044('option')">옵션/재고</div>
-        <div class="wf-tab tab-disabled" onclick="switchTab044('delivery')">배송정보</div>
-        <div class="wf-tab tab-disabled" onclick="switchTab044('detail')">상세정보</div>
-        <div class="wf-tab tab-disabled" onclick="switchTab044('notice')">상품정보제공고시</div>
+      <!-- 7개 탭 -->
+      <div class="wf-tabs">
+        <div class="wf-tab active" onclick="switchTab('basic')">기본정보</div>
+        <div class="wf-tab" onclick="switchTab('display')">전시정보</div>
+        <div class="wf-tab" onclick="switchTab('sales')">판매정보</div>
+        <div class="wf-tab" onclick="switchTab('option')">옵션/재고</div>
+        <div class="wf-tab" onclick="switchTab('delivery')">배송정보</div>
+        <div class="wf-tab" onclick="switchTab('detail')">상세정보</div>
+        <div class="wf-tab" onclick="switchTab('notice')">상품정보제공고시</div>
       </div>
 
       <!-- ========== 탭 1: 기본정보 ========== -->
@@ -229,13 +197,13 @@
               <label>상품명 <span class="required">*</span></label>
               <input class="wf-input" type="text" placeholder="상품명을 입력하세요">
             </div>
-            <div class="form-group" id="fldProductCodeWrap" style="display:none;">
+            <div class="form-group">
               <label>상품코드</label>
-              <div class="readonly-field" id="fldProductCode">2026041000001</div>
+              <div class="readonly-field">2026041000001</div>
             </div>
-            <div class="form-group" id="fldRequestCodeWrap" style="display:none;">
+            <div class="form-group">
               <label>요청코드</label>
-              <div class="readonly-field" id="fldRequestCode">REQ-2026-0001</div>
+              <div class="readonly-field">REQ-2026-0001</div>
             </div>
             <div class="form-group">
               <label>판매사 상품코드</label>
@@ -373,47 +341,8 @@
           </div>
         </div>
 
-        <!-- 영역 1.4: 등록정보 (readonly) — 수정/조회 모드에서만 표시 -->
-        <div class="form-section form-section--readonly" id="regInfoSection" style="display:none;">
-          <h2>등록정보</h2>
-          <div class="form-grid">
-            <div class="form-group">
-              <label>승인상태</label>
-              <div class="readonly-field" id="regApprovalBadge"><span class="wf-badge wf-badge--registering">등록중</span></div>
-            </div>
-            <div class="form-group">
-              <label>반려사유</label>
-              <div class="readonly-field">-</div>
-            </div>
-            <div class="form-group">
-              <label>등록자</label>
-              <div class="readonly-field">홍길동</div>
-            </div>
-            <div class="form-group">
-              <label>등록일시</label>
-              <div class="readonly-field">2026-04-10 09:30</div>
-            </div>
-            <div class="form-group">
-              <label>승인자</label>
-              <div class="readonly-field">관리자</div>
-            </div>
-            <div class="form-group">
-              <label>승인일시</label>
-              <div class="readonly-field">2026-04-11 14:20</div>
-            </div>
-            <div class="form-group">
-              <label>수정자</label>
-              <div class="readonly-field">홍길동</div>
-            </div>
-            <div class="form-group">
-              <label>수정일시</label>
-              <div class="readonly-field">2026-04-12 11:05</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 영역 1.5: 판매상태 — 수정(APPROVED) 모드에서만 편집 가능 -->
-        <div class="form-section" id="saleStatusSection" style="display:none;">
+        <!-- 영역 1.4: 판매상태 -->
+        <div class="form-section">
           <h2>판매상태</h2>
           <div class="form-group" style="max-width:240px;">
             <label>판매상태 변경</label>
@@ -425,8 +354,8 @@
           </div>
         </div>
 
-        <!-- 영역 1.6: 승인 이력 — 수정/조회 모드에서만 표시 -->
-        <div class="form-section" id="approvalHistory044" style="display:none;">
+        <!-- 영역 1.5: 승인 이력 -->
+        <div class="form-section">
           <h2>승인 이력</h2>
           <table class="wf-table">
             <thead>
@@ -616,23 +545,8 @@
           </div>
         </div>
 
-        <!-- 영역 3.3~3.5: 프로모션 (등록/수정REG: 안내문구, 수정APR/조회: 테이블) -->
-        <div id="promoNotice044">
-          <div class="form-section form-section--readonly">
-            <h2>할인 프로모션 정보</h2>
-            <div class="promo-notice">승인완료 후 등록 가능합니다</div>
-          </div>
-          <div class="form-section form-section--readonly">
-            <h2>쿠폰 프로모션</h2>
-            <div class="promo-notice">승인완료 후 등록 가능합니다</div>
-          </div>
-          <div class="form-section form-section--readonly">
-            <h2>적립금 프로모션</h2>
-            <div class="promo-notice">승인완료 후 등록 가능합니다</div>
-          </div>
-        </div>
-
-        <div id="promoTables044" style="display:none;">
+        <!-- 영역 3.3~3.5: 프로모션 (readonly 테이블) -->
+        <div>
           <div class="form-section form-section--readonly">
             <h2>할인 프로모션 정보</h2>
             <p class="wf-text-sm wf-text-muted" style="margin-bottom:8px;">승인완료 후 프로모션관리에서 등록</p>
@@ -1051,35 +965,11 @@
         </div>
       </div>
 
-      <!-- ========== 하단 버튼 (모드별) ========== -->
-      <div class="form-buttons form-buttons--split" id="btn-register">
-        <div><button class="wf-btn">취소</button></div>
-        <div style="display:flex;gap:8px;">
-          <button class="wf-btn" data-action="BO-PDM-03A">임시저장</button>
-          <button class="wf-btn wf-btn--primary" data-action="BO-PDM-030">저장</button>
-          <button class="wf-btn wf-btn--primary" data-action="BO-PDM-033" disabled id="btnApprovalReq">승인요청</button>
-        </div>
-      </div>
-      <div class="form-buttons form-buttons--split" id="btn-editReg" style="display:none;">
-        <div style="display:flex;gap:8px;">
-          <button class="wf-btn">취소</button>
-          <button class="wf-btn wf-btn--danger" data-action="BO-PDM-032">삭제</button>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button class="wf-btn wf-btn--primary" data-action="BO-PDM-031">저장</button>
-          <button class="wf-btn wf-btn--primary" data-action="BO-PDM-033">승인요청</button>
-        </div>
-      </div>
-      <div class="form-buttons form-buttons--split" id="btn-editApproved" style="display:none;">
-        <div><button class="wf-btn">취소</button></div>
-        <div style="display:flex;gap:8px;">
-          <button class="wf-btn" onclick="openModal044('previewModal044')">미리보기</button>
-          <button class="wf-btn wf-btn--primary" data-action="BO-PDM-031">저장</button>
-        </div>
-      </div>
-      <div class="form-buttons form-buttons--split" id="btn-viewPending" style="display:none;">
-        <div><button class="wf-btn">취소</button></div>
-        <div><button class="wf-btn wf-btn--danger" data-action="BO-PDM-034">승인철회</button></div>
+      <!-- 하단 버튼 -->
+      <div class="form-buttons">
+        <button class="wf-btn" onclick="location.href='BO-PDM-040_배송상품-목록-화면.html'">취소</button>
+        <button class="wf-btn" onclick="openModal044('previewModal044')">미리보기</button>
+        <button class="wf-btn wf-btn--primary" onclick="openModal044('saveModal044')">저장</button>
       </div>
 
     </main>
@@ -1092,24 +982,14 @@
     <p><strong>Route:</strong> /bo/products/delivery/form</p>
     <hr style="margin:8px 0;">
 
-    <h4 style="font-size:13px;margin:8px 0 4px;">모드 전환 (4가지)</h4>
-    <ul style="font-size:11px;line-height:1.7;">
-      <li><strong>등록:</strong> 신규 상품 등록. 탭 순차 저장. 상품코드 미표시</li>
-      <li><strong>수정(REGISTERING):</strong> 미승인 상품 수정. 삭제 가능</li>
-      <li><strong>수정(APPROVED):</strong> 승인완료 상품 수정. 판매상태 변경 가능</li>
-      <li><strong>조회(PENDING):</strong> 승인대기 조회전용. 승인철회만 가능</li>
-    </ul>
-
-    <hr style="margin:8px 0;">
-
     <div id="desc-basic" class="desc-content active">
-      <h4 style="font-size:13px;margin:8px 0 4px;">기본정보 탭 — 6개 영역</h4>
+      <h4 style="font-size:13px;margin:8px 0 4px;">기본정보 탭 — 5개 영역</h4>
 
       <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.1 기본정보 등록</h4>
       <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
         <li><strong>상품명 *</strong> &mdash; input (full width). 필수, 최대 200자</li>
-        <li><strong>상품코드</strong> &mdash; readonly. 등록 모드: 미표시. 수정/조회: 13자리 자동</li>
-        <li><strong>요청코드</strong> &mdash; readonly. 등록 모드: 저장 후 표시</li>
+        <li><strong>상품코드</strong> &mdash; readonly. 13자리 자동</li>
+        <li><strong>요청코드</strong> &mdash; readonly</li>
         <li><strong>판매사 *</strong> &mdash; readonly + [조회] 팝업. 하위업체 연동</li>
         <li><strong>브랜드 *</strong> &mdash; readonly + [조회] 팝업</li>
         <li><strong>상품키워드</strong> &mdash; input + [등록하기]. 태그 형태. 최대 10개</li>
@@ -1121,14 +1001,11 @@
       <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.3 고객사 정보</h4>
       <p style="font-size:11px;margin:2px 0;">미등록/등록 라디오. "등록" 시 고객사 조회 팝업 활성</p>
 
-      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.4 등록정보 (readonly)</h4>
-      <p style="font-size:11px;margin:2px 0;">등록 모드: 숨김. 수정/조회: 승인상태, 반려사유, 등록자/일시, 승인자/일시, 수정자/일시</p>
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.4 판매상태</h4>
+      <p style="font-size:11px;margin:2px 0;">판매상태 변경 select (판매중/판매일시중지/판매종료)</p>
 
-      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.5 판매상태</h4>
-      <p style="font-size:11px;margin:2px 0;">등록/수정REG: 숨김. 수정APR: 편집 가능. 조회: disabled</p>
-
-      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.6 승인 이력</h4>
-      <p style="font-size:11px;margin:2px 0;">등록 모드: 숨김. 수정/조회: 테이블(No, 요청일, 처리일, 처리자, 상태, 비고)</p>
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.5 승인 이력</h4>
+      <p style="font-size:11px;margin:2px 0;">테이블(No, 요청일, 처리일, 처리자, 상태, 비고)</p>
     </div>
 
     <div id="desc-display" class="desc-content">
@@ -1192,16 +1069,11 @@
     </div>
 
     <hr style="margin:8px 0;">
-    <h4 style="font-size:13px;margin:8px 0 4px;">탭 순차 저장 (등록 모드)</h4>
-    <p style="font-size:11px;line-height:1.6;">기본정보 &rarr; 전시정보 &rarr; 판매정보 &rarr; 옵션/재고 &rarr; 배송정보 &rarr; 상세정보 &rarr; 상품정보제공고시 &rarr; 승인요청 활성화</p>
-
-    <hr style="margin:8px 0;">
-    <h4 style="font-size:13px;margin:8px 0 4px;">모드별 하단 버튼</h4>
+    <h4 style="font-size:13px;margin:8px 0 4px;">하단 공통</h4>
     <ul style="font-size:11px;line-height:1.7;">
-      <li><strong>등록:</strong> 취소 | 임시저장 · 저장 · 승인요청(비활성)</li>
-      <li><strong>수정(REG):</strong> 취소 · 삭제 | 저장 · 승인요청</li>
-      <li><strong>수정(APR):</strong> 취소 | 미리보기 · 저장</li>
-      <li><strong>조회(PND):</strong> 취소 | 승인철회</li>
+      <li><strong>취소:</strong> BO-PDM-040 목록 이동</li>
+      <li><strong>미리보기:</strong> placeholder 모달</li>
+      <li><strong>저장:</strong> 저장 확인 모달 (primary)</li>
     </ul>
 
     <hr style="margin:8px 0;">
@@ -1406,86 +1278,15 @@ document.querySelectorAll('.lnb-menu-item > a').forEach(function(btn) {
   });
 });
 
-/* ===== 현재 모드 상태 ===== */
-var currentMode = 'register';
-var tabOrder = ['basic','display','sales','option','delivery','detail','notice'];
-var tabUnlocked = { basic:true, display:false, sales:false, option:false, delivery:false, detail:false, notice:false };
-
-/* ===== 모드 전환 ===== */
-function switchMode(mode) {
-  currentMode = mode;
-  document.querySelectorAll('.mode-tab').forEach(function(t){ t.classList.remove('active'); });
+/* ===== 탭 전환 (046 동일) ===== */
+function switchTab(id) {
+  document.querySelectorAll('.wf-tab').forEach(function(t){ t.classList.remove('active'); });
   event.target.classList.add('active');
-  updateFieldsByMode(mode);
-  updateButtonsByMode(mode);
-  /* 등록 모드: 순차 잠금 / 기타: 모든 탭 활성 */
-  if (mode === 'register') {
-    tabUnlocked = { basic:true, display:false, sales:false, option:false, delivery:false, detail:false, notice:false };
-    document.getElementById('seqProgress').style.display = 'flex';
-  } else {
-    tabOrder.forEach(function(t){ tabUnlocked[t] = true; });
-    document.getElementById('seqProgress').style.display = 'none';
-  }
-  updateTabStates();
-  switchTab044('basic');
-}
-
-/* ===== 콘텐츠 탭 전환 ===== */
-function switchTab044(tabId) {
-  if (!tabUnlocked[tabId]) return;
-  document.querySelectorAll('#contentTabs .wf-tab').forEach(function(t){ t.classList.remove('active'); });
   document.querySelectorAll('.tab-content').forEach(function(c){ c.classList.remove('active'); });
-  var idx = tabOrder.indexOf(tabId);
-  document.querySelectorAll('#contentTabs .wf-tab')[idx].classList.add('active');
-  document.getElementById('tab-' + tabId).classList.add('active');
-  /* 디스크립션 패널 동기화 */
+  document.getElementById('tab-' + id).classList.add('active');
   document.querySelectorAll('.desc-content').forEach(function(d){ d.classList.remove('active'); });
-  var descEl = document.getElementById('desc-' + tabId);
-  if (descEl) descEl.classList.add('active');
-}
-
-/* ===== 탭 상태 갱신 ===== */
-function updateTabStates() {
-  var tabs = document.querySelectorAll('#contentTabs .wf-tab');
-  tabOrder.forEach(function(t, i) {
-    if (tabUnlocked[t]) { tabs[i].classList.remove('tab-disabled'); }
-    else { tabs[i].classList.add('tab-disabled'); }
-  });
-}
-
-/* ===== 모드별 버튼 전환 ===== */
-function updateButtonsByMode(mode) {
-  ['register','editReg','editApproved','viewPending'].forEach(function(m) {
-    document.getElementById('btn-' + m).style.display = (m === mode) ? 'flex' : 'none';
-  });
-}
-
-/* ===== 모드별 필드 상태 갱신 ===== */
-function updateFieldsByMode(mode) {
-  var isRegister = (mode === 'register');
-  var isEditReg = (mode === 'editReg');
-  var isEditApproved = (mode === 'editApproved');
-  var isViewPending = (mode === 'viewPending');
-  /* 상품코드/요청코드: 등록 모드 미표시 */
-  document.getElementById('fldProductCodeWrap').style.display = isRegister ? 'none' : 'flex';
-  document.getElementById('fldRequestCodeWrap').style.display = isRegister ? 'none' : 'flex';
-  /* 등록정보: 등록 모드 미표시 */
-  document.getElementById('regInfoSection').style.display = isRegister ? 'none' : 'block';
-  /* 판매상태: 수정(APPROVED)만 표시 */
-  document.getElementById('saleStatusSection').style.display = isEditApproved ? 'block' : 'none';
-  /* 승인 이력: 등록 숨김 */
-  document.getElementById('approvalHistory044').style.display = isRegister ? 'none' : 'block';
-  /* 프로모션: 등록/수정REG=안내, 수정APR/조회=테이블 */
-  document.getElementById('promoNotice044').style.display = (isRegister||isEditReg) ? 'block' : 'none';
-  document.getElementById('promoTables044').style.display = (isEditApproved||isViewPending) ? 'block' : 'none';
-  /* 등록정보 뱃지 */
-  var badges = { register:'', editReg:'<span class="wf-badge wf-badge--registering">등록중</span>', editApproved:'<span class="wf-badge wf-badge--approved">승인완료</span>', viewPending:'<span class="wf-badge wf-badge--pending">승인대기</span>' };
-  if (document.getElementById('regApprovalBadge')) document.getElementById('regApprovalBadge').innerHTML = badges[mode] || '';
-  /* 조회 모드: 모든 입력 비활성 */
-  document.querySelectorAll('.wf-content input,.wf-content select,.wf-content textarea').forEach(function(el) {
-    el.disabled = isViewPending;
-  });
-  if (isViewPending) document.getElementById('saleStatusSelect044').disabled = true;
+  var desc = document.getElementById('desc-' + id);
+  if (desc) desc.classList.add('active');
 }
 
 /* ===== 키워드 ===== */
