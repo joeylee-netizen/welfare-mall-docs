@@ -194,9 +194,17 @@
         <div class="form-section">
           <h2>기본정보</h2>
           <div class="form-grid">
+            <div class="form-group">
+              <label>외부연동 여부</label>
+              <div class="readonly-field">자동</div>
+              <p class="wf-text-sm wf-text-muted" style="margin-top:2px;">시스템 자동 설정값</p>
+            </div>
+            <div class="form-group">
+              <!-- 빈 셀: 그리드 정렬용 -->
+            </div>
             <div class="form-group full">
               <label>상품명 <span class="required">*</span></label>
-              <input class="wf-input" type="text" value="신라호텔 디럭스 숙박권">
+              <input class="wf-input" type="text" value="신라호텔 디럭스 숙박권" maxlength="50" placeholder="한글 기준 50자 이내 (100 bytes)">
             </div>
             <div class="form-group">
               <label>상품코드</label>
@@ -208,7 +216,7 @@
             </div>
             <div class="form-group full">
               <label>다국어 상품명</label>
-              <input class="wf-input" type="text" value="Shilla Hotel Deluxe Room Voucher" placeholder="영문 또는 다국어 상품명 입력">
+              <input class="wf-input" type="text" value="Shilla Hotel Deluxe Room Voucher" maxlength="100" placeholder="영문 또는 다국어 상품명 입력 (100 bytes)">
             </div>
             <div class="form-group">
               <label>판매사</label>
@@ -227,7 +235,7 @@
             <div class="form-group full">
               <label>상품키워드</label>
               <div class="input-with-btn">
-                <input class="wf-input" type="text" id="keywordInput" placeholder="키워드 입력">
+                <input class="wf-input" type="text" id="keywordInput" maxlength="10" placeholder="키워드 입력 (한글 10자/20 bytes, 최대 10개)">
                 <button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addKeyword()">등록하기</button>
               </div>
               <div class="keyword-tags" id="keywordTags">
@@ -261,12 +269,15 @@
             </div>
             <div class="form-group full">
               <label>유효기간 <span class="required">*</span></label>
-              <div class="date-range">
-                <input class="wf-input" type="date" value="2026-04-12">
-                <span class="separator">~</span>
-                <input class="wf-input" type="date" value="2027-04-12">
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <label class="checkbox-label"><input type="checkbox" id="validityNone" onchange="toggleValidityPeriod()"> 유효기간 없음</label>
+                <div class="date-range" id="validityDateRange">
+                  <input class="wf-input" type="date" value="2026-04-12" id="validityStart">
+                  <span class="separator">~</span>
+                  <input class="wf-input" type="date" value="2027-04-12" id="validityEnd">
+                </div>
               </div>
-              <p class="wf-text-sm wf-text-muted" style="margin-top:2px;">승인완료 후 수정불가</p>
+              <p class="wf-text-sm wf-text-muted" style="margin-top:2px;">승인완료 후 수정불가. "유효기간 없음" 체크 시 날짜 비활성</p>
             </div>
             <div class="form-group">
               <label>패스 타입</label>
@@ -431,41 +442,6 @@
               <option>판매종료</option>
             </select>
           </div>
-        </div>
-
-        <!-- 영역 6: 승인 이력 (기본정보 탭에서만 표시) -->
-        <div class="form-section">
-          <h2>승인 이력</h2>
-          <table class="wf-table">
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>요청일</th>
-                <th>처리일</th>
-                <th>처리자</th>
-                <th>처리상태</th>
-                <th>비고</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>2026-04-12</td>
-                <td>2026-04-13</td>
-                <td>관리자</td>
-                <td><span class="wf-badge wf-badge--approved">승인</span></td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>2026-04-10</td>
-                <td>2026-04-11</td>
-                <td>관리자</td>
-                <td><span class="wf-badge wf-badge--rejected">반려</span></td>
-                <td>유효기간 설정 오류</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
 
       </div>
@@ -782,8 +758,10 @@
         </div>
       </div>
 
-      <!-- ========== 탭 5: 발급정보 (편집 가능 폼 — 단일 영역) ========== -->
+      <!-- ========== 탭 5: 발급정보 (편집 가능 폼 — 2개 영역) ========== -->
       <div id="tab-issue" class="tab-content">
+
+        <!-- 영역 1: 발급정보 -->
         <div class="form-section">
           <h2>발급정보</h2>
           <div class="form-grid">
@@ -797,20 +775,28 @@
               <div class="readonly-field">무료</div>
               <p class="wf-text-sm wf-text-muted" style="margin-top:2px;">시스템값. 티켓상품 무료 고정</p>
             </div>
+          </div>
+        </div>
+
+        <!-- 영역 2: 교환/반품 정보 -->
+        <div class="form-section">
+          <h2>교환/반품 정보</h2>
+          <div class="form-grid">
             <div class="form-group full">
               <label>교환/반품 기간 <span class="required">*</span></label>
-              <textarea class="wf-input" rows="3" maxlength="1000" placeholder="교환/반품 기간 안내 입력 (최대 1000자)">구매 후 7일 이내 미사용 시 전액 환불 가능. 유효기간 경과 후에는 환불 불가.</textarea>
+              <textarea class="wf-input" rows="3" maxlength="1000" placeholder="한글 기준 500자 이내로 입력해주세요 (1,000 bytes)">구매 후 7일 이내 미사용 시 전액 환불 가능. 유효기간 경과 후에는 환불 불가.</textarea>
             </div>
             <div class="form-group full">
               <label>교환/반품 안내 <span class="required">*</span></label>
-              <textarea class="wf-input" rows="3" maxlength="1000" placeholder="교환/반품 안내 입력 (최대 1000자)">모바일티켓은 사용 전 고객센터(1588-0000)를 통해 환불 신청이 가능합니다. 부분 사용 시 잔여분에 대해서는 환불이 불가합니다.</textarea>
+              <textarea class="wf-input" rows="3" maxlength="1000" placeholder="한글 기준 500자 이내로 입력해주세요 (1,000 bytes)">모바일티켓은 사용 전 고객센터(1588-0000)를 통해 환불 신청이 가능합니다. 부분 사용 시 잔여분에 대해서는 환불이 불가합니다.</textarea>
             </div>
             <div class="form-group full">
               <label>교환/반품 불가 안내 <span class="required">*</span></label>
-              <textarea class="wf-input" rows="3" maxlength="1000" placeholder="교환/반품 불가 안내 입력 (최대 1000자)">유효기간 경과 후, 이미 사용된 티켓, 예약티켓 이용일 당일 취소 시 환불이 불가합니다.</textarea>
+              <textarea class="wf-input" rows="3" maxlength="1000" placeholder="한글 기준 500자 이내로 입력해주세요 (1,000 bytes)">유효기간 경과 후, 이미 사용된 티켓, 예약티켓 이용일 당일 취소 시 환불이 불가합니다.</textarea>
             </div>
           </div>
         </div>
+
       </div>
 
       <!-- ========== 탭 6: 상세정보 (편집 가능 폼 — 3개 영역) ========== -->
@@ -1023,35 +1009,40 @@
 
     <!-- ===== 탭별 디스크립션 ===== -->
     <div id="desc-basic" class="desc-content active">
-      <h4 style="font-size:13px;margin:8px 0 4px;">기본정보 탭 — 편집 가능 폼 (6개 영역)</h4>
+      <h4 style="font-size:13px;margin:8px 0 4px;">기본정보 탭 — 편집 가능 폼 (5개 영역)</h4>
 
       <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.1 기본정보</h4>
       <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>외부연동 여부</strong> &mdash; readonly. 시스템 자동 설정값</li>
         <li><strong>상품명 *</strong> &mdash; input text (full width)
-          <br>&bull; <em>검증:</em> 필수. 최대 200자. 특수문자 허용
+          <br>&bull; <em>검증:</em> 필수. 최대 100 bytes (한글 50자). 특수문자 허용
         </li>
         <li><strong>상품코드</strong> &mdash; readonly. 승인완료 시 자동 부여(13자리)</li>
-        <li><strong>판매사 상품코드</strong> &mdash; input text. 판매사 자체 관리 코드(선택)</li>
-        <li><strong>다국어 상품명</strong> &mdash; input text (full width). 영문/다국어(선택)</li>
+        <li><strong>판매사 상품코드</strong> &mdash; input number. 판매사 자체 관리 코드(선택)</li>
+        <li><strong>다국어 상품명</strong> &mdash; input text (full width). 최대 100 bytes. 영문/다국어(선택)</li>
         <li><strong>판매사</strong> &mdash; readonly input + [조회] 팝업
           <br>&bull; 팝업 선택 시 하위업체 select 자동 갱신
-          <br>&bull; <em>정책:</em> 승인완료 후 판매사 변경 불가
+          <br>&bull; <em>수정불가:</em> 승인완료 후 판매사 변경 불가
         </li>
         <li><strong>하위업체</strong> &mdash; select. 판매사 선택 후 활성화</li>
         <li><strong>상품키워드</strong> &mdash; input + [등록하기] &rarr; 태그(chip) 출력
-          <br>&bull; <em>정책:</em> 최대 10개. FO 검색 키워드로 활용
+          <br>&bull; <em>검증:</em> 개별 키워드 한글 10자/20 bytes. 최대 10개
+          <br>&bull; FO 검색 키워드로 활용
         </li>
       </ol>
 
       <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.1-A 티켓정보 (티켓 전용)</h4>
       <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
         <li><strong>상품유형 *</strong> &mdash; radio (일반티켓 / 예약티켓). 기본값: 일반티켓
-          <br>&bull; <em>정책:</em> 승인완료 후 수정불가
+          <br>&bull; <em>수정불가:</em> 승인완료 후 수정불가
         </li>
         <li><strong>티켓 타입 *</strong> &mdash; radio (모바일티켓 / 바우처). 승인완료 후 수정불가
           <br>&bull; 발급정보 탭의 발급방법 필드와 연동
         </li>
-        <li><strong>유효기간 *</strong> &mdash; date-range (시작 ~ 종료). 승인완료 후 수정불가</li>
+        <li><strong>유효기간 *</strong> &mdash; checkbox "유효기간 없음" + date-range (시작 ~ 종료)
+          <br>&bull; "유효기간 없음" 체크 시 날짜 비활성화
+          <br>&bull; 승인완료 후 수정불가
+        </li>
         <li><strong>패스 타입</strong> &mdash; select (1일권/시즌권/연간권 등). 승인완료 후 수정불가</li>
         <li><strong>취소 가능일</strong> &mdash; number input (일). 승인완료 후 수정불가</li>
         <li><strong>이용필수규칙</strong> &mdash; textarea. 승인완료 후 수정불가
@@ -1064,9 +1055,16 @@
         <li><strong>상품리뷰 등록</strong> &mdash; radio (가능/불가능). 기본값: 가능</li>
         <li><strong>Q&amp;A 등록</strong> &mdash; radio (가능/불가능). 기본값: 가능</li>
         <li><strong>선물하기</strong> &mdash; radio (가능/불가능). 기본값: 가능</li>
-        <li><strong>최소 구매수량</strong> &mdash; radio(사용안함/사용) + number input</li>
-        <li><strong>최대 구매수량</strong> &mdash; radio(사용안함/사용) + number input</li>
-        <li><strong>특가 구매수량</strong> &mdash; radio(사용안함/사용) + number input</li>
+        <li><strong>최소 구매수량</strong> &mdash; radio(사용안함/사용) + number input
+          <br>&bull; 1회당 구매 가능한 최소 수량
+        </li>
+        <li><strong>최대 구매수량</strong> &mdash; radio(사용안함/사용) + number input
+          <br>&bull; 1회당 구매 가능한 최대 수량
+        </li>
+        <li><strong>특가 구매수량</strong> &mdash; radio(사용안함/사용) + number input
+          <br>&bull; 판매기간 동안 구매 가능한 수량
+          <br>&bull; <em>연동:</em> "사용" 선택 시 최소/최대 구매수량 자동 "사용안함" 처리
+        </li>
       </ol>
 
       <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.3 고객사 정보</h4>
@@ -1078,7 +1076,7 @@
 
       <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.4 등록정보 (readonly)</h4>
       <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
-        <li><strong>승인상태</strong> &mdash; Badge 표시(승인완료/반려 등)</li>
+        <li><strong>승인상태</strong> &mdash; Badge 표시. 5종: 승인대기/승인요청/승인완료/반려/삭제</li>
         <li><strong>반려사유</strong> &mdash; 반려 시에만 값 표시, 정상이면 "-"</li>
         <li><strong>등록자 / 등록일시</strong> &mdash; 최초 등록 정보</li>
         <li><strong>승인자 / 승인일시</strong> &mdash; 최종 승인 정보</li>
@@ -1087,16 +1085,18 @@
 
       <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.5 판매상태</h4>
       <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
-        <li><strong>판매상태 변경</strong> &mdash; select (판매중/판매일시중지/판매종료)
+        <li><strong>판매상태 변경</strong> &mdash; select 5종
+          <br>&bull; 판매중 / 판매일시중지 / 판매종료 / 일시품절 / 품절
+          <br>&bull; <em>일시품절:</em> 재고 0인 상태가 6일 이상 지속 시 자동 전환
+          <br>&bull; <em>품절:</em> 재고 0인 상태가 7일 이상 지속 시 자동 전환
           <br>&bull; <em>전환 규칙:</em> BO-PDM-001 정책 준용
         </li>
       </ol>
 
-      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">1.6 승인 이력</h4>
+      <hr style="margin:8px 0;">
+      <h4 style="font-size:12px;margin:6px 0 4px;color:#dc2626;">저장 시 수정불가 항목</h4>
       <p style="font-size:11px;margin:2px 0;line-height:1.6;">
-        &bull; <em>표시 위치:</em> 기본정보 탭에서만 표시<br>
-        &bull; <em>테이블 열:</em> No | 요청일 | 처리일 | 처리자 | 처리상태(Badge) | 비고<br>
-        &bull; <em>정렬:</em> 최신순(요청일 desc)
+        &bull; 상품유형, 판매사 &mdash; 승인완료 후 변경 불가
       </p>
 
       <hr style="margin:8px 0;">
@@ -1118,6 +1118,12 @@
         </li>
         <li><strong>전시카테고리 *</strong> &mdash; 테이블 (대표 라디오 / 경로 / 삭제)</li>
       </ol>
+
+      <hr style="margin:8px 0;">
+      <h4 style="font-size:12px;margin:6px 0 4px;color:#dc2626;">저장 시 수정불가 항목</h4>
+      <p style="font-size:11px;margin:2px 0;line-height:1.6;">
+        &bull; 표준카테고리 &mdash; 승인완료 후 변경 불가
+      </p>
 
       <hr style="margin:8px 0;">
       <h4 style="font-size:12px;margin:6px 0 4px;color:#6b7280;">팝업 1개</h4>
@@ -1147,6 +1153,12 @@
       <p style="font-size:11px;margin:2px 0;line-height:1.6;">
         할인 프로모션 / 쿠폰 프로모션 / 적립금 프로모션 &mdash; 046과 동일 구조
       </p>
+
+      <hr style="margin:8px 0;">
+      <h4 style="font-size:12px;margin:6px 0 4px;color:#dc2626;">저장 시 수정불가 항목</h4>
+      <p style="font-size:11px;margin:2px 0;line-height:1.6;">
+        &bull; 판매가, 상품마진율 &mdash; 승인완료 후 변경 불가
+      </p>
     </div>
 
     <div id="desc-option" class="desc-content">
@@ -1164,10 +1176,17 @@
         <li>상품코드(readonly), 상품명(readonly), 옵션여부(readonly)</li>
         <li>옵션 속성 등록 테이블: 번호/옵션ID/옵션명/등록&middot;삭제</li>
       </ol>
+
+      <hr style="margin:8px 0;">
+      <h4 style="font-size:12px;margin:6px 0 4px;color:#dc2626;">저장 시 수정불가 항목</h4>
+      <p style="font-size:11px;margin:2px 0;line-height:1.6;">
+        &bull; 상품옵션 변경, 옵션등록 &mdash; 승인완료 후 변경 불가<br>
+        &bull; 재고수량, 옵션별 판매상태 &mdash; 수정 가능
+      </p>
     </div>
 
     <div id="desc-issue" class="desc-content">
-      <h4 style="font-size:13px;margin:8px 0 4px;">발급정보 탭 — 편집 가능 폼 (단일 영역)</h4>
+      <h4 style="font-size:13px;margin:8px 0 4px;">발급정보 탭 — 편집 가능 폼 (2개 영역)</h4>
 
       <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">5.1 발급정보</h4>
       <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
@@ -1177,16 +1196,29 @@
         <li><strong>배송비 정책</strong> &mdash; readonly. "무료" 고정
           <br>&bull; 티켓상품은 배송비 없음
         </li>
-        <li><strong>교환/반품 기간 *</strong> &mdash; textarea (최대 1000자)
+      </ol>
+
+      <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">5.2 교환/반품 정보</h4>
+      <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
+        <li><strong>교환/반품 기간 *</strong> &mdash; textarea
+          <br>&bull; <em>검증:</em> 필수. 한글 500자 / 1,000 bytes
           <br>&bull; FO 상품 상세에 노출
         </li>
-        <li><strong>교환/반품 안내 *</strong> &mdash; textarea (최대 1000자)
+        <li><strong>교환/반품 안내 *</strong> &mdash; textarea
+          <br>&bull; <em>검증:</em> 필수. 한글 500자 / 1,000 bytes
           <br>&bull; 환불 절차 및 조건 안내
         </li>
-        <li><strong>교환/반품 불가 안내 *</strong> &mdash; textarea (최대 1000자)
+        <li><strong>교환/반품 불가 안내 *</strong> &mdash; textarea
+          <br>&bull; <em>검증:</em> 필수. 한글 500자 / 1,000 bytes
           <br>&bull; 환불 불가 사유 안내
         </li>
       </ol>
+
+      <hr style="margin:8px 0;">
+      <h4 style="font-size:12px;margin:6px 0 4px;color:#dc2626;">저장 시 수정불가 항목</h4>
+      <p style="font-size:11px;margin:2px 0;line-height:1.6;">
+        &bull; 없음 (모든 필드 수정 가능)
+      </p>
     </div>
 
     <div id="desc-detail" class="desc-content">
@@ -1206,7 +1238,14 @@
       <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">6.3 상품상세설명</h4>
       <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
         <li>적용 범위: 전체/PC. PC HTML 편집기 + 모바일 편집기</li>
+        <li>"전체" 선택 시 PC 편집기 내용이 모바일에 자동 적용</li>
       </ol>
+
+      <hr style="margin:8px 0;">
+      <h4 style="font-size:12px;margin:6px 0 4px;color:#dc2626;">저장 시 수정불가 항목</h4>
+      <p style="font-size:11px;margin:2px 0;line-height:1.6;">
+        &bull; 없음 (모든 필드 수정 가능)
+      </p>
     </div>
 
     <div id="desc-notice" class="desc-content">
@@ -1214,16 +1253,27 @@
 
       <h4 style="font-size:12px;margin:10px 0 4px;color:#2563eb;">7.1 상품정보제공고시</h4>
       <ol style="font-size:11px;margin:0;padding-left:16px;line-height:1.7;">
-        <li><strong>입력방식 *</strong> &mdash; radio (연동/직접입력)</li>
+        <li><strong>입력방식 *</strong> &mdash; radio (연동/직접입력)
+          <br>&bull; 연동: 상품분류 선택 시 항목 자동 출력 (수정/추가/삭제 가능)
+          <br>&bull; 직접입력: 빈 상태에서 항목 직접 추가
+          <br>&bull; 분류 변경 시 항목 초기화
+        </li>
         <li><strong>상품분류 *</strong> &mdash; select (티켓 카테고리 기준)</li>
-        <li><strong>편집 테이블</strong> &mdash; 번호/항목/내용/+/- 버튼</li>
+        <li><strong>편집 테이블</strong> &mdash; 번호/항목/내용/+/- 버튼
+          <br>&bull; <em>검증:</em> 항목 최대 500 bytes, 내용 최대 1,000 bytes
+        </li>
       </ol>
+
+      <hr style="margin:8px 0;">
+      <h4 style="font-size:12px;margin:6px 0 4px;color:#dc2626;">저장 시 수정불가 항목</h4>
+      <p style="font-size:11px;margin:2px 0;line-height:1.6;">
+        &bull; 없음 (모든 필드 수정 가능)
+      </p>
     </div>
 
     <hr style="margin:8px 0;">
     <h4 style="font-size:13px;margin:8px 0 4px;">하단 공통</h4>
     <ul>
-      <li><strong>승인 이력:</strong> 기본정보 탭에서만 표시 (영역 1.6)</li>
       <li><strong>취소:</strong> BO-PDM-041 티켓상품 목록 이동</li>
       <li><strong>미리보기:</strong> placeholder 모달</li>
       <li><strong>저장:</strong> 저장 확인 모달 (primary)</li>
@@ -1413,6 +1463,7 @@ function toggleNoticeMode(){var v=document.querySelector('input[name="noticeMode
 function addNoticeRow(){var tb=document.querySelector('#noticeTable tbody'),n=tb.rows.length+1;var tr=document.createElement('tr');tr.innerHTML='<td><input class="wf-input" type="text" value="'+n+'" style="width:40px;text-align:center;"></td><td><input class="wf-input" type="text" value="" placeholder="항목명"></td><td><input class="wf-input" type="text" value="" placeholder="내용 입력"></td><td><div class="notice-actions"><button class="wf-btn wf-btn--sm wf-btn--primary" onclick="addNoticeRow()">+</button><button class="wf-btn wf-btn--sm" onclick="removeNoticeRow(this)">-</button></div></td>';tb.appendChild(tr)}
 function removeNoticeRow(el){var tr=el.closest('tr'),tb=tr.parentElement;if(tb.rows.length>1)tr.remove()}
 function toggleTicketType(){var v=document.querySelector('input[name="ticketProductType"]:checked').value}
+function toggleValidityPeriod(){var c=document.getElementById('validityNone');document.getElementById('validityStart').disabled=c.checked;document.getElementById('validityEnd').disabled=c.checked}
 </script>
 
 </body>
