@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="wfr-id"      content="BO-CLM-041">
+  <meta name="wfr-title"   content="주문취소 목록 화면">
+  <meta name="wfr-domain"  content="claim">
+  <meta name="wfr-route"   content="/bo/claim/delivery/cancel/list">
+  <meta name="wfr-version" content="1.0">
+  <title>BO-CLM-041 — 주문취소 목록 화면 | 임직원 복지몰</title>
+  <link rel="stylesheet" href="../../../../_wireframe/base.css">
+  <style>
+    /* 상태 badge */
+    .wf-badge--cancel-req   { background: #dbeafe; color: #1d4ed8; }
+    .wf-badge--sale-cancel  { background: #e0e7ff; color: #4338ca; }
+    .wf-badge--refund-req   { background: #ede9fe; color: #6d28d9; }
+    .wf-badge--refunded     { background: #dcfce7; color: #15803d; }
+    .wf-badge--refund-fail  { background: #fee2e2; color: #dc2626; }
+    .wf-badge--withdrawn    { background: #ffedd5; color: #c2410c; }
+    .wf-badge--liability-b  { background: #f3f4f6; color: #4b5563; }
+    .wf-badge--liability-s  { background: #fee2e2; color: #dc2626; }
+    .wf-badge--fo-claimed   { background: #dbeafe; color: #1d4ed8; }
+    .wf-badge--fo-canceled  { background: #ffedd5; color: #c2410c; }
+
+    /* 필터 */
+    .filter-grid { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 12px; background: #fafbfc; border: 1px solid #d0d0d0; border-radius: 8px; overflow: hidden; }
+    .filter-grid th { background: #f0f1f3; font-weight: 600; font-size: 13px; color: #555; padding: 10px 14px; border-bottom: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0; text-align: left; white-space: nowrap; width: 130px; vertical-align: middle; }
+    .filter-grid td { padding: 8px 12px; border-bottom: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0; vertical-align: middle; }
+    .filter-grid tr:last-child th, .filter-grid tr:last-child td { border-bottom: none; }
+    .filter-grid td:last-child { border-right: none; }
+    .filter-grid .wf-select, .filter-grid .wf-input { padding: 6px 10px; font-size: 13px; }
+    .filter-grid label.cb-label, .filter-grid label.radio-label { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; margin-right: 10px; cursor: pointer; white-space: nowrap; }
+    .filter-actions { text-align: center; margin-bottom: 16px; }
+    .filter-disabled { opacity: 0.4; pointer-events: none; }
+
+    /* 테이블 */
+    .table-scroll-wrap { overflow-x: auto; overflow-y: auto; max-height: 520px; border: 1px solid #d0d0d0; border-radius: 8px; }
+    .table-scroll-wrap .wf-table { min-width: 2900px; margin: 0; border-collapse: separate; border-spacing: 0; }
+    .table-scroll-wrap .wf-table th { border-bottom: 2px solid #d0d0d0; border-right: 1px solid #d0d0d0; text-align: center; position: sticky; top: 0; z-index: 2; background: #f7f8fa; }
+    .table-scroll-wrap .wf-table td { border-bottom: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0; }
+    .table-scroll-wrap .wf-table th:last-child, .table-scroll-wrap .wf-table td:last-child { border-right: none; }
+    .table-scroll-wrap .wf-table tr:last-child td { border-bottom: none; }
+    .table-scroll-wrap .wf-table th, .table-scroll-wrap .wf-table td { font-size: 13px; padding: 10px; white-space: nowrap; text-align: center; }
+    .table-scroll-wrap .wf-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+    /* 긴급 행 */
+    .row-urgent { background: #fff7ed !important; }
+    .row-urgent td:first-child::before { content: "🚨 "; }
+
+    /* 툴바 */
+    .toolbar-wrap { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding: 8px 0; }
+    .toolbar-left { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #64748b; }
+    .toolbar-right { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .toolbar-right .wf-btn--danger { background: #ef4444; color: #fff; }
+    .toolbar-right .wf-btn--warn { background: #f59e0b; color: #fff; }
+
+    /* 모달 */
+    .wf-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1100; align-items: center; justify-content: center; }
+    .wf-modal-overlay.show { display: flex; }
+    .wf-modal { background: #fff; border-radius: 12px; padding: 24px; width: 520px; max-width: 90vw; }
+    .wf-modal h3 { font-size: 16px; margin-bottom: 12px; }
+    .wf-modal p { font-size: 13px; color: #555; margin-bottom: 10px; line-height: 1.5; }
+    .wf-modal textarea { width: 100%; min-height: 80px; padding: 8px; font-size: 13px; border: 1px solid #d0d0d0; border-radius: 6px; resize: vertical; box-sizing: border-box; }
+    .wf-modal .notice-template { margin: 10px 0; font-size: 12px; }
+    .wf-modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+
+    /* 디스크립션 번호 마커 */
+    .desc-num { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 4px; background: #e74c3c; color: #fff; border-radius: 9px; font-size: 9px; font-weight: 700; line-height: 1; vertical-align: middle; flex-shrink: 0; }
+    .filter-grid th .desc-num { margin-right: 4px; }
+
+    /* 디스크립션 패널 */
+    .spec-desc-panel .desc-block { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #ffe58f; }
+    .spec-desc-panel .desc-block:last-child { border-bottom: none; margin-bottom: 0; }
+    .spec-desc-panel .desc-title { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #333; }
+    .spec-desc-panel .desc-title .desc-num { min-width: 20px; height: 20px; font-size: 10px; }
+    .spec-desc-panel .desc-sub { font-size: 11px; color: #666; margin: 4px 0 2px 26px; }
+    .spec-desc-panel .desc-block ul { font-size: 11px; margin: 2px 0 4px 26px; padding-left: 14px; }
+    .spec-desc-panel .desc-block li { margin-bottom: 2px; color: #444; }
+    .spec-desc-panel .desc-block .policy { background: #fff8e1; border-left: 3px solid #f59e0b; padding: 4px 8px; margin: 4px 0 4px 26px; font-size: 11px; color: #92400e; }
+    .spec-desc-panel .desc-col-table { width: 100%; font-size: 10px; border-collapse: collapse; margin: 6px 0; }
+    .spec-desc-panel .desc-col-table th { background: #f5f5f5; border: 1px solid #ddd; padding: 3px 5px; text-align: left; font-weight: 600; }
+    .spec-desc-panel .desc-col-table td { border: 1px solid #ddd; padding: 3px 5px; }
+  </style>
+</head>
+<body>
+
+<div class="spec-layout">
+  <!-- ════════════ 좌측: 와이어프레임 ════════════ -->
+  <div class="wf-layout">
+
+    <header class="wf-gnb" data-region="gnb">
+      <span class="gnb-logo">임직원 복지몰</span>
+      <div class="gnb-tabs">
+        <a class="gnb-tab gnb-tab--home" title="홈">&#x1F3E0;</a>
+        <span class="gnb-tab gnb-tab--active">주문취소 목록 <button class="tab-close">&times;</button></span>
+      </div>
+      <span class="wf-ml-auto wf-text-sm">홍길동님 &#x2699; 로그아웃</span>
+    </header>
+
+    <aside class="wf-icon-strip" data-region="icon-strip">
+      <button title="메뉴 토글" onclick="toggleLnb()">&#x2630;</button>
+      <button title="즐겨찾기">&#x2606;</button>
+      <button title="문서">&#x1F4CB;</button>
+      <button title="최근">&#x1F550;</button>
+    </aside>
+
+    <aside class="wf-lnb" data-region="lnb">
+      <div class="lnb-user">
+        <div class="lnb-user-name">홍길동 &#x2699;</div>
+        <div class="lnb-user-email">hong@company.co.kr &middot; 로그아웃</div>
+        <button class="lnb-close" onclick="toggleLnb()">&times;</button>
+      </div>
+      <div class="lnb-toggle-bar">
+        <span>전체메뉴보기</span>
+        <label class="lnb-switch"><input type="checkbox"><span class="slider"></span></label>
+        <span>메뉴필터기능</span>
+      </div>
+      <nav><ul>
+        <li><a href="#"><span class="menu-icon">&#x1F4CA;</span> 대시보드</a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F4E6;</span><span>상품 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F69A;</span><span>주문배송 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item open"><a href="#"><span class="menu-icon">&#x1F4AC;</span><span>클레임관리</span><span class="arrow">&#x25B8;</span></a>
+          <ul class="lnb-submenu">
+            <li class="lnb-sub-header">배송상품 클레임</li>
+            <li><a href="BO-CLM-040_배송상품-클레임-목록-화면.html">배송상품 클레임 목록</a></li>
+            <li><a href="#" class="active">주문취소 목록</a></li>
+            <li><a href="BO-CLM-043_반품-목록-화면.html">반품 목록</a></li>
+            <li><a href="BO-CLM-045_교환-목록-화면.html">교환 목록</a></li>
+          </ul>
+        </li>
+      </ul></nav>
+    </aside>
+
+    <main class="wf-content" data-region="content">
+      <h1>주문취소 목록</h1>
+
+      <section data-component="BO-CLM-021" data-title="주문취소 목록" data-action="BO-CLM-031,035,036,037,038">
+
+        <!-- ===== 검색 필터 ===== -->
+        <table class="filter-grid" id="filterGrid">
+          <colgroup>
+            <col style="width:14%;">
+            <col style="width:36%;">
+            <col style="width:14%;">
+            <col style="width:36%;">
+          </colgroup>
+          <tr class="filter-row" data-filter="1">
+            <th><span class="desc-num">1</span>기간</th>
+            <td colspan="3">
+              <select class="wf-select" style="width:130px;">
+                <option>클레임신청일</option><option>상태변경일</option><option>환불완료일</option>
+              </select>
+              <input class="wf-input" type="date" value="2026-04-14" style="width:140px">
+              <span style="margin:0 4px;">~</span>
+              <input class="wf-input" type="date" value="2026-04-21" style="width:140px">
+              <span style="margin-left:12px;">
+                <label class="radio-label"><input type="radio" name="q-date"> 오늘</label>
+                <label class="radio-label"><input type="radio" name="q-date" checked> 최근 7일</label>
+                <label class="radio-label"><input type="radio" name="q-date"> 1개월</label>
+                <label class="radio-label"><input type="radio" name="q-date"> 3개월</label>
+                <label class="radio-label"><input type="radio" name="q-date"> 1년</label>
+              </span>
+            </td>
+          </tr>
+          <tr class="filter-row" data-filter="2-3">
+            <th><span class="desc-num">2</span>하위 유형</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> 주문취소(사용자)</label>
+              <label class="cb-label"><input type="checkbox"> 판매취소(관리자)</label>
+            </td>
+            <th><span class="desc-num">3</span>FO 상태</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> 주문취소</label>
+              <label class="cb-label"><input type="checkbox"> 주문취소 철회</label>
+            </td>
+          </tr>
+          <tr class="filter-row" data-filter="4">
+            <th><span class="desc-num">4</span>BO 상태</th>
+            <td colspan="3">
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> 주문취소 신청</label>
+              <label class="cb-label"><input type="checkbox"> 판매취소 신청</label>
+              <label class="cb-label"><input type="checkbox"> 환불요청 완료</label>
+              <label class="cb-label"><input type="checkbox"> 환불완료</label>
+              <label class="cb-label"><input type="checkbox"> 환불실패</label>
+              <label class="cb-label"><input type="checkbox"> 주문취소 철회</label>
+            </td>
+          </tr>
+          <tr class="filter-row" data-filter="5-6">
+            <th><span class="desc-num">5</span>처리 채널</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> FO</label>
+              <label class="cb-label"><input type="checkbox"> BO_PROXY</label>
+              <label class="cb-label"><input type="checkbox"> SYSTEM</label>
+            </td>
+            <th><span class="desc-num">6</span>접수 채널</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> FO</label>
+              <label class="cb-label"><input type="checkbox"> BO_PROXY</label>
+              <label class="cb-label"><input type="checkbox"> ADMIN</label>
+            </td>
+          </tr>
+          <tr class="filter-row" data-filter="7-8">
+            <th><span class="desc-num">7</span>승인 필요</th>
+            <td>
+              <label class="radio-label"><input type="radio" name="q-approval" checked> 전체</label>
+              <label class="radio-label"><input type="radio" name="q-approval"> Yes</label>
+              <label class="radio-label"><input type="radio" name="q-approval"> No</label>
+            </td>
+            <th><span class="desc-num">8</span>귀책</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> 구매자</label>
+              <label class="cb-label"><input type="checkbox"> 판매사</label>
+            </td>
+          </tr>
+          <tr class="filter-row" data-filter="9-10">
+            <th><span class="desc-num">9</span>사유</th>
+            <td>
+              <select class="wf-select" style="width:220px">
+                <option>전체</option>
+                <option>단순변심</option>
+                <option>가격/프로모션 비교</option>
+                <option>배송지연</option>
+                <option>상품 품절</option>
+                <option>기타</option>
+              </select>
+            </td>
+            <th><span class="desc-num">10</span>판매사</th>
+            <td>
+              <input class="wf-input" type="text" placeholder="판매사 선택" readonly style="width:160px">
+              <button class="wf-btn wf-btn--sm">조회</button>
+            </td>
+          </tr>
+          <tr class="filter-row" data-filter="11-12">
+            <th><span class="desc-num">11</span>고객사</th>
+            <td>
+              <select class="wf-select"><option>전체</option><option>(주)예시컴퍼니</option></select>
+            </td>
+            <th><span class="desc-num">12</span>환불 수단</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> 카드</label>
+              <label class="cb-label"><input type="checkbox"> 계좌이체</label>
+              <label class="cb-label"><input type="checkbox"> 복지포인트</label>
+            </td>
+          </tr>
+          <tr data-filter="13">
+            <th><span class="desc-num">13</span>검색어</th>
+            <td colspan="3">
+              <select class="wf-select" id="keywordType" style="width:130px;" onchange="onKeywordTypeChange()">
+                <option value="none">사용안함</option>
+                <option value="claim_code">클레임코드</option>
+                <option value="order_id">주문번호</option>
+                <option value="product_name">상품명</option>
+                <option value="buyer_name">구매자명</option>
+              </select>
+              <input class="wf-input" type="text" placeholder="검색어 입력 (콤마 구분 복수 검색)" style="width:400px">
+            </td>
+          </tr>
+        </table>
+        <div class="filter-actions">
+          <span class="desc-num" style="margin-right:6px;">14</span>
+          <button class="wf-btn" onclick="resetFilters()">초기화</button>
+          <button class="wf-btn wf-btn--primary" data-action="BO-CLM-031" data-trigger="click">조회</button>
+        </div>
+
+        <!-- ===== 상단 툴바 (일괄 처리) ===== -->
+        <div class="toolbar-wrap">
+          <div class="toolbar-left">
+            <span class="desc-num">15</span>
+            <span>조회결과 <strong>47</strong>건</span>
+            <span>|</span>
+            <span>선택 <strong id="selectedCount">0</strong>건</span>
+          </div>
+          <div class="toolbar-right">
+            <button class="wf-btn wf-btn--primary wf-btn--sm" id="btnBatchApprove" onclick="openModal('approve')" disabled data-action="BO-CLM-035">일괄 승인</button>
+            <button class="wf-btn wf-btn--danger wf-btn--sm" id="btnBatchReject" onclick="openModal('reject')" disabled data-action="BO-CLM-036">일괄 반려</button>
+            <button class="wf-btn wf-btn--warn wf-btn--sm" id="btnBatchRetry" onclick="openModal('retry')" disabled data-action="BO-CLM-038">일괄 환불재전송</button>
+            <select class="wf-select"><option>20건</option><option>50건</option><option>100건</option></select>
+            <button class="wf-btn">엑셀 다운로드</button>
+          </div>
+        </div>
+
+        <!-- ===== 목록 테이블 (26컬럼) ===== -->
+        <div style="margin-bottom:4px;"><span class="desc-num">16</span> <span style="font-size:11px;color:#999;">목록 테이블 (26컬럼, 가로·세로 스크롤, 긴급 행 강조)</span></div>
+        <div class="table-scroll-wrap">
+          <table class="wf-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" onclick="toggleAll(this)"></th>
+                <th>No</th>
+                <th>긴급</th>
+                <th>클레임코드</th>
+                <th>하위유형</th>
+                <th>FO상태</th>
+                <th>BO상태</th>
+                <th>처리채널</th>
+                <th>접수채널</th>
+                <th>주문번호</th>
+                <th>출고지</th>
+                <th>고객사</th>
+                <th>구매자</th>
+                <th>판매사</th>
+                <th>대표 상품명</th>
+                <th>수량</th>
+                <th>귀책</th>
+                <th>사유</th>
+                <th>환불총액</th>
+                <th>PG환불</th>
+                <th>포인트복원</th>
+                <th>신청일시</th>
+                <th>상태변경일</th>
+                <th>환불완료일</th>
+                <th>승인/반려</th>
+                <th>환불재전송</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 샘플 1: 긴급 행 (상품준비중 + 승인대기) -->
+              <tr class="row-urgent">
+                <td><input type="checkbox" class="row-cb" onclick="updateToolbar()"></td>
+                <td>1</td>
+                <td>⚠️</td>
+                <td><a href="BO-CLM-042_주문취소-상세-화면.html" target="_blank">CLM20260421000127</a></td>
+                <td>주문취소(사용자)</td>
+                <td><span class="wf-badge wf-badge--fo-claimed">주문취소</span></td>
+                <td><span class="wf-badge wf-badge--cancel-req">주문취소 신청</span></td>
+                <td>BO_PROXY</td>
+                <td>BO_PROXY</td>
+                <td><a href="#">ORD20260421008</a></td>
+                <td>서울창고</td>
+                <td>(주)예시컴퍼니</td>
+                <td><a href="#">user001(홍길동)</a></td>
+                <td><a href="#">V0101(판매사A)</a></td>
+                <td>무선 이어폰 외 1건</td>
+                <td>2</td>
+                <td><span class="wf-badge wf-badge--liability-b">구매자</span></td>
+                <td>단순변심</td>
+                <td class="num">89,000</td>
+                <td class="num">79,000</td>
+                <td class="num">10,000</td>
+                <td>2026.04.21 14:22</td>
+                <td>2026.04.21 14:22</td>
+                <td>—</td>
+                <td>
+                  <button class="wf-btn wf-btn--sm wf-btn--primary" onclick="openModal('approve-single')">승인</button>
+                  <button class="wf-btn wf-btn--sm wf-btn--danger" onclick="openModal('reject-single')">반려</button>
+                </td>
+                <td>—</td>
+              </tr>
+              <!-- 샘플 2: 환불완료 (판매취소) -->
+              <tr>
+                <td><input type="checkbox" class="row-cb" onclick="updateToolbar()"></td>
+                <td>2</td>
+                <td>—</td>
+                <td><a href="BO-CLM-042_주문취소-상세-화면.html" target="_blank">CLM20260421000126</a></td>
+                <td>판매취소(관리자)</td>
+                <td><span class="wf-badge wf-badge--fo-claimed">주문취소</span></td>
+                <td><span class="wf-badge wf-badge--refunded">환불완료</span></td>
+                <td>SYSTEM</td>
+                <td>ADMIN</td>
+                <td><a href="#">ORD20260421002</a></td>
+                <td>부산창고</td>
+                <td>(주)예시컴퍼니</td>
+                <td><a href="#">user042(김철수)</a></td>
+                <td><a href="#">V0202(판매사B)</a></td>
+                <td>블루투스 스피커</td>
+                <td>1</td>
+                <td><span class="wf-badge wf-badge--liability-s">판매사</span></td>
+                <td>상품 품절</td>
+                <td class="num">45,000</td>
+                <td class="num">45,000</td>
+                <td class="num">0</td>
+                <td>2026.04.21 09:12</td>
+                <td>2026.04.21 09:15</td>
+                <td>2026.04.21 09:15</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <!-- 샘플 3: 환불실패 -->
+              <tr>
+                <td><input type="checkbox" class="row-cb" onclick="updateToolbar()"></td>
+                <td>3</td>
+                <td>—</td>
+                <td><a href="BO-CLM-042_주문취소-상세-화면.html" target="_blank">CLM20260420000084</a></td>
+                <td>주문취소(사용자)</td>
+                <td><span class="wf-badge wf-badge--fo-claimed">주문취소</span></td>
+                <td><span class="wf-badge wf-badge--refund-fail">환불실패</span></td>
+                <td>SYSTEM</td>
+                <td>FO</td>
+                <td><a href="#">ORD20260420105</a></td>
+                <td>서울창고</td>
+                <td>㈜다른회사</td>
+                <td><a href="#">user112(이영희)</a></td>
+                <td><a href="#">V0101(판매사A)</a></td>
+                <td>케이블 3종 세트</td>
+                <td>3</td>
+                <td><span class="wf-badge wf-badge--liability-b">구매자</span></td>
+                <td>단순변심</td>
+                <td class="num">24,900</td>
+                <td class="num">15,000</td>
+                <td class="num">9,900</td>
+                <td>2026.04.20 18:34</td>
+                <td>2026.04.21 00:30</td>
+                <td>—</td>
+                <td>—</td>
+                <td>
+                  <button class="wf-btn wf-btn--sm wf-btn--warn" onclick="openModal('retry-single')">재전송</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="wf-pagination">
+          <button class="wf-pagination-btn">&laquo;</button>
+          <button class="wf-pagination-btn active">1</button>
+          <button class="wf-pagination-btn">2</button>
+          <button class="wf-pagination-btn">3</button>
+          <button class="wf-pagination-btn">&raquo;</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ════════════ 우측: 디스크립션 패널 ════════════ -->
+  <div class="spec-desc-panel">
+    <h3>BO-CLM-041 — 주문취소 목록 화면 v1.0</h3>
+    <p><strong>메뉴 경로:</strong> 클레임관리 &gt; 주문취소 목록</p>
+    <p><strong>Route:</strong> /bo/claim/delivery/cancel/list</p>
+    <hr style="margin:8px 0;">
+
+    <!-- 필터 영역 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">1</span> 기간</div>
+      <ul>
+        <li>기간유형: <strong>클레임신청일(기본)</strong> / 상태변경일 / 환불완료일</li>
+        <li>퀵선택: 오늘 / 최근7일(기본) / 1개월 / 3개월 / 1년</li>
+      </ul>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">2</span> 하위 유형</div>
+      <ul><li>체크박스: 전체(기본) / 주문취소(사용자) / 판매취소(관리자)</li></ul>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">3</span> FO 상태</div>
+      <ul><li>체크박스: 전체(기본) / 주문취소 / 주문취소 철회</li></ul>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">4</span> BO 상태</div>
+      <ul><li>체크박스: 전체(기본) / 주문취소 신청 / 판매취소 신청 / 환불요청 완료 / 환불완료 / 환불실패 / 주문취소 철회</li></ul>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">5</span> 처리 채널</div>
+      <ul><li>체크박스: 전체(기본) / FO / BO_PROXY / SYSTEM</li></ul>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">6</span> 접수 채널</div>
+      <ul><li>체크박스: 전체(기본) / FO / BO_PROXY / ADMIN</li></ul>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">7</span> 승인 필요 여부</div>
+      <ul>
+        <li>라디오: <strong>전체(기본)</strong> / Yes(대기) / No</li>
+        <li>상품준비중 단계 수기 승인 대기 건 필터</li>
+      </ul>
+      <div class="policy">긴급 처리 대상 일괄 조회용</div>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">8</span> 귀책</div>
+      <ul><li>체크박스: 전체(기본) / 구매자 / 판매사</li></ul>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">9</span> 사유</div>
+      <ul><li>셀렉트: 전체(기본) / 단순변심 / 가격비교 / 배송지연 / 상품 품절 / 기타</li></ul>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">10</span> 판매사</div>
+      <ul><li>조회 팝업으로 판매사 검색·선택</li></ul>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">11</span> 고객사</div>
+      <ul><li>셀렉트: 관리자 권한 범위 내 고객사 목록 (Default 전체)</li></ul>
+      <div class="policy">멀티태넌트 격리: 권한 외 고객사 자동 제외</div>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">12</span> 환불 수단</div>
+      <ul><li>체크박스: 전체(기본) / 카드 / 계좌이체 / 복지포인트</li></ul>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">13</span> 검색어</div>
+      <ul>
+        <li>셀렉트: <strong>사용안함(기본)</strong> / 클레임코드 / 주문번호 / 상품명 / 구매자명</li>
+        <li>콤마 구분 복수 검색 가능</li>
+        <li>"사용안함" 외 선택 시 1~12번 필터 비활성화</li>
+      </ul>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">14</span> 조회 버튼</div>
+      <ul>
+        <li><strong>[초기화]:</strong> 검색 조건 초기화 + 화면 새로고침</li>
+        <li><strong>[조회]:</strong> 설정 조건으로 재조회 (API: BO-CLM-031)</li>
+      </ul>
+    </div>
+
+    <hr style="margin:8px 0;">
+    <!-- 상단 툴바 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">15</span> 상단 툴바 (일괄 처리)</div>
+      <ul>
+        <li>조회결과·선택 건수 표시</li>
+        <li><strong>[일괄 승인]</strong> — 선택 전원 <code>CANCEL_REQUESTED + approval_required=Yes</code>일 때만 활성 (BO-CLM-035 반복 호출)</li>
+        <li><strong>[일괄 반려]</strong> — 동일 조건 활성. 반려사유 모달 → BO-CLM-036 반복 호출</li>
+        <li><strong>[일괄 환불재전송]</strong> — 선택 전원 <code>REFUND_FAILED</code>일 때만 활성 (BO-CLM-038)</li>
+        <li><strong>[엑셀 다운로드]</strong> — 항상 활성 (최대 10,000건)</li>
+        <li>출력건수: <strong>20건(기본)</strong> / 50건 / 100건</li>
+      </ul>
+      <div class="policy">일괄 처리 시 각 건 개별 호출 → 집계 응답을 토스트로 "N건 성공, M건 실패" 요약</div>
+    </div>
+
+    <hr style="margin:8px 0;">
+    <!-- 테이블 -->
+    <div class="desc-block">
+      <div class="desc-title"><span class="desc-num">16</span> 목록 테이블 (26컬럼)</div>
+      <table class="desc-col-table">
+        <thead><tr><th>#</th><th>컬럼명</th><th>UI유형</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>체크박스</td><td>checkbox</td><td>전체/개별 선택, 일괄 대상</td></tr>
+          <tr><td>2</td><td>No</td><td>number</td><td>행 번호</td></tr>
+          <tr><td>3</td><td>긴급</td><td>icon</td><td>⚠️ 표시 + 행 배경 주황 (CANCEL_REQUESTED + 승인필요)</td></tr>
+          <tr><td>4</td><td>클레임코드</td><td><strong>링크</strong></td><td>클릭 → BO-CLM-042 상세 모달</td></tr>
+          <tr><td>5</td><td>하위유형</td><td>텍스트</td><td>주문취소(사용자)/판매취소(관리자)</td></tr>
+          <tr><td>6</td><td>FO상태</td><td>Badge</td><td>FO 노출 상태</td></tr>
+          <tr><td>7</td><td>BO상태</td><td>Badge</td><td>BO 세부 상태</td></tr>
+          <tr><td>8</td><td>처리채널</td><td>텍스트</td><td>FO/BO_PROXY/SYSTEM</td></tr>
+          <tr><td>9</td><td>접수채널</td><td>텍스트</td><td>FO/BO_PROXY/ADMIN</td></tr>
+          <tr><td>10</td><td>주문번호</td><td><strong>링크</strong></td><td>클릭 → 주문상세 새 탭</td></tr>
+          <tr><td>11</td><td>출고지</td><td>텍스트</td><td>출고지명</td></tr>
+          <tr><td>12</td><td>고객사</td><td>텍스트</td><td>멀티태넌트</td></tr>
+          <tr><td>13</td><td>구매자</td><td><strong>링크</strong></td><td>클릭 → 회원 상세 팝업</td></tr>
+          <tr><td>14</td><td>판매사</td><td><strong>링크</strong></td><td>클릭 → 판매사 정보 팝업</td></tr>
+          <tr><td>15</td><td>대표 상품명</td><td>텍스트</td><td>"상품명 외 N건" 형식</td></tr>
+          <tr><td>16</td><td>수량</td><td>number</td><td>ClaimItem 합계</td></tr>
+          <tr><td>17</td><td>귀책</td><td>Badge</td><td>구매자/판매사</td></tr>
+          <tr><td>18</td><td>사유</td><td>텍스트</td><td>ClaimReasonCode 라벨</td></tr>
+          <tr><td>19</td><td>환불총액</td><td>number</td><td>₩</td></tr>
+          <tr><td>20</td><td>PG환불</td><td>number</td><td>카드/계좌이체</td></tr>
+          <tr><td>21</td><td>포인트복원</td><td>number</td><td>복지포인트</td></tr>
+          <tr><td>22</td><td>신청일시</td><td>텍스트</td><td>기본 정렬 DESC</td></tr>
+          <tr><td>23</td><td>상태변경일</td><td>텍스트</td><td>최근 전이 시각</td></tr>
+          <tr><td>24</td><td>환불완료일</td><td>텍스트</td><td>미완료 시 "—"</td></tr>
+          <tr><td>25</td><td>승인/반려</td><td><strong>버튼</strong></td><td>긴급 행(CANCEL_REQUESTED+승인필요)만 활성</td></tr>
+          <tr><td>26</td><td>환불재전송</td><td><strong>버튼</strong></td><td>REFUND_FAILED 행만 활성</td></tr>
+        </tbody>
+      </table>
+      <div class="policy">긴급 행 강조: approval_required=Yes AND claim_status_bo=CANCEL_REQUESTED → 배경 <code>#fff7ed</code> + ⚠️ 아이콘</div>
+    </div>
+
+    <hr style="margin:8px 0;">
+    <!-- 모달 -->
+    <div class="desc-block">
+      <div class="desc-title">승인 확인 모달</div>
+      <ul>
+        <li>타이틀: 주문취소 일괄 승인 / 주문취소 승인 (단건)</li>
+        <li>본문: "선택한 N건의 주문취소를 승인하시겠습니까? 승인 시 즉시 환불요청이 진행됩니다."</li>
+        <li>버튼: [취소] [승인]</li>
+      </ul>
+      <div class="policy">API: PATCH /api/v1/claims/{claim_id}/approve (BO-CLM-035)</div>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title">반려 사유 입력 모달</div>
+      <ul>
+        <li>반려사유 textarea (10~200자 필수)</li>
+        <li>FO 안내 문구 템플릿 라디오: 출고 준비 완료 / 배송 시작 임박 / 기타</li>
+        <li>버튼: [취소] [반려 확정]</li>
+      </ul>
+      <div class="policy">API: PATCH /api/v1/claims/{claim_id}/reject (BO-CLM-036)<br>반려 시 원주문 상태 복원 + FO 안내 알림톡 발송</div>
+    </div>
+    <div class="desc-block">
+      <div class="desc-title">환불 재전송 확인 모달</div>
+      <ul>
+        <li>본문: "선택한 N건의 환불 요청을 재전송합니다. 당일 수동 재시도는 1회로 제한됩니다."</li>
+        <li>버튼: [취소] [재전송]</li>
+      </ul>
+      <div class="policy">API: POST /api/v1/claims/{claim_id}/refund/retry (BO-CLM-038)<br>일일 한도 초과 시 409 DAILY_RETRY_LIMIT_EXCEEDED</div>
+    </div>
+
+    <hr style="margin:8px 0;">
+    <!-- 상태 처리 -->
+    <div class="desc-block">
+      <div class="desc-title">상태 처리</div>
+      <table class="desc-col-table">
+        <thead><tr><th>상태</th><th>UI 표현</th></tr></thead>
+        <tbody>
+          <tr><td>로딩</td><td>skeleton + 버튼 비활성</td></tr>
+          <tr><td>데이터 없음</td><td>"조회 결과가 없습니다." + [필터 초기화]</td></tr>
+          <tr><td>일괄 처리 중</td><td>모달 내 진행률 (건/총건수), 취소 비활성</td></tr>
+          <tr><td>부분 실패</td><td>토스트: "N건 성공, M건 실패. 실패 건은 목록에서 확인해 주세요."</td></tr>
+          <tr><td>상태 충돌(409)</td><td>토스트 + 자동 새로고침</td></tr>
+          <tr><td>재시도 한도 초과</td><td>버튼 비활성 + 툴팁 "금일 수동 재시도 1회 제한"</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr style="margin:8px 0;">
+    <!-- 관련 문서 -->
+    <div class="desc-block">
+      <div class="desc-title">관련 문서</div>
+      <ul>
+        <li>정책: BO-CLM-002 (주문취소 정책)</li>
+        <li>데이터: BO-CLM-010 (클레임 엔티티)</li>
+        <li>컴포넌트: BO-CLM-021 (주문취소 목록 테이블)</li>
+        <li>액션: BO-CLM-031 (목록 조회) / BO-CLM-035 (승인) / BO-CLM-036 (반려) / BO-CLM-037 (환불 수기 완료) / BO-CLM-038 (환불 재전송)</li>
+        <li>연결: BO-CLM-042 (주문취소 상세 화면)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 모달: 승인 확인 -->
+<div class="wf-modal-overlay" id="modal-approve" data-action="BO-CLM-035">
+  <div class="wf-modal">
+    <h3>주문취소 승인</h3>
+    <p>선택한 <strong id="approveCount">1</strong>건의 주문취소를 승인하시겠습니까?<br>
+    승인 시 즉시 환불요청이 진행됩니다.</p>
+    <div class="wf-modal-footer">
+      <button class="wf-btn" onclick="closeModal('approve')">취소</button>
+      <button class="wf-btn wf-btn--primary" onclick="closeModal('approve')">승인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 모달: 반려 사유 입력 -->
+<div class="wf-modal-overlay" id="modal-reject" data-action="BO-CLM-036">
+  <div class="wf-modal">
+    <h3>주문취소 반려</h3>
+    <p>선택한 <strong id="rejectCount">1</strong>건의 주문취소를 반려합니다.</p>
+    <textarea placeholder="반려 사유를 입력해 주세요 (10~200자 필수)"></textarea>
+    <div class="notice-template">
+      <strong>FO 안내 문구 템플릿</strong>
+      <div style="margin-top:6px">
+        <label><input type="radio" name="notice-tpl" checked> 출고 준비 완료 (반품 안내)</label><br>
+        <label><input type="radio" name="notice-tpl"> 배송 시작 임박 (수령 거부 안내)</label><br>
+        <label><input type="radio" name="notice-tpl"> 기타 (수동 입력)</label>
+      </div>
+    </div>
+    <div class="wf-modal-footer">
+      <button class="wf-btn" onclick="closeModal('reject')">취소</button>
+      <button class="wf-btn wf-btn--primary" onclick="closeModal('reject')">반려 확정</button>
+    </div>
+  </div>
+</div>
+
+<!-- 모달: 환불 재전송 -->
+<div class="wf-modal-overlay" id="modal-retry" data-action="BO-CLM-038">
+  <div class="wf-modal">
+    <h3>환불 재전송</h3>
+    <p>선택한 <strong id="retryCount">1</strong>건의 환불 요청을 재전송합니다.<br>
+    당일 수동 재시도는 1회로 제한됩니다.</p>
+    <div class="wf-modal-footer">
+      <button class="wf-btn" onclick="closeModal('retry')">취소</button>
+      <button class="wf-btn wf-btn--primary" onclick="closeModal('retry')">재전송</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleLnb() { document.querySelector('.wf-layout').classList.toggle('lnb-collapsed'); }
+document.querySelectorAll('.lnb-menu-item > a').forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    var li = this.parentElement;
+    if (li.querySelector('.lnb-submenu')) li.classList.toggle('open');
+  });
+});
+function onKeywordTypeChange() {
+  var type = document.getElementById('keywordType').value;
+  var disable = (type !== 'none');
+  document.querySelectorAll('#filterGrid .filter-row').forEach(function(tr){
+    tr.classList.toggle('filter-disabled', disable);
+  });
+}
+function resetFilters() {
+  document.getElementById('keywordType').value = 'none';
+  onKeywordTypeChange();
+}
+function toggleAll(cb) {
+  document.querySelectorAll('.row-cb').forEach(function(c){ c.checked = cb.checked; });
+  updateToolbar();
+}
+function updateToolbar() {
+  var count = document.querySelectorAll('.row-cb:checked').length;
+  document.getElementById('selectedCount').textContent = count;
+  document.getElementById('btnBatchApprove').disabled = (count === 0);
+  document.getElementById('btnBatchReject').disabled = (count === 0);
+  document.getElementById('btnBatchRetry').disabled = (count === 0);
+}
+function openModal(type) {
+  var key = type.split('-')[0];
+  document.getElementById('modal-' + key).classList.add('show');
+  var count = document.querySelectorAll('.row-cb:checked').length || 1;
+  if (key === 'approve') document.getElementById('approveCount').textContent = count;
+  if (key === 'reject') document.getElementById('rejectCount').textContent = count;
+  if (key === 'retry') document.getElementById('retryCount').textContent = count;
+}
+function closeModal(key) { document.getElementById('modal-' + key).classList.remove('show'); }
+</script>
+
+</body>
+</html>

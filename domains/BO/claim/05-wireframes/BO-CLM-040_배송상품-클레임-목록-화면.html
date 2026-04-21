@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="wfr-id"      content="BO-CLM-040">
+  <meta name="wfr-title"   content="배송상품 클레임 목록 화면">
+  <meta name="wfr-domain"  content="claim">
+  <meta name="wfr-route"   content="/bo/claim/delivery/list">
+  <meta name="wfr-version" content="2.0">
+  <title>BO-CLM-040 — 배송상품 클레임 목록 화면 | 임직원 복지몰</title>
+  <link rel="stylesheet" href="../../../../_wireframe/base.css">
+  <style>
+    /* 상태 badge — BO 클레임 상태 (전 유형 통합) */
+    .wf-badge--cancel-req    { background: #dbeafe; color: #1d4ed8; }
+    .wf-badge--sale-cancel   { background: #e0e7ff; color: #4338ca; }
+    .wf-badge--refund-req    { background: #ede9fe; color: #6d28d9; }
+    .wf-badge--refunded      { background: #dcfce7; color: #15803d; }
+    .wf-badge--refund-fail   { background: #fee2e2; color: #dc2626; }
+    .wf-badge--return-req    { background: #dbeafe; color: #1d4ed8; }
+    .wf-badge--return-recv   { background: #ccfbf1; color: #0f766e; }
+    .wf-badge--return-coll   { background: #fef3c7; color: #b45309; }
+    .wf-badge--exchange-req  { background: #dbeafe; color: #1d4ed8; }
+    .wf-badge--exchange-coll { background: #fef3c7; color: #b45309; }
+    .wf-badge--exchange-final{ background: #dcfce7; color: #15803d; }
+    .wf-badge--withdrawn     { background: #ffedd5; color: #c2410c; }
+    .wf-badge--liability-b   { background: #f3f4f6; color: #4b5563; }
+    .wf-badge--liability-s   { background: #fee2e2; color: #dc2626; }
+    .wf-badge--approval-y    { background: #fef3c7; color: #b45309; font-weight: 700; }
+    .wf-badge--approval-n    { background: #f3f4f6; color: #6b7280; }
+    .wf-badge--fo-claimed    { background: #dbeafe; color: #1d4ed8; }
+    .wf-badge--fo-completed  { background: #dcfce7; color: #15803d; }
+    .wf-badge--fo-withdrawn  { background: #ffedd5; color: #c2410c; }
+    .wf-badge--insp-pass     { background: #dcfce7; color: #15803d; }
+    .wf-badge--insp-none     { background: #f3f4f6; color: #6b7280; }
+    .wf-badge--type-cancel   { background: #dbeafe; color: #1d4ed8; }
+    .wf-badge--type-return   { background: #ccfbf1; color: #0f766e; }
+    .wf-badge--type-exchange { background: #fef3c7; color: #b45309; }
+
+    /* 필터 */
+    .filter-grid { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 12px; background: #fafbfc; border: 1px solid #d0d0d0; border-radius: 8px; overflow: hidden; }
+    .filter-grid th { background: #f0f1f3; font-weight: 600; font-size: 13px; color: #555; padding: 10px 14px; border-bottom: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0; text-align: left; white-space: nowrap; width: 130px; vertical-align: middle; }
+    .filter-grid td { padding: 8px 12px; border-bottom: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0; vertical-align: middle; }
+    .filter-grid tr:last-child th, .filter-grid tr:last-child td { border-bottom: none; }
+    .filter-grid td:last-child { border-right: none; }
+    .filter-grid .wf-select, .filter-grid .wf-input { padding: 6px 10px; font-size: 13px; }
+    .filter-grid label.cb-label, .filter-grid label.radio-label { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; margin-right: 10px; cursor: pointer; white-space: nowrap; }
+    .filter-actions { text-align: center; margin-bottom: 16px; }
+    .filter-disabled { opacity: 0.4; pointer-events: none; }
+
+    /* 테이블 */
+    .table-scroll-wrap { overflow-x: auto; overflow-y: auto; max-height: 520px; border: 1px solid #d0d0d0; border-radius: 8px; }
+    .table-scroll-wrap .wf-table { min-width: 3400px; margin: 0; border-collapse: separate; border-spacing: 0; }
+    .table-scroll-wrap .wf-table th { border-bottom: 2px solid #d0d0d0; border-right: 1px solid #d0d0d0; text-align: center; position: sticky; top: 0; z-index: 2; background: #f7f8fa; }
+    .table-scroll-wrap .wf-table td { border-bottom: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0; }
+    .table-scroll-wrap .wf-table th:last-child, .table-scroll-wrap .wf-table td:last-child { border-right: none; }
+    .table-scroll-wrap .wf-table tr:last-child td { border-bottom: none; }
+    .table-scroll-wrap .wf-table th, .table-scroll-wrap .wf-table td { font-size: 13px; padding: 10px; white-space: nowrap; text-align: center; }
+    .table-scroll-wrap .wf-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+    /* 툴바 */
+    .toolbar-wrap { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding: 8px 0; }
+    .toolbar-left { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; }
+    .toolbar-right { display: flex; align-items: center; gap: 8px; }
+
+    /* desc-num */
+    .desc-num { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 4px; background: #e74c3c; color: #fff; border-radius: 9px; font-size: 9px; font-weight: 700; line-height: 1; vertical-align: middle; flex-shrink: 0; }
+    .filter-grid th .desc-num { margin-right: 4px; }
+
+    .spec-desc-panel .desc-block { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #ffe58f; }
+    .spec-desc-panel .desc-block:last-child { border-bottom: none; margin-bottom: 0; }
+    .spec-desc-panel .desc-title { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #333; }
+    .spec-desc-panel .desc-title .desc-num { min-width: 20px; height: 20px; font-size: 10px; }
+    .spec-desc-panel .desc-sub { font-size: 11px; color: #666; margin: 4px 0 2px 26px; }
+    .spec-desc-panel .desc-block ul { font-size: 11px; margin: 2px 0 4px 26px; padding-left: 14px; }
+    .spec-desc-panel .desc-block li { margin-bottom: 2px; color: #444; }
+    .spec-desc-panel .desc-block .policy { background: #fff8e1; border-left: 3px solid #f59e0b; padding: 4px 8px; margin: 4px 0 4px 26px; font-size: 11px; color: #92400e; }
+    .spec-desc-panel .desc-col-table { width: 100%; font-size: 10px; border-collapse: collapse; margin: 6px 0; }
+    .spec-desc-panel .desc-col-table th { background: #f5f5f5; border: 1px solid #ddd; padding: 3px 5px; text-align: left; font-weight: 600; }
+    .spec-desc-panel .desc-col-table td { border: 1px solid #ddd; padding: 3px 5px; }
+  </style>
+</head>
+<body>
+
+<div class="spec-layout">
+  <div class="wf-layout">
+
+    <header class="wf-gnb" data-region="gnb">
+      <span class="gnb-logo">임직원 복지몰</span>
+      <div class="gnb-tabs">
+        <a class="gnb-tab gnb-tab--home" title="홈">&#x1F3E0;</a>
+        <span class="gnb-tab gnb-tab--active">배송상품 클레임 목록 <button class="tab-close">&times;</button></span>
+      </div>
+      <span class="wf-ml-auto wf-text-sm">홍길동님 &#x2699; 로그아웃</span>
+    </header>
+
+    <aside class="wf-icon-strip" data-region="icon-strip">
+      <button title="메뉴 토글" onclick="toggleLnb()">&#x2630;</button>
+      <button title="즐겨찾기">&#x2606;</button>
+      <button title="문서">&#x1F4CB;</button>
+      <button title="최근">&#x1F550;</button>
+    </aside>
+
+    <aside class="wf-lnb" data-region="lnb">
+      <div class="lnb-user">
+        <div class="lnb-user-name">홍길동 &#x2699;</div>
+        <div class="lnb-user-email">hong@company.co.kr &middot; 로그아웃</div>
+        <button class="lnb-close" onclick="toggleLnb()">&times;</button>
+      </div>
+      <div class="lnb-toggle-bar">
+        <span>전체메뉴보기</span>
+        <label class="lnb-switch"><input type="checkbox"><span class="slider"></span></label>
+        <span>메뉴필터기능</span>
+      </div>
+      <nav><ul>
+        <li><a href="#"><span class="menu-icon">&#x1F4CA;</span> 대시보드</a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F464;</span><span>회원 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F4E6;</span><span>상품 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F69A;</span><span>주문배송 관리</span><span class="arrow">&#x25B8;</span></a></li>
+        <li class="lnb-menu-item open"><a href="#"><span class="menu-icon">&#x1F4AC;</span><span>클레임관리</span><span class="arrow">&#x25B8;</span></a>
+          <ul class="lnb-submenu">
+            <li class="lnb-sub-header">배송상품 클레임</li>
+            <li><a href="#" class="active">배송상품 클레임 목록</a></li>
+            <li><a href="BO-CLM-041_주문취소-목록-화면.html">주문취소 목록</a></li>
+            <li><a href="BO-CLM-043_반품-목록-화면.html">반품 목록</a></li>
+            <li><a href="BO-CLM-045_교환-목록-화면.html">교환 목록</a></li>
+          </ul>
+        </li>
+        <li class="lnb-menu-item"><a href="#"><span class="menu-icon">&#x1F4B0;</span><span>정산 관리</span><span class="arrow">&#x25B8;</span></a></li>
+      </ul></nav>
+    </aside>
+
+    <main class="wf-content" data-region="content">
+      <h1>배송상품 클레임 목록 <span style="font-size:12px; color:#64748b; margin-left:8px;">(전체 유형 통합 조회)</span></h1>
+
+      <section data-component="BO-CLM-020" data-title="통합 클레임 목록" data-action="BO-CLM-030">
+
+        <table class="filter-grid" id="filterGrid">
+          <colgroup><col style="width:14%;"><col style="width:36%;"><col style="width:14%;"><col style="width:36%;"></colgroup>
+          <tr class="filter-row" data-filter="1">
+            <th><span class="desc-num">1</span>기간</th>
+            <td colspan="3">
+              <select class="wf-select"><option>클레임신청일</option><option>상태변경일</option><option>완료일</option></select>
+              <input class="wf-input" type="date" value="2026-04-15" style="width:140px"> ~ <input class="wf-input" type="date" value="2026-04-22" style="width:140px">
+              <label class="radio-label"><input type="radio" name="q-date"> 오늘</label>
+              <label class="radio-label"><input type="radio" name="q-date" checked> 7일</label>
+              <label class="radio-label"><input type="radio" name="q-date"> 1개월</label>
+              <label class="radio-label"><input type="radio" name="q-date"> 3개월</label>
+              <label class="radio-label"><input type="radio" name="q-date"> 1년</label>
+            </td>
+          </tr>
+          <tr class="filter-row" data-filter="2">
+            <th><span class="desc-num">2</span>클레임 유형</th>
+            <td colspan="3" style="background:#eff6ff;">
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> 주문취소</label>
+              <label class="cb-label"><input type="checkbox"> 반품</label>
+              <label class="cb-label"><input type="checkbox"> 교환</label>
+              <span style="font-size:11px; color:#1d4ed8; margin-left:10px;">v2.0 NEW — 탭 UI 대체</span>
+            </td>
+          </tr>
+          <tr class="filter-row" data-filter="3-4">
+            <th><span class="desc-num">3</span>하위 유형</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> 주문취소(사용자)</label>
+              <label class="cb-label"><input type="checkbox"> 판매취소</label>
+              <label class="cb-label"><input type="checkbox"> 반품(사용자)</label>
+              <label class="cb-label"><input type="checkbox"> 반품(대행)</label>
+              <label class="cb-label"><input type="checkbox"> 교환(사용자)</label>
+              <label class="cb-label"><input type="checkbox"> 교환(대행)</label>
+            </td>
+            <th><span class="desc-num">4</span>FO 상태</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> 주문취소/주문취소 철회</label>
+              <label class="cb-label"><input type="checkbox"> 반품 상태 통합</label>
+              <label class="cb-label"><input type="checkbox"> 교환 상태 통합</label>
+            </td>
+          </tr>
+          <tr class="filter-row" data-filter="5">
+            <th><span class="desc-num">5</span>BO 상태</th>
+            <td colspan="3">
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> 주문취소 신청</label>
+              <label class="cb-label"><input type="checkbox"> 환불요청</label>
+              <label class="cb-label"><input type="checkbox"> 환불완료</label>
+              <label class="cb-label"><input type="checkbox"> 환불실패</label>
+              <label class="cb-label"><input type="checkbox"> 반품신청</label>
+              <label class="cb-label"><input type="checkbox"> 반품접수</label>
+              <label class="cb-label"><input type="checkbox"> 반품수거중</label>
+              <label class="cb-label"><input type="checkbox"> 반품회수완료</label>
+              <label class="cb-label"><input type="checkbox"> 교환신청</label>
+              <label class="cb-label"><input type="checkbox"> 교환접수</label>
+              <label class="cb-label"><input type="checkbox"> 교환수거중</label>
+              <label class="cb-label"><input type="checkbox"> 교환회수완료</label>
+              <label class="cb-label"><input type="checkbox"> 교환최종승인</label>
+              <label class="cb-label"><input type="checkbox"> 철회</label>
+            </td>
+          </tr>
+          <tr class="filter-row" data-filter="6-7">
+            <th><span class="desc-num">6</span>처리 채널</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> FO</label>
+              <label class="cb-label"><input type="checkbox"> BO_PROXY</label>
+              <label class="cb-label"><input type="checkbox"> SYSTEM</label>
+            </td>
+            <th><span class="desc-num">7</span>접수 채널</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> FO</label>
+              <label class="cb-label"><input type="checkbox"> BO_PROXY</label>
+              <label class="cb-label"><input type="checkbox"> ADMIN</label>
+            </td>
+          </tr>
+          <tr class="filter-row" data-filter="8-9">
+            <th><span class="desc-num">8</span>귀책</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> 구매자</label>
+              <label class="cb-label"><input type="checkbox"> 판매사</label>
+            </td>
+            <th><span class="desc-num">9</span>클레임 사유</th>
+            <td><select class="wf-select" style="width:240px"><option>전체</option><option>단순변심</option><option>가격비교</option><option>배송지연</option><option>상품품절</option><option>상품불량</option><option>상품누락</option><option>다른상품</option><option>색상/사이즈 불만족</option><option>기타</option></select></td>
+          </tr>
+          <tr class="filter-row" data-filter="10-11">
+            <th><span class="desc-num">10</span>판매사</th>
+            <td><input class="wf-input" type="text" placeholder="판매사 선택" readonly style="width:160px"> <button class="wf-btn wf-btn--sm">조회</button></td>
+            <th><span class="desc-num">11</span>고객사</th>
+            <td><select class="wf-select"><option>전체</option><option>(주)예시컴퍼니</option></select></td>
+          </tr>
+          <tr class="filter-row" data-filter="12-13">
+            <th><span class="desc-num">12</span>구매자</th>
+            <td><input class="wf-input" type="text" placeholder="구매자 선택" readonly style="width:160px"> <button class="wf-btn wf-btn--sm">조회</button></td>
+            <th><span class="desc-num">13</span>환불 수단</th>
+            <td>
+              <label class="cb-label"><input type="checkbox" checked> 전체</label>
+              <label class="cb-label"><input type="checkbox"> 카드</label>
+              <label class="cb-label"><input type="checkbox"> 계좌이체</label>
+              <label class="cb-label"><input type="checkbox"> 복지포인트</label>
+            </td>
+          </tr>
+          <tr class="filter-row" data-filter="14">
+            <th><span class="desc-num">14</span>승인 필요</th>
+            <td colspan="3">
+              <label class="radio-label"><input type="radio" name="q-approval" checked> 전체</label>
+              <label class="radio-label"><input type="radio" name="q-approval"> Yes</label>
+              <label class="radio-label"><input type="radio" name="q-approval"> No</label>
+            </td>
+          </tr>
+          <tr data-filter="15">
+            <th><span class="desc-num">15</span>검색어</th>
+            <td colspan="3">
+              <select class="wf-select" id="keywordType" style="width:130px;" onchange="onKeywordTypeChange()">
+                <option value="none">사용안함</option>
+                <option>클레임코드</option><option>주문번호</option><option>상품명</option><option>구매자명</option><option>반송장번호</option><option>교환주문번호</option>
+              </select>
+              <input class="wf-input" type="text" placeholder="검색어 입력" style="width:400px">
+            </td>
+          </tr>
+        </table>
+        <div class="filter-actions">
+          <span class="desc-num" style="margin-right:6px;">16</span>
+          <button class="wf-btn" onclick="resetFilters()">초기화</button>
+          <button class="wf-btn wf-btn--primary" data-action="BO-CLM-030">조회</button>
+        </div>
+
+        <div class="toolbar-wrap">
+          <div class="toolbar-left">
+            <span class="desc-num">17</span>
+            <span>조회결과 <strong>182</strong>건 <small style="color:#94a3b8">(주문취소 127 / 반품 34 / 교환 21)</small></span>
+          </div>
+          <div class="toolbar-right">
+            <select class="wf-select"><option>20건</option><option>50건</option><option>100건</option></select>
+            <button class="wf-btn">엑셀 다운로드</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:4px;"><span class="desc-num">18</span> <span style="font-size:11px;color:#999;">통합 클레임 목록 테이블 (29컬럼, 가로·세로 스크롤)</span></div>
+        <div class="table-scroll-wrap">
+          <table class="wf-table">
+            <thead>
+              <tr>
+                <th>No</th><th>클레임코드</th><th>유형</th><th>하위유형</th>
+                <th>FO상태</th><th>BO상태</th><th>처리채널</th><th>접수채널</th>
+                <th>주문번호</th><th>출고지</th><th>고객사</th><th>구매자</th><th>판매사</th>
+                <th>대표 상품명</th><th>수량</th><th>귀책</th><th>사유</th>
+                <th>환불총액</th><th>PG환불</th><th>포인트복원</th><th>클레임배송비</th>
+                <th>수거 상태</th><th>반송장</th><th>검수결과</th><th>교환주문번호</th>
+                <th>신청일시</th><th>상태변경일</th><th>완료일</th><th>승인필요</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 주문취소 -->
+              <tr onclick="location.href='BO-CLM-042_주문취소-상세-화면.html'" style="cursor:pointer">
+                <td>1</td>
+                <td><a href="BO-CLM-042_주문취소-상세-화면.html">CLM20260421000127</a></td>
+                <td><span class="wf-badge wf-badge--type-cancel">주문취소</span></td>
+                <td>주문취소(사용자)</td>
+                <td><span class="wf-badge wf-badge--fo-claimed">주문취소</span></td>
+                <td><span class="wf-badge wf-badge--cancel-req">주문취소 신청</span></td>
+                <td>BO_PROXY</td><td>BO_PROXY</td>
+                <td><a href="#">ORD20260421008</a></td>
+                <td>서울창고</td><td>(주)예시컴퍼니</td>
+                <td><a href="#">user001(홍길동)</a></td>
+                <td><a href="#">V0101(판매사A)</a></td>
+                <td>무선 이어폰 외 1건</td>
+                <td>2</td>
+                <td><span class="wf-badge wf-badge--liability-b">구매자</span></td>
+                <td>단순변심</td>
+                <td class="num">89,000</td><td class="num">79,000</td><td class="num">10,000</td><td class="num">0</td>
+                <td>—</td><td>—</td><td>—</td><td>—</td>
+                <td>2026.04.21 14:22</td><td>2026.04.21 14:22</td><td>—</td>
+                <td><span class="wf-badge wf-badge--approval-y">Yes</span></td>
+              </tr>
+              <!-- 반품 -->
+              <tr onclick="location.href='BO-CLM-044_반품-상세-화면.html'" style="cursor:pointer">
+                <td>2</td>
+                <td><a href="BO-CLM-044_반품-상세-화면.html">CLM20260418000014</a></td>
+                <td><span class="wf-badge wf-badge--type-return">반품</span></td>
+                <td>반품(사용자)</td>
+                <td><span class="wf-badge wf-badge--fo-completed">반품완료</span></td>
+                <td><span class="wf-badge wf-badge--return-coll">반품회수완료</span></td>
+                <td>SYSTEM</td><td>FO</td>
+                <td><a href="#">ORD20260410098</a></td>
+                <td>서울창고</td><td>㈜다른회사</td>
+                <td><a href="#">user112(이영희)</a></td>
+                <td><a href="#">V0101(판매사A)</a></td>
+                <td>스포츠 러닝화 프로</td>
+                <td>1</td>
+                <td><span class="wf-badge wf-badge--liability-b">구매자</span></td>
+                <td>색상/사이즈 불만족</td>
+                <td class="num">86,500</td><td class="num">76,500</td><td class="num">10,000</td><td class="num">2,500</td>
+                <td><span class="wf-badge wf-badge--return-coll">회수완료</span></td>
+                <td>CJ(1234567890)</td>
+                <td><span class="wf-badge wf-badge--insp-none">미검수</span></td>
+                <td>—</td>
+                <td>2026.04.17 18:34</td><td>2026.04.21 10:00</td><td>—</td>
+                <td><span class="wf-badge wf-badge--approval-y">Yes</span></td>
+              </tr>
+              <!-- 교환 -->
+              <tr onclick="location.href='BO-CLM-046_교환-상세-화면.html'" style="cursor:pointer">
+                <td>3</td>
+                <td><a href="BO-CLM-046_교환-상세-화면.html">CLM20260415000011</a></td>
+                <td><span class="wf-badge wf-badge--type-exchange">교환</span></td>
+                <td>교환(사용자)</td>
+                <td><span class="wf-badge wf-badge--fo-completed">교환최종승인</span></td>
+                <td><span class="wf-badge wf-badge--exchange-final">교환최종승인</span></td>
+                <td>BO_PROXY</td><td>FO</td>
+                <td><a href="#">ORD20260407022</a></td>
+                <td>서울창고</td><td>(주)예시컴퍼니</td>
+                <td><a href="#">user145(윤태호)</a></td>
+                <td><a href="#">V0101(판매사A)</a></td>
+                <td>러닝화</td>
+                <td>1</td>
+                <td><span class="wf-badge wf-badge--liability-b">구매자</span></td>
+                <td>색상/사이즈 불만족</td>
+                <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">5,000</td>
+                <td><span class="wf-badge wf-badge--exchange-final">최종승인</span></td>
+                <td>CJ(1112223333)</td>
+                <td><span class="wf-badge wf-badge--insp-pass">통과</span></td>
+                <td><a href="#">ORD-EX-20260418001</a></td>
+                <td>2026.04.14 10:00</td><td>2026.04.18 15:00</td><td>2026.04.18 15:00</td>
+                <td><span class="wf-badge wf-badge--approval-n">No</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="wf-pagination">
+          <button class="wf-pagination-btn">&laquo;</button>
+          <button class="wf-pagination-btn active">1</button>
+          <button class="wf-pagination-btn">2</button>
+          <button class="wf-pagination-btn">3</button>
+          <button class="wf-pagination-btn">4</button>
+          <button class="wf-pagination-btn">5</button>
+          <button class="wf-pagination-btn">&raquo;</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="spec-desc-panel">
+    <h3>BO-CLM-040 — 배송상품 클레임 목록 화면 v2.0</h3>
+    <p><strong>메뉴 경로:</strong> 클레임관리 &gt; 배송상품 클레임 &gt; 배송상품 클레임 목록(통합)</p>
+    <p><strong>Route:</strong> /bo/claim/delivery/list</p>
+    <div class="policy" style="margin:6px 0 8px 0; background: #fff8e1; border-left: 3px solid #f59e0b; padding: 6px 10px; font-size: 11px; color: #92400e;">
+      <strong>v2.0 변경:</strong> 탭 UI 전면 삭제 → claim_type 필터(체크박스)로 전환. 반품/교환 탭 placeholder 제거. LNB 서브메뉴 4개로 확장(통합/주문취소/반품/교환). 테이블 컬럼 4개 추가(수거 상태/반송장/검수 결과/교환주문번호).
+    </div>
+    <hr style="margin:8px 0;">
+
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">1</span> 기간</div><ul><li>기간유형: 클레임신청일(기본)/상태변경일/완료일</li><li>퀵선택: 오늘/7일(기본)/1개월/3개월/1년</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">2</span> 클레임 유형 (v2.0 NEW)</div><ul><li>체크박스: 전체(기본)/주문취소/반품/교환</li><li>탭 UI 대체 — LNB에서 유형별 분리 진입 가능</li></ul><div class="policy">배경 강조(#eff6ff)</div></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">3</span> 하위 유형</div><ul><li>주문취소(사용자/판매취소)/반품(사용자/대행)/교환(사용자/대행)</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">4</span> FO 상태</div><ul><li>전 유형 FO 상태값 통합</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">5</span> BO 상태</div><ul><li>전 유형 BO 상태값 통합(주문취소 6개 + 반품 9개 + 교환 7개)</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">6</span> 처리 채널</div><ul><li>FO/BO_PROXY/SYSTEM</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">7</span> 접수 채널</div><ul><li>FO/BO_PROXY/ADMIN</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">8</span> 귀책</div><ul><li>구매자/판매사</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">9</span> 클레임 사유</div><ul><li>전 유형 사유 통합</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">10</span> 판매사</div><ul><li>조회 팝업</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">11</span> 고객사</div><ul><li>권한 범위 내</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">12</span> 구매자</div><ul><li>조회 팝업</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">13</span> 환불 수단</div><ul><li>주문취소·반품에만 적용</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">14</span> 승인 필요</div><ul><li>전체/Yes/No</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">15</span> 검색어</div><ul><li>사용안함/클레임코드/주문번호/상품명/구매자명/<strong>반송장번호</strong>/<strong>교환주문번호</strong></li></ul><div class="policy">v2.0 추가: 반송장·교환주문번호 검색 옵션</div></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">16</span> 조회 버튼</div><ul><li>[초기화] [조회] (API: BO-CLM-030)</li></ul></div>
+
+    <hr style="margin:8px 0;">
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">17</span> 상단 툴바</div><ul><li>조회결과 N건 (유형별 count 미리보기)</li><li>[엑셀 다운로드] · 출력건수</li></ul></div>
+
+    <hr style="margin:8px 0;">
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">18</span> 목록 테이블 (29컬럼, v2.0 4개 컬럼 추가)</div>
+      <table class="desc-col-table"><thead><tr><th>#</th><th>컬럼명</th><th>비고</th></tr></thead><tbody>
+        <tr><td>1</td><td>No</td><td>행 번호</td></tr>
+        <tr><td>2</td><td>클레임코드</td><td>링크 → claim_type별 상세 모달 분기</td></tr>
+        <tr><td>3</td><td>유형</td><td>주문취소/반품/교환 (badge)</td></tr>
+        <tr><td>4</td><td>하위유형</td><td>text</td></tr>
+        <tr><td>5-6</td><td>FO/BO상태</td><td>badge</td></tr>
+        <tr><td>7-9</td><td>채널/주문번호</td><td></td></tr>
+        <tr><td>10-13</td><td>출고지/고객사/구매자/판매사</td><td>링크</td></tr>
+        <tr><td>14-17</td><td>상품명/수량/귀책/사유</td><td></td></tr>
+        <tr><td>18-21</td><td>환불총액/PG/포인트/배송비</td><td>number</td></tr>
+        <tr><td><strong>22</strong></td><td><strong>수거 상태 (NEW)</strong></td><td>반품/교환 전용 — 수거중/수거완료/회수완료</td></tr>
+        <tr><td><strong>23</strong></td><td><strong>반송장 (NEW)</strong></td><td>반품/교환 전용 — 택배사(송장번호)</td></tr>
+        <tr><td><strong>24</strong></td><td><strong>검수 결과 (NEW)</strong></td><td>반품/교환 전용 — 통과/거부/미검수</td></tr>
+        <tr><td><strong>25</strong></td><td><strong>교환주문번호 (NEW)</strong></td><td>교환 최종승인 이후 — 링크 → 주문상세</td></tr>
+        <tr><td>26-28</td><td>신청/상태변경/완료 일시</td><td>date</td></tr>
+        <tr><td>29</td><td>승인 필요</td><td>Yes(yellow)/No(gray)</td></tr>
+      </tbody></table>
+      <div class="policy">행 클릭 분기: CANCEL→BO-CLM-042 / RETURN→BO-CLM-044 / EXCHANGE→BO-CLM-046</div>
+    </div>
+
+    <hr style="margin:8px 0;">
+    <div class="desc-block"><div class="desc-title">상태 처리</div>
+      <table class="desc-col-table"><thead><tr><th>상태</th><th>UI</th></tr></thead><tbody>
+        <tr><td>로딩</td><td>테이블 skeleton + 조회 버튼 비활성</td></tr>
+        <tr><td>데이터 없음</td><td>"조회 결과가 없습니다." + [필터 초기화]</td></tr>
+        <tr><td>403</td><td>상단 알림</td></tr>
+        <tr><td>500</td><td>토스트 + [재시도]</td></tr>
+      </tbody></table>
+    </div>
+
+    <hr style="margin:8px 0;">
+    <div class="desc-block"><div class="desc-title">관련 문서</div><ul>
+      <li>정책: BO-CLM-001/002/003/004</li>
+      <li>데이터: BO-CLM-010 v2.0</li>
+      <li>컴포넌트: BO-CLM-020 v2.0</li>
+      <li>액션: BO-CLM-030</li>
+      <li>유형별 전용: BO-CLM-041/043/045 (목록) / BO-CLM-042/044/046 (상세)</li>
+    </ul></div>
+  </div>
+</div>
+
+<script>
+function toggleLnb() { document.querySelector('.wf-layout').classList.toggle('lnb-collapsed'); }
+document.querySelectorAll('.lnb-menu-item > a').forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    var li = this.parentElement;
+    if (li.querySelector('.lnb-submenu')) li.classList.toggle('open');
+  });
+});
+function onKeywordTypeChange() {
+  var type = document.getElementById('keywordType').value;
+  var disable = (type !== 'none');
+  document.querySelectorAll('#filterGrid .filter-row').forEach(function(tr){ tr.classList.toggle('filter-disabled', disable); });
+}
+function resetFilters() { document.getElementById('keywordType').value = 'none'; onKeywordTypeChange(); }
+</script>
+
+</body>
+</html>

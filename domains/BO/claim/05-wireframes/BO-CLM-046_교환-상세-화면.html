@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="wfr-id"      content="BO-CLM-046">
+  <meta name="wfr-title"   content="교환 상세 화면">
+  <meta name="wfr-domain"  content="claim">
+  <meta name="wfr-route"   content="/bo/claim/delivery/exchange/:claim_id">
+  <meta name="wfr-version" content="1.0">
+  <title>BO-CLM-046 — 교환 상세 화면 | 임직원 복지몰</title>
+  <link rel="stylesheet" href="../../../../_wireframe/base.css">
+  <style>
+    body { background: #f1f5f9; }
+    .modal-wrap { background: #e5e7eb; padding: 20px; min-height: 800px; display: flex; align-items: flex-start; justify-content: center; border-radius: 8px; }
+    .detail-modal { background: #fff; width: 100%; max-width: 1000px; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; }
+    .detail-header { padding: 18px 24px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+    .detail-header h2 { margin: 0; font-size: 18px; font-weight: 700; }
+    .detail-header h2 .code { color: #3b82f6; font-family: 'Courier New', monospace; }
+    .detail-header .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b; }
+    .detail-body { padding: 20px 24px; background: #fafbfc; }
+
+    .section { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
+    .section-header { padding: 12px 18px; background: #f7f8fa; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+    .section-header .section-num { background: #3b82f6; color: #fff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; margin-right: 8px; }
+    .section-body { padding: 16px 20px; }
+
+    /* 교환 특화 섹션 강조 */
+    .section.exchange-target { border-color: #3b82f6; }
+    .section.exchange-target .section-header { background: #eff6ff; border-bottom-color: #bfdbfe; }
+    .section.exchange-target .section-num { background: #1d4ed8; }
+
+    .kv-grid { display: grid; grid-template-columns: 140px 1fr 140px 1fr; gap: 8px 12px; font-size: 13px; }
+    .kv-grid .k { color: #64748b; font-weight: 600; padding: 6px 0; }
+    .kv-grid .v { color: #1e293b; padding: 6px 0; }
+    .kv-grid .v.full { grid-column: span 3; }
+
+    .wf-badge--exchange-req   { background: #dbeafe; color: #1d4ed8; }
+    .wf-badge--exchange-recv  { background: #ccfbf1; color: #0f766e; }
+    .wf-badge--exchange-coll  { background: #fef3c7; color: #b45309; }
+    .wf-badge--exchange-final { background: #dcfce7; color: #15803d; }
+    .wf-badge--withdrawn      { background: #ffedd5; color: #c2410c; }
+    .wf-badge--liability-b    { background: #f3f4f6; color: #4b5563; }
+    .wf-badge--liability-s    { background: #fee2e2; color: #dc2626; }
+    .wf-badge--fo-requested   { background: #dbeafe; color: #1d4ed8; }
+    .wf-badge--insp-pass      { background: #dcfce7; color: #15803d; }
+    .wf-badge--insp-none      { background: #f3f4f6; color: #6b7280; }
+    .wf-badge--verify-pass    { background: #dcfce7; color: #15803d; font-weight: 700; }
+    .wf-badge--verify-fail    { background: #fee2e2; color: #dc2626; font-weight: 700; }
+    .wf-badge--reserved       { background: #ede9fe; color: #6d28d9; }
+
+    .section-body .wf-table { width: 100%; font-size: 13px; border-collapse: collapse; margin: 0; }
+    .section-body .wf-table th { background: #f7f8fa; padding: 8px 10px; border-bottom: 2px solid #d0d0d0; font-weight: 600; text-align: center; }
+    .section-body .wf-table td { padding: 8px 10px; border-bottom: 1px solid #e5e7eb; text-align: center; }
+    .section-body .wf-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .section-body .wf-table td.text-left { text-align: left; }
+
+    .payment-block { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; font-size: 13px; margin-top: 8px; }
+    .payment-block .line { display: flex; justify-content: space-between; padding: 4px 0; }
+    .payment-block .line.total { font-weight: 700; border-top: 1px solid #cbd5e1; margin-top: 6px; padding-top: 8px; }
+
+    .timeline { padding-left: 12px; }
+    .timeline-item { position: relative; padding: 10px 0 14px 22px; border-left: 2px solid #e2e8f0; }
+    .timeline-item:last-child { border-left-color: transparent; }
+    .timeline-dot { position: absolute; left: -7px; top: 14px; width: 12px; height: 12px; border-radius: 50%; background: #3b82f6; border: 2px solid #fff; box-shadow: 0 0 0 2px #3b82f6; }
+    .timeline-dot.done { background: #22c55e; box-shadow: 0 0 0 2px #22c55e; }
+    .timeline-time { font-size: 11px; color: #64748b; }
+    .timeline-title { font-size: 13px; font-weight: 700; margin: 2px 0; }
+    .timeline-meta { font-size: 12px; color: #64748b; }
+    .timeline-memo { font-size: 12px; color: #475569; background: #f8fafc; padding: 6px 10px; border-radius: 6px; margin-top: 4px; }
+
+    .detail-footer { padding: 14px 24px; border-top: 1px solid #e2e8f0; background: #fff; display: flex; justify-content: space-between; }
+    .detail-footer .btn-group { display: flex; gap: 8px; }
+    .wf-btn--danger { background: #ef4444; color: #fff; }
+    .wf-btn--success { background: #22c55e; color: #fff; }
+
+    .confirm-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+    .confirm-overlay.show { display: flex; }
+    .confirm-box { background: #fff; border-radius: 12px; padding: 24px; width: 500px; }
+    .confirm-box h3 { font-size: 16px; margin-bottom: 12px; }
+    .confirm-box p { font-size: 13px; color: #555; line-height: 1.5; }
+    .confirm-box .notice-box { background: #fff8e1; border-left: 3px solid #f59e0b; padding: 8px 12px; margin: 8px 0; font-size: 12px; color: #92400e; }
+    .confirm-box textarea { width: 100%; min-height: 70px; padding: 8px; font-size: 13px; border: 1px solid #d0d0d0; border-radius: 6px; margin-top: 10px; box-sizing: border-box; }
+    .confirm-box .form-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; }
+    .confirm-box .form-row label { width: 90px; color: #64748b; }
+    .confirm-box select, .confirm-box input { padding: 6px 10px; font-size: 13px; border: 1px solid #d0d0d0; border-radius: 4px; }
+    .confirm-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+
+    .desc-num { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 4px; background: #e74c3c; color: #fff; border-radius: 9px; font-size: 9px; font-weight: 700; line-height: 1; vertical-align: middle; flex-shrink: 0; }
+    .spec-desc-panel .desc-block { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #ffe58f; }
+    .spec-desc-panel .desc-block:last-child { border-bottom: none; margin-bottom: 0; }
+    .spec-desc-panel .desc-title { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #333; }
+    .spec-desc-panel .desc-title .desc-num { min-width: 20px; height: 20px; font-size: 10px; }
+    .spec-desc-panel .desc-block ul { font-size: 11px; margin: 2px 0 4px 26px; padding-left: 14px; }
+    .spec-desc-panel .desc-block li { margin-bottom: 2px; color: #444; }
+    .spec-desc-panel .desc-block .policy { background: #fff8e1; border-left: 3px solid #f59e0b; padding: 4px 8px; margin: 4px 0 4px 26px; font-size: 11px; color: #92400e; }
+    .spec-desc-panel .desc-col-table { width: 100%; font-size: 10px; border-collapse: collapse; margin: 6px 0; }
+    .spec-desc-panel .desc-col-table th { background: #f5f5f5; border: 1px solid #ddd; padding: 3px 5px; text-align: left; font-weight: 600; }
+    .spec-desc-panel .desc-col-table td { border: 1px solid #ddd; padding: 3px 5px; }
+  </style>
+</head>
+<body>
+
+<div class="spec-layout">
+  <div class="wf-layout">
+    <div class="modal-wrap" data-region="modal-backdrop">
+      <div class="detail-modal" data-component="BO-CLM-026" data-title="교환 상세 폼" data-action="BO-CLM-032,03A,03B,03C,03E,03F">
+        <div class="detail-header">
+          <h2><span class="desc-num">1</span> 교환 상세 <span class="code">[CLM20260418000023]</span></h2>
+          <button class="close-btn" onclick="window.close()">&times;</button>
+        </div>
+        <div class="detail-body">
+
+          <section class="section" data-region="section-claim">
+            <div class="section-header"><span><span class="desc-num">2</span><span class="section-num">1</span>클레임 정보</span></div>
+            <div class="section-body">
+              <div class="kv-grid">
+                <div class="k">클레임코드</div><div class="v"><strong>CLM20260418000023</strong></div>
+                <div class="k">클레임 유형</div><div class="v">교환</div>
+                <div class="k">하위 유형</div><div class="v">교환(사용자)</div>
+                <div class="k">FO 상태</div><div class="v"><span class="wf-badge wf-badge--fo-requested">교환접수</span></div>
+                <div class="k">BO 상태</div><div class="v"><span class="wf-badge wf-badge--exchange-coll">교환회수완료</span></div>
+                <div class="k">처리 채널</div><div class="v">SYSTEM</div>
+                <div class="k">접수 채널</div><div class="v">FO</div>
+                <div class="k">신청자</div><div class="v">user305 (임수진)</div>
+                <div class="k">신청일시</div><div class="v">2026.04.17 22:10:00</div>
+                <div class="k">클레임 사유</div><div class="v">색상/사이즈 옵션 불만족</div>
+                <div class="k">귀책</div><div class="v"><span class="wf-badge wf-badge--liability-b">구매자</span></div>
+                <div class="k">사유 상세</div><div class="v full">사이즈가 작아 한 치수 큰 옵션으로 교환 요청.</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" data-region="section-order">
+            <div class="section-header"><span><span class="desc-num">3</span><span class="section-num">2</span>원주문 정보</span></div>
+            <div class="section-body">
+              <div class="kv-grid">
+                <div class="k">주문번호</div><div class="v"><a href="#">ORD20260411055</a></div>
+                <div class="k">주문일시</div><div class="v">2026.04.11 19:40:22</div>
+                <div class="k">원주문 상태</div><div class="v"><span class="wf-badge wf-badge--exchange-coll">배송완료</span></div>
+                <div class="k">고객사</div><div class="v">㈜다른회사</div>
+                <div class="k">주문자</div><div class="v"><a href="#">user305 · sujin@example.com</a></div>
+                <div class="k">연락처</div><div class="v">010-****-7890</div>
+                <div class="k">판매사</div><div class="v"><a href="#">V0303(판매사C)</a></div>
+                <div class="k">출고지</div><div class="v">인천창고</div>
+                <div class="k">배송지</div><div class="v full">인천광역시 연수구 경원대로 100, 2동 501호 (21936)</div>
+              </div>
+              <div class="payment-block">
+                <div class="line"><span>결제수단</span><span>복지포인트 + 삼성카드</span></div>
+                <div class="line"><span>PG 결제액</span><span>45,000원</span></div>
+                <div class="line"><span>복지포인트 사용</span><span>5,000P</span></div>
+                <div class="line"><span>사용 쿠폰</span><span>—</span></div>
+                <div class="line total"><span>총 결제금액</span><span>50,000원</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" data-region="section-items">
+            <div class="section-header"><span><span class="desc-num">4</span><span class="section-num">3</span>교환 대상 상품 (원상품)</span></div>
+            <div class="section-body">
+              <table class="wf-table">
+                <thead><tr><th>원상품명</th><th>원옵션</th><th>수량</th><th>단가</th><th>할인 분배</th><th>적용 쿠폰</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td class="text-left"><a href="#">캐시미어 니트 스웨터</a></td>
+                    <td>그레이 / S</td>
+                    <td>1</td>
+                    <td class="num">50,000</td>
+                    <td class="num">0</td>
+                    <td>—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="section exchange-target" data-region="section-exchange-target">
+            <div class="section-header"><span><span class="desc-num">5</span><span class="section-num">4</span>교환 요청 옵션 ★</span></div>
+            <div class="section-body">
+              <div class="kv-grid">
+                <div class="k">교환 대상 상품</div><div class="v">캐시미어 니트 스웨터 <span class="wf-badge wf-badge--verify-pass">✓ 동일 상품</span></div>
+                <div class="k">교환 대상 옵션</div><div class="v"><strong>그레이 / M</strong></div>
+                <div class="k">옵션 가격</div><div class="v">50,000원 <span class="wf-badge wf-badge--verify-pass">✓ 동일 가격</span></div>
+                <div class="k">선차감 재고</div><div class="v"><span class="wf-badge wf-badge--reserved">Yes (신청 시 차감)</span></div>
+                <div class="k">재고 복원 필요</div><div class="v full">최종승인 시: No (재고 확정) / 철회·검수거부 시: Yes (재고 복원)</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" data-region="section-pickup">
+            <div class="section-header"><span><span class="desc-num">6</span><span class="section-num">5</span>수거·검수 정보</span></div>
+            <div class="section-body">
+              <div class="kv-grid">
+                <div class="k">택배사</div><div class="v">로젠택배</div>
+                <div class="k">반송장 번호</div><div class="v"><a href="#" target="_blank">5555666677 (추적)</a></div>
+                <div class="k">수거 요청일</div><div class="v">2026.04.18 12:00</div>
+                <div class="k">택배사 수령일</div><div class="v">2026.04.19 11:00 (자동)</div>
+                <div class="k">판매사 회수일</div><div class="v">2026.04.21 11:00 (자동)</div>
+                <div class="k">검수 결과</div><div class="v"><span class="wf-badge wf-badge--insp-none">미검수 (승인 대기)</span></div>
+                <div class="k">검수자</div><div class="v">—</div>
+                <div class="k">검수일시</div><div class="v">—</div>
+                <div class="k">검수 메모</div><div class="v full">—</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section exchange-target" data-region="section-final">
+            <div class="section-header"><span><span class="desc-num">7</span><span class="section-num">6</span>교환 최종승인 정보 ★</span></div>
+            <div class="section-body">
+              <div class="kv-grid">
+                <div class="k">최종승인 일시</div><div class="v" style="color:#94a3b8;">진행 중 (최종승인 대기)</div>
+                <div class="k">최종승인자</div><div class="v" style="color:#94a3b8;">—</div>
+                <div class="k">교환주문번호</div><div class="v" style="color:#94a3b8;">— (최종승인 후 발급)</div>
+                <div class="k">교환주문 발급 상태</div><div class="v" style="color:#94a3b8;">—</div>
+                <div class="k">재배송 송장</div><div class="v" style="color:#94a3b8;">—</div>
+                <div class="k">재배송 상태</div><div class="v" style="color:#94a3b8;">—</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" data-region="section-history">
+            <div class="section-header"><span><span class="desc-num">8</span><span class="section-num">7</span>클레임 처리 이력</span></div>
+            <div class="section-body">
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="timeline-dot done"></div>
+                  <div class="timeline-time">2026.04.21 11:00:00</div>
+                  <div class="timeline-title">교환회수완료 (자동 전이)</div>
+                  <div class="timeline-meta">채널: SYSTEM</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot done"></div>
+                  <div class="timeline-time">2026.04.19 11:00:00</div>
+                  <div class="timeline-title">교환상품수거 (택배사 수령)</div>
+                  <div class="timeline-meta">채널: SYSTEM · 택배사: 로젠택배</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot done"></div>
+                  <div class="timeline-time">2026.04.18 12:00:00</div>
+                  <div class="timeline-title">교환수거중 (반송장 등록)</div>
+                  <div class="timeline-meta">처리자: 관리자 kim.clm · 채널: BO/PO</div>
+                  <div class="timeline-memo">로젠택배 / 5555666677 / 2026-04-18 수거 예약</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot done"></div>
+                  <div class="timeline-time">2026.04.18 09:30:00</div>
+                  <div class="timeline-title">교환접수 (승인)</div>
+                  <div class="timeline-meta">처리자: 관리자 kim.clm · 채널: BO/PO</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot"></div>
+                  <div class="timeline-time">2026.04.17 22:10:00</div>
+                  <div class="timeline-title">교환신청 (접수 + 재고 선차감)</div>
+                  <div class="timeline-meta">처리자: user305 · 채널: FO</div>
+                  <div class="timeline-memo">그레이/S → 그레이/M 교환 요청. 교환 대상 재고 1개 선차감.</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="detail-footer">
+          <div class="btn-group">
+            <span class="desc-num" style="margin-right:4px; align-self:center;">9</span>
+            <button class="wf-btn" onclick="window.close()">닫기</button>
+          </div>
+          <div class="btn-group">
+            <!-- 현재 상태 EXCHANGE_COLLECTED: 검수거부/최종승인 노출 -->
+            <button class="wf-btn wf-btn--danger" onclick="openConfirm('inspectReject')" data-action="BO-CLM-03F">검수거부</button>
+            <button class="wf-btn wf-btn--success" onclick="openConfirm('finalize')" data-action="BO-CLM-03E">최종승인</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec-desc-panel">
+    <h3>BO-CLM-046 — 교환 상세 화면 v1.0</h3>
+    <p><strong>메뉴 경로:</strong> (모달) 교환 목록에서 행 클릭</p>
+    <p><strong>Route:</strong> /bo/claim/delivery/exchange/:claim_id</p>
+    <hr style="margin:8px 0;">
+
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">1</span> 모달 헤더</div><ul><li>타이틀: 교환 상세 [클레임코드]</li><li>[X] · ESC 닫기</li></ul><div class="policy">오픈 시 API: GET /api/v1/claims/{claim_id} (BO-CLM-032 공용)</div></div>
+
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">2</span> 섹션 1: 클레임 정보</div><ul><li>2열 key-value (반품 상세와 동일 구조)</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">3</span> 섹션 2: 원주문 정보</div><ul><li>주문번호·주문자·판매사 링크, 결제수단 블록</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">4</span> 섹션 3: 교환 대상 상품 (원상품)</div><ul><li>ClaimItem 테이블 — 원주문 옵션 기준</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">5</span> 섹션 4: 교환 요청 옵션 ★ (교환 전용)</div>
+      <ul>
+        <li>교환 대상 상품 / 옵션 / 가격 표시 + 검증 배지</li>
+        <li><strong>동일 상품</strong> ✓ — 원주문 상품과 일치</li>
+        <li><strong>동일 가격</strong> ✓ — 원옵션 단가와 일치</li>
+        <li>선차감 재고 상태(Yes/No)</li>
+        <li>재고 복원 필요 여부 (종결 상태별)</li>
+      </ul>
+      <div class="policy">섹션 배경 강조(파랑 테두리). 가격/상품 불일치 시 ❌ FAIL 배지</div>
+    </div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">6</span> 섹션 5: 수거·검수 정보</div><ul><li>반송장/택배사/수거 일정/검수 결과·메모·검수자</li><li>반송장 번호 클릭 → 택배사 추적 새 탭</li></ul></div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">7</span> 섹션 6: 교환 최종승인 정보 ★ (교환 전용)</div>
+      <ul>
+        <li>최종승인 일시 · 승인자</li>
+        <li><strong>교환주문번호</strong> — 링크 → 주문관리 모듈 주문상세</li>
+        <li>교환주문 발급 상태 / 재배송 송장 / 재배송 상태</li>
+        <li>최종승인 전 단계: "진행 중" 또는 "—" 표시</li>
+      </ul>
+    </div>
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">8</span> 섹션 7: 처리 이력 타임라인</div><ul><li>ClaimHistory 최신 순</li><li>재고 선차감/복원, 수거, 검수, 교환주문 발급 이벤트 포함</li></ul></div>
+
+    <hr style="margin:8px 0;">
+    <div class="desc-block"><div class="desc-title"><span class="desc-num">9</span> 하단 버튼 — 모드별 분기</div>
+      <table class="desc-col-table"><thead><tr><th>상태</th><th>버튼</th><th>API</th></tr></thead><tbody>
+        <tr><td>EXCHANGE_REQUESTED</td><td>[닫기] [거절] [승인]</td><td>BO-CLM-03A/03B</td></tr>
+        <tr><td>EXCHANGE_RECEIVED</td><td>[닫기] [수거요청]</td><td>BO-CLM-03C</td></tr>
+        <tr><td>EXCHANGE_PICKUP_IN_PROGRESS / PICKED_UP</td><td>[닫기]</td><td>모니터링</td></tr>
+        <tr><td><strong>EXCHANGE_COLLECTED</strong></td><td>[닫기] [검수거부] <strong>[최종승인]</strong></td><td>BO-CLM-03E/03F</td></tr>
+        <tr><td>EXCHANGE_FINAL_APPROVED / EXCHANGE_WITHDRAWN</td><td>[닫기]</td><td>종결</td></tr>
+      </tbody></table>
+      <div class="policy">교환은 환불 프로세스 없음 — 환불 수기 완료·재전송 버튼 없음</div>
+    </div>
+
+    <hr style="margin:8px 0;">
+    <div class="desc-block"><div class="desc-title">처리 흐름</div><ul>
+      <li><strong>승인</strong> → BO-CLM-03A → 상태: 교환접수</li>
+      <li><strong>거절</strong> → 반려사유 모달 → BO-CLM-03B → 상태: 교환철회 + <strong>재고 복원</strong></li>
+      <li><strong>수거요청</strong> → 반송장 등록 → BO-CLM-03C → 상태: 교환수거중</li>
+      <li><strong>최종승인</strong> → 확인 모달 → BO-CLM-03E → <strong>교환주문 발급 + 재배송</strong></li>
+      <li><strong>검수거부</strong> → 사유/메모 모달 → BO-CLM-03F → 상태: 교환철회 + <strong>재고 복원 + 원상품 재배송</strong></li>
+    </ul></div>
+
+    <hr style="margin:8px 0;">
+    <div class="desc-block"><div class="desc-title">상태 처리</div>
+      <table class="desc-col-table"><thead><tr><th>상태</th><th>UI</th></tr></thead><tbody>
+        <tr><td>로딩</td><td>섹션별 skeleton</td></tr>
+        <tr><td>처리 중</td><td>버튼 비활성 + 스피너</td></tr>
+        <tr><td>재고 선차감 부족</td><td>토스트 + 신청 거부</td></tr>
+        <tr><td>교환주문 발급 실패</td><td>토스트 + 재시도 가능</td></tr>
+        <tr><td>재고 복원 실패</td><td>토스트 + CS 알림 유도</td></tr>
+      </tbody></table>
+    </div>
+
+    <hr style="margin:8px 0;">
+    <div class="desc-block"><div class="desc-title">관련 문서</div><ul>
+      <li>정책: BO-CLM-004 (교환)</li>
+      <li>데이터: BO-CLM-010 (exchange_target_option_id, exchange_order_id)</li>
+      <li>컴포넌트: BO-CLM-026</li>
+      <li>액션: BO-CLM-032/03A/03B/03C/03E/03F</li>
+      <li>호출측: BO-CLM-045 (교환 목록)</li>
+    </ul></div>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="confirm-approve"><div class="confirm-box">
+  <h3>교환 승인</h3>
+  <p>본 건의 교환 신청을 승인합니다.</p>
+  <div class="notice-box">교환 대상 재고는 선차감 상태입니다. 승인 시 '교환접수'로 전환됩니다.</div>
+  <div class="confirm-footer"><button class="wf-btn" onclick="closeConfirm('approve')">취소</button><button class="wf-btn wf-btn--primary" onclick="closeConfirm('approve')">승인</button></div>
+</div></div>
+
+<div class="confirm-overlay" id="confirm-reject"><div class="confirm-box">
+  <h3>교환 거절</h3>
+  <p>반려사유를 입력해 주세요.</p>
+  <textarea placeholder="반려 사유 (10~200자 필수)"></textarea>
+  <div class="notice-box">거절 시 선차감된 교환 재고가 자동 복원됩니다.</div>
+  <div class="confirm-footer"><button class="wf-btn" onclick="closeConfirm('reject')">취소</button><button class="wf-btn wf-btn--primary" onclick="closeConfirm('reject')">거절 확정</button></div>
+</div></div>
+
+<div class="confirm-overlay" id="confirm-pickup"><div class="confirm-box">
+  <h3>교환 수거요청</h3>
+  <div class="form-row"><label>택배사</label><select><option>CJ대한통운</option><option>로젠택배</option><option>한진택배</option><option>우체국택배</option></select></div>
+  <div class="form-row"><label>송장번호</label><input type="text" placeholder="송장번호"></div>
+  <div class="form-row"><label>수거 요청일</label><input type="date" value="2026-04-22"></div>
+  <div class="confirm-footer"><button class="wf-btn" onclick="closeConfirm('pickup')">취소</button><button class="wf-btn wf-btn--primary" onclick="closeConfirm('pickup')">수거요청</button></div>
+</div></div>
+
+<div class="confirm-overlay" id="confirm-finalize"><div class="confirm-box">
+  <h3>교환 최종승인</h3>
+  <p>검수를 <strong>통과</strong> 처리하고 교환을 최종 승인합니다.</p>
+  <textarea placeholder="검수 메모 (0~1000자, 선택)"></textarea>
+  <div class="notice-box">최종 승인 시 <strong>교환주문번호가 자동 발급</strong>되며 교환 상품이 재배송됩니다.</div>
+  <div class="confirm-footer"><button class="wf-btn" onclick="closeConfirm('finalize')">취소</button><button class="wf-btn wf-btn--success" onclick="closeConfirm('finalize')">최종승인</button></div>
+</div></div>
+
+<div class="confirm-overlay" id="confirm-inspectReject"><div class="confirm-box">
+  <h3>교환 검수거부</h3>
+  <p>검수거부 시 교환이 철회되며 <strong>선차감 재고가 복원</strong>되고 <strong>원상품이 재배송</strong>됩니다.</p>
+  <div style="margin-top:10px; font-size:12px;">
+    <strong>거부 사유</strong><br>
+    <label><input type="radio" name="ins-rej-s" checked> 훼손</label>
+    <label><input type="radio" name="ins-rej-s"> 누락</label>
+    <label><input type="radio" name="ins-rej-s"> 기타</label>
+  </div>
+  <textarea placeholder="검수 메모 (기타 선택 시 필수)"></textarea>
+  <div class="confirm-footer"><button class="wf-btn" onclick="closeConfirm('inspectReject')">취소</button><button class="wf-btn wf-btn--danger" onclick="closeConfirm('inspectReject')">검수거부 확정</button></div>
+</div></div>
+
+<script>
+function openConfirm(type) { document.getElementById('confirm-' + type).classList.add('show'); }
+function closeConfirm(type) { document.getElementById('confirm-' + type).classList.remove('show'); }
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { var open = document.querySelector('.confirm-overlay.show'); if (open) open.classList.remove('show'); }
+});
+</script>
+
+</body>
+</html>
