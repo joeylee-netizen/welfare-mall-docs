@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="임직원 복지몰 BO 상품관리 기획 — PPT 244슬라이드 vs AI 에이전트 64파일 산출물 비교 분석">
 <meta name="author" content="임직원 복지몰 기획팀">
+<meta name="theme-color" content="#0e1220">
+<meta property="og:type" content="article">
+<meta property="og:title" content="기획, AI 에이전트로 어떻게 달라지는가 — PPT vs AI 비교">
+<meta property="og:description" content="임직원 복지몰 BO 상품관리 기획 — PPT 244슬라이드 vs AI 에이전트 64파일 산출물 비교 분석. 25.5시간 실측 데이터 기반.">
+<meta property="og:locale" content="ko_KR">
 <title>기획, AI 에이전트로 어떻게 달라지는가 — PPT vs AI 비교</title>
 <style>
   :root {
@@ -15,6 +20,8 @@
     --accent-light: rgba(251,146,60,0.15);
     --accent-dark: #fb923c;
     --success: #34d399;
+    --warning: #fbbf24;
+    --muted: #6b7a94;
     --purple: #8b5cf6;
     --purple-light: rgba(124,58,237,0.18);
     --gray-50: #131a2c;
@@ -27,7 +34,7 @@
     --radius: 12px;
     --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px #5a6e94;
     --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
-    --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
     --bg: #0e1220;
     --bg-alt: #121828;
     --bg-card: #1e2842;
@@ -275,6 +282,14 @@
   .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
   .grid-7-3 { display: grid; grid-template-columns: 7fr 3fr; gap: 28px; align-items: start; }
   .grid-3-7 { display: grid; grid-template-columns: 3fr 7fr; gap: 28px; align-items: start; }
+
+  /* Gallery styles */
+  .gallery-item.ppt-style { border-top: 2px solid var(--accent); }
+  .gallery-item.ai-style { border-top: 2px solid var(--primary); }
+
+  /* Table responsive wrapper */
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .table-scroll .scope-table { min-width: 520px; }
 
   /* Context List */
   .context-list { list-style: none; padding: 0; }
@@ -554,7 +569,7 @@
     color: var(--primary);
     box-shadow: 0 0 12px rgba(56,189,248,0.10);
   }
-  .flow-arrow { font-size: 16px; color: #7a9cc0; font-weight: 700; }
+  .flow-arrow { font-size: 16px; color: #7a9cc0; font-weight: 700; text-align: center; }
 
   /* Roadmap */
   .roadmap { position: relative; padding-left: 40px; }
@@ -789,10 +804,31 @@
   }
 
   @media print {
-    body { background: white; color: #333; }
-    .hero { padding: 40px 20px; }
-    section { padding: 40px 0; page-break-inside: avoid; }
+    body { background: white !important; color: #333 !important; }
+    .hero { padding: 40px 20px; background: white !important; color: #333 !important; }
+    .hero::after { display: none; }
+    .hero h1, .hero .tag, .hero p { color: #333 !important; }
+    .hero-kpi-item .num { color: #222 !important; }
+    .hero-kpi-item .desc { color: #555 !important; }
+    section { padding: 40px 0; page-break-inside: avoid; background: white !important; }
+    .card, .kpi-card, .feature-card, .pipeline-cell, .pillar {
+      background: #f8f8f8 !important; border-color: #ccc !important;
+      backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+      box-shadow: none !important; color: #333 !important;
+    }
+    .kpi-card .value, .kpi-card .label, .kpi-card .unit { color: #333 !important; }
+    .note { background: #f0f0f0 !important; border-color: #bbb !important; color: #333 !important; }
+    .note strong { color: #111 !important; }
+    .comp-table, .scope-table { border-color: #ccc !important; }
+    .comp-table th, .comp-table td, .scope-table th, .scope-table td { color: #333 !important; border-color: #ddd !important; }
+    .section-tag, .section-title, .section-desc { color: #333 !important; }
+    .conclusion { background: white !important; }
+    .conclusion h2, .conclusion p, .conclusion strong { color: #333 !important; }
+    .conclusion::before { display: none; }
+    .nav-bar, #topBtn, .lightbox { display: none !important; }
     .fade-in { opacity: 1; transform: none; }
+    .footer { background: white !important; color: #666 !important; border-color: #ccc !important; }
+    svg text { fill: #333 !important; }
   }
 
   /* Star particles */
@@ -1114,7 +1150,7 @@
     <!-- 도넛 차트: 작업시간 비율 -->
     <h3 style="font-size:15px; font-weight:600; margin:48px 0 16px; color:#8f9ab5;" class="fade-in">AI 25.5시간 작업 시간 분배</h3>
     <div class="chart-wrap fade-in">
-      <svg viewBox="0 0 460 260" width="460">
+      <svg viewBox="0 0 460 260" width="460" role="img" aria-label="AI 25.5시간 작업 시간 분배 도넛 차트: 와이어프레임 56%, Data/Comp/Action 18%, 테스트케이스 18%, 정책 8%">
         <!-- Donut Chart -->
         <g transform="translate(130, 130)">
           <!-- Background circle -->
@@ -1164,7 +1200,7 @@
     <h3 style="font-size:15px; font-weight:600; margin:48px 0 8px; color:#8f9ab5;" class="fade-in">Claude Code 실제 사용량 — 구독 플랜별 작업 가능 범위</h3>
     <p style="font-size:13px; color:#8a9cb8; margin-bottom:24px; max-width:720px; margin-left:auto; margin-right:auto;" class="fade-in">
       Max 5x 플랜으로 5일간 수행한 세션 로그 실측 기반.
-      128개 세션(메인 36 + 서브에이전트 92)에서 약 113만 output tokens을 생성했습니다.
+      128개 세션(메인 36 + 서브에이전트 92)에서 약 135만 output tokens을 생성했습니다.
       Pro 플랜이었다면 동일 작업에 약 15일(3주)이 소요됩니다.
     </p>
 
@@ -1181,7 +1217,7 @@
       </div>
       <div class="kpi-card accent">
         <div class="label">총 생성 토큰</div>
-        <div class="value">~113만</div>
+        <div class="value">~135만</div>
         <div class="unit">output tokens</div>
       </div>
       <div class="kpi-card">
@@ -1196,6 +1232,7 @@
       <h3 style="font-size:14px; margin-bottom:12px; color:#e8eaf0;">
         구독 플랜별 예상 소요 일수 <span style="font-weight:400; color:#8a9cb8;">(9:00~18:00 기준)</span>
       </h3>
+      <div class="table-scroll">
       <table class="scope-table">
         <thead>
           <tr>
@@ -1203,56 +1240,57 @@
             <th>생성 토큰</th>
             <th style="text-align:center;">Max 5x (실측)</th>
             <th style="text-align:center;">Pro (추정)</th>
-            <th style="text-align:center; color:#6b7a94;">Max 20x (참고)</th>
+            <th style="text-align:center; color:var(--muted);">Max 20x (참고)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>04.13 파이프라인 초안</td>
             <td><strong>231K</strong></td>
-            <td style="text-align:center; color:#34d399;">1일</td>
+            <td style="text-align:center; color:var(--success);">1일</td>
             <td style="text-align:center; color:var(--accent);">2.6일</td>
-            <td style="text-align:center; color:#6b7a94;">1일</td>
+            <td style="text-align:center; color:var(--muted);">1일</td>
           </tr>
           <tr>
             <td>04.14 배송상품 재설계</td>
             <td><strong>269K</strong></td>
-            <td style="text-align:center; color:#34d399;">1일</td>
+            <td style="text-align:center; color:var(--success);">1일</td>
             <td style="text-align:center; color:var(--accent);">3.1일</td>
-            <td style="text-align:center; color:#6b7a94;">1일</td>
+            <td style="text-align:center; color:var(--muted);">1일</td>
           </tr>
           <tr>
             <td>04.16 탭 재설계</td>
             <td><strong>128K</strong></td>
-            <td style="text-align:center; color:#34d399;">1일</td>
-            <td style="text-align:center; color:#fbbf24;">1.5일</td>
-            <td style="text-align:center; color:#6b7a94;">1일</td>
+            <td style="text-align:center; color:var(--success);">1일</td>
+            <td style="text-align:center; color:var(--warning);">1.5일</td>
+            <td style="text-align:center; color:var(--muted);">1일</td>
           </tr>
           <tr>
             <td>04.17 검증+등록 재설계</td>
             <td><strong>405K</strong></td>
-            <td style="text-align:center; color:#34d399;">1일</td>
+            <td style="text-align:center; color:var(--success);">1일</td>
             <td style="text-align:center; color:var(--accent);">4.6일</td>
-            <td style="text-align:center; color:#6b7a94;">1일</td>
+            <td style="text-align:center; color:var(--muted);">1일</td>
           </tr>
           <tr>
             <td>04.20 티켓+할인프로모션</td>
             <td><strong>312K</strong></td>
-            <td style="text-align:center; color:#34d399;">1일</td>
+            <td style="text-align:center; color:var(--success);">1일</td>
             <td style="text-align:center; color:var(--accent);">3.5일</td>
-            <td style="text-align:center; color:#6b7a94;">1일</td>
+            <td style="text-align:center; color:var(--muted);">1일</td>
           </tr>
           <tr style="border-top:2px solid var(--border); font-weight:700;">
             <td style="color:#e8eaf0;">합계</td>
             <td style="color:#e8eaf0;">~1.35M</td>
-            <td style="text-align:center; color:#34d399;">5일 (1주)</td>
+            <td style="text-align:center; color:var(--success);">5일 (1주)</td>
             <td style="text-align:center; color:var(--accent);">~15일 (3주)</td>
-            <td style="text-align:center; color:#6b7a94;">5일 (1주)</td>
+            <td style="text-align:center; color:var(--muted);">5일 (1주)</td>
           </tr>
         </tbody>
       </table>
-      <p style="font-size:11px; color:#6b7a94; margin-top:10px; margin-bottom:0;">
-        * 이 프로젝트는 Max 5x($100/월)로 실제 수행. Pro 하루 생성 한도 ~88K tokens 기준 추정 (5h 롤링 윈도우 &times; 일과 8시간)
+      </div>
+      <p style="font-size:11px; color:var(--muted); margin-top:10px; margin-bottom:0;">
+        * 이 프로젝트는 Max 5x($100/월)로 실제 수행. Pro는 하루 약 2회 버스트(버스트당 ~44K tokens) 기준 ~88K/일로 추정
       </p>
     </div>
 
@@ -1348,7 +1386,7 @@
     <!-- 수평 바 차트: 6단계별 라인 수 비율 -->
     <h3 style="font-size:15px; font-weight:600; margin:40px 0 20px; color:#8f9ab5;" class="fade-in">6단계별 라인 수 분포</h3>
     <div class="chart-wrap fade-in">
-      <svg viewBox="0 0 600 220" width="600">
+      <svg viewBox="0 0 600 220" width="600" role="img" aria-label="산출물 라인 수 비교 바 차트: 와이어프레임 14,267줄, Action 1,882줄, Component 1,763줄, TC 1,676줄, Data 414줄, Policy 602줄">
         <!-- Bars -->
         <g transform="translate(110, 0)">
           <!-- Policy -->
@@ -1472,7 +1510,7 @@
       <!-- Radar Chart -->
       <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
         <h4 style="font-size:15px; font-weight:700; color:#b0b8cc; margin-bottom:16px;">6축 품질 비교</h4>
-        <svg viewBox="0 0 280 300" width="260">
+        <svg viewBox="0 0 280 300" width="260" role="img" aria-label="PPT vs AI 6축 레이더 차트: 구조화, 추적성, 재활용성, 변경회복력, 시각적자유도, 이해관계자접근성 비교">
           <!-- Radar axes -->
           <g transform="translate(140, 145)">
             <!-- Axis lines -->
@@ -1536,21 +1574,21 @@
     <div class="grid-3 fade-in">
       <div class="feature-card">
         <div class="icon blue">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         </div>
         <h3>구조화</h3>
         <p>6단계 파이프라인(Policy → Data → Component → Action → Wireframe → Test Case)으로 기획 문서 간 <strong>정합성을 자동 보장</strong>합니다. 정책 변경이 하위 문서에 빠짐없이 반영됩니다.</p>
       </div>
       <div class="feature-card">
         <div class="icon purple">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
         </div>
         <h3>추적성</h3>
         <p>모든 문서가 <strong>refs 체인</strong>으로 연결되고 <strong>Git</strong>으로 이력이 관리됩니다. "이 정책이 바뀌면 어디가 영향받나?"에 refs 체인 조회로 즉시 파악할 수 있습니다.</p>
       </div>
       <div class="feature-card">
         <div class="icon green">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
         </div>
         <h3>생산성</h3>
         <p>확정된 요구사항을 <strong>25.5시간</strong>에 64파일로 변환. 테스트케이스 <strong>126건 AI 지원 생성</strong>. 전면 재설계 요청에도 3~5시간 내 완료합니다.</p>
@@ -1562,7 +1600,7 @@
       1. <strong>이해관계자 합의 도구 부재</strong> &mdash; PPT는 회의에서 바로 보여주고 합의할 수 있지만, Markdown/HTML 기획서는 별도의 뷰어나 배포 과정이 필요합니다.<br>
       2. <strong>조직 학습 비용</strong> &mdash; Git, Markdown, 스키마 개념에 대한 기획자/PM의 학습이 전제됩니다.<br>
       3. <strong>시각적 자유도</strong> &mdash; PPT의 도형/레이아웃 자유도를 HTML/CSS가 완전히 대체하기 어렵습니다.<br>
-      4. <strong>도구 구독 비용</strong> &mdash; 이 프로젝트는 Claude Max 5x($100/월)로 5일 만에 완료했습니다. Pro($20/월)로는 동일 작업에 약 3배(5일→15일) 더 소요되며, 하루 8시간 중 4~5시간을 한도 회복 대기로 소비하게 됩니다.
+      4. <strong>도구 구독 비용</strong> &mdash; 이 프로젝트는 Claude Max 5x($100/월)로 5일간 완료했습니다. Pro($20/월)로도 동일 작업이 가능하나 약 3배(~15일)의 기간이 필요하며, 프로젝트 규모에 따라 적정 플랜 선택이 중요합니다.
     </div>
   </div>
 </section>
@@ -1641,17 +1679,17 @@
         <h3 style="font-size:16px; margin-bottom:20px;"><span class="badge badge--ppt">PPT</span> 수동 수정 (7단계)</h3>
         <div class="flow-diagram" style="flex-direction:column; align-items:stretch;">
           <div class="flow-step manual">1. PPT 파일 열기 + 섹션 찾기</div>
-          <div class="flow-arrow" style="transform:rotate(90deg);">&#8595;</div>
+          <div class="flow-arrow">&#8595;</div>
           <div class="flow-step manual">2. 정책 슬라이드 수정</div>
-          <div class="flow-arrow" style="transform:rotate(90deg);">&#8595;</div>
+          <div class="flow-arrow">&#8595;</div>
           <div class="flow-step manual">3. 목록 필터 슬라이드 수정</div>
-          <div class="flow-arrow" style="transform:rotate(90deg);">&#8595;</div>
+          <div class="flow-arrow">&#8595;</div>
           <div class="flow-step manual">4. 테이블 badge 추가</div>
-          <div class="flow-arrow" style="transform:rotate(90deg);">&#8595;</div>
+          <div class="flow-arrow">&#8595;</div>
           <div class="flow-step manual">5. 등록 화면 라디오 수정</div>
-          <div class="flow-arrow" style="transform:rotate(90deg);">&#8595;</div>
+          <div class="flow-arrow">&#8595;</div>
           <div class="flow-step manual">6. 수정이력 수기 기록</div>
-          <div class="flow-arrow" style="transform:rotate(90deg);">&#8595;</div>
+          <div class="flow-arrow">&#8595;</div>
           <div class="flow-step manual">7. 누락 검토 (전체 슬라이드)</div>
         </div>
       </div>
@@ -1660,11 +1698,11 @@
         <h3 style="font-size:16px; margin-bottom:20px;"><span class="badge badge--ai">AI</span> 자동 추적 (4단계)</h3>
         <div class="flow-diagram" style="flex-direction:column; align-items:stretch;">
           <div class="flow-step auto">1. "제휴사 할인 추가해줘" 지시</div>
-          <div class="flow-arrow" style="transform:rotate(90deg);">&#8595;</div>
+          <div class="flow-arrow">&#8595;</div>
           <div class="flow-step auto">2. refs 체인 추적: 정책 → 엔티티 → 컴포넌트 → 액션 → 와이어프레임</div>
-          <div class="flow-arrow" style="transform:rotate(90deg);">&#8595;</div>
+          <div class="flow-arrow">&#8595;</div>
           <div class="flow-step auto">3. 영향받는 7~8개 파일 일괄 수정</div>
-          <div class="flow-arrow" style="transform:rotate(90deg);">&#8595;</div>
+          <div class="flow-arrow">&#8595;</div>
           <div class="flow-step auto">4. Git diff 확인 + 커밋</div>
         </div>
         <div class="note" style="margin-top:20px; margin-bottom:0;">
@@ -1811,24 +1849,24 @@
   <div class="conclusion-pillars">
     <div class="pillar">
       <div class="p-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       </div>
-      <div class="p-title">구조화</div>
-      <div class="p-desc">6단계 파이프라인<br>정합성 자동 보장</div>
+      <div class="p-title">확장 가능한 체계</div>
+      <div class="p-desc">클레임·주문 등 신규 도메인에<br>동일 파이프라인 즉시 적용</div>
     </div>
     <div class="pillar">
       <div class="p-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
       </div>
-      <div class="p-title">추적성</div>
-      <div class="p-desc">refs 체인 + Git<br>변경 영향 자동 분석</div>
+      <div class="p-title">지속적 정합성</div>
+      <div class="p-desc">정책 변경 시 영향 범위 자동 파악<br>누락 없는 하위 문서 반영</div>
     </div>
     <div class="pillar">
       <div class="p-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 3 0 3 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-3 0-3"/></svg>
       </div>
-      <div class="p-title">생산성</div>
-      <div class="p-desc">25.5h에 64파일<br>TC 126건 AI 지원 생성</div>
+      <div class="p-title">반복 가능한 속도</div>
+      <div class="p-desc">검증된 방법론으로 신규 도메인도<br>동일 품질·속도의 산출물 생성</div>
     </div>
   </div>
 </div>
@@ -1843,10 +1881,11 @@
 <!-- ═══════════════════════════════════════════════ -->
 <script>
 // ── Intersection Observer for fade-in ──
-const observer = new IntersectionObserver((entries) => {
+const observer = new IntersectionObserver((entries, obs) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add('visible');
+      obs.unobserve(entry.target);
     }
   });
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
