@@ -786,6 +786,98 @@
     .pipeline { grid-template-columns: 1fr 1fr; }
     .flow-diagram { flex-direction: column; }
     .flow-arrow { transform: rotate(90deg); }
+    .hero { padding: 88px 24px 64px; }
+    .hero h1 { font-size: 32px; }
+    section { padding: 56px 0; }
+    .conclusion { padding: 72px 24px; }
+  }
+
+  /* ── Mobile ≤ 480px ── */
+  @media (max-width: 480px) {
+
+    /* Hero */
+    .hero { padding: 72px 16px 48px; }
+    .hero h1 { font-size: 26px; letter-spacing: -0.5px; }
+    .hero .tag { font-size: 12px; }
+    .hero p { font-size: 14px; }
+    .hero-kpi { gap: 8px; }
+    .hero-kpi-item { padding: 14px 12px; }
+    .hero-kpi-item .num { font-size: 22px; }
+    .hero-kpi-item .desc { font-size: 11px; }
+    .hero::after { width: 300px; height: 300px; }
+
+    /* Section spacing */
+    section { padding: 48px 0; }
+    .container { padding: 0 12px; }
+    .section-title { font-size: 20px; }
+    .section-desc { font-size: 13px; }
+
+    /* Cards */
+    .card { padding: 20px 16px; }
+    .feature-card { padding: 20px 16px; }
+    .kpi-card { padding: 16px 12px; }
+    .kpi-card .value { font-size: 24px; }
+    .kpi-card .label { font-size: 12px; }
+
+    /* Tables */
+    .table-scroll .comp-table { min-width: 420px; }
+    .comp-table td:first-child { width: auto; min-width: 80px; }
+    .comp-table th, .comp-table td { padding: 10px 12px; font-size: 12px; }
+    .table-scroll .scope-table { min-width: 480px; }
+
+    /* Pipeline */
+    .pipeline { grid-template-columns: 1fr; gap: 8px; }
+    .pipeline-cell .stage { font-size: 11px; }
+    .pipeline-cell .count { font-size: 22px; }
+    .pipeline-cell .lines { font-size: 11px; }
+
+    /* Grid */
+    .grid-4 { gap: 12px; }
+
+    /* Timeline */
+    .tl-item { flex-direction: column; gap: 4px; }
+    .tl-date { width: auto; }
+
+    /* Conclusion */
+    .conclusion { padding: 56px 16px; }
+    .conclusion h2 { font-size: 22px; }
+    .pillar { padding: 20px 16px; }
+
+    /* Nav touch target */
+    .nav-item { padding: 14px 12px; font-size: 12px; min-height: 44px; }
+
+    /* Top button */
+    #topBtn { width: 44px; height: 44px; }
+
+    /* Small fonts floor: 11px minimum */
+    .footer { font-size: 12px; }
+    .badge { font-size: 12px; }
+    .scope-table th { font-size: 12px; }
+    .roadmap-item .phase { font-size: 12px; }
+
+    /* Lightbox close hint */
+    .lightbox::after {
+      content: '✕';
+      position: fixed;
+      top: 16px; right: 16px;
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: white;
+      background: rgba(0,0,0,0.5);
+      border-radius: 50%;
+      z-index: 10000;
+    }
+
+    /* Scroll hint for horizontal scroll areas */
+    .table-scroll { position: relative; }
+    .table-scroll::after {
+      content: '← 스크롤 →';
+      display: block;
+      text-align: center;
+      font-size: 11px;
+      color: #6b7a94;
+      padding: 6px 0 0;
+    }
   }
 
   /* ── Focus visible ── */
@@ -1016,6 +1108,7 @@
     <div class="grid-2 fade-in">
       <div class="card" style="border-top: 2px solid var(--accent);">
         <h3 style="font-size:17px; margin-bottom:16px;"><span class="badge badge--ppt">PPT</span> 기존 PPT 기획서</h3>
+        <div class="table-scroll">
         <table class="scope-table">
           <thead><tr><th>화면</th><th>슬라이드</th></tr></thead>
           <tbody>
@@ -1028,6 +1121,7 @@
             <tr><td>공통 정책/팝업</td><td>22</td></tr>
           </tbody>
         </table>
+        </div>
         <p style="margin-top:16px; font-size:14px; color:var(--gray-500); text-align:center;">
           합계: <strong style="color:var(--accent); font-size:18px;">244 슬라이드</strong> (2개 파일)
         </p>
@@ -1035,6 +1129,7 @@
 
       <div class="card" style="border-top: 2px solid var(--primary);">
         <h3 style="font-size:17px; margin-bottom:16px;"><span class="badge badge--ai">AI</span> AI 에이전트 기획서</h3>
+        <div class="table-scroll">
         <table class="scope-table">
           <thead><tr><th>단계</th><th>파일 수</th><th>비고</th></tr></thead>
           <tbody>
@@ -1046,6 +1141,7 @@
             <tr><td>Test Case</td><td>16</td><td>MD + Excel 실행용</td></tr>
           </tbody>
         </table>
+        </div>
         <p style="margin-top:16px; font-size:14px; color:var(--gray-500); text-align:center;">
           합계: <strong style="color:#38bdf8; font-size:18px;">64 파일 / 20,604 라인</strong>
         </p>
@@ -1150,7 +1246,7 @@
     <!-- 도넛 차트: 작업시간 비율 -->
     <h3 style="font-size:15px; font-weight:600; margin:48px 0 16px; color:#8f9ab5;" class="fade-in">AI 25.5시간 작업 시간 분배</h3>
     <div class="chart-wrap fade-in">
-      <svg viewBox="0 0 460 260" width="460" role="img" aria-label="AI 25.5시간 작업 시간 분배 도넛 차트: 와이어프레임 56%, Data/Comp/Action 18%, 테스트케이스 18%, 정책 8%">
+      <svg viewBox="0 0 460 260" role="img" aria-label="AI 25.5시간 작업 시간 분배 도넛 차트: 와이어프레임 56%, Data/Comp/Action 18%, 테스트케이스 18%, 정책 8%">
         <!-- Donut Chart -->
         <g transform="translate(130, 130)">
           <!-- Background circle -->
@@ -1386,7 +1482,7 @@
     <!-- 수평 바 차트: 6단계별 라인 수 비율 -->
     <h3 style="font-size:15px; font-weight:600; margin:40px 0 20px; color:#8f9ab5;" class="fade-in">6단계별 라인 수 분포</h3>
     <div class="chart-wrap fade-in">
-      <svg viewBox="0 0 600 220" width="600" role="img" aria-label="산출물 라인 수 비교 바 차트: 와이어프레임 14,267줄, Action 1,882줄, Component 1,763줄, TC 1,676줄, Data 414줄, Policy 602줄">
+      <svg viewBox="0 0 600 220" role="img" aria-label="산출물 라인 수 비교 바 차트: 와이어프레임 14,267줄, Action 1,882줄, Component 1,763줄, TC 1,676줄, Data 414줄, Policy 602줄">
         <!-- Bars -->
         <g transform="translate(110, 0)">
           <!-- Policy -->
@@ -1440,6 +1536,7 @@
     <p class="section-desc fade-in">각 방식의 강점과 한계를 6축으로 종합 비교합니다</p>
 
     <div class="grid-7-3 fade-in">
+      <div class="table-scroll">
       <table class="comp-table">
         <thead>
           <tr>
@@ -1506,11 +1603,12 @@
           </tr>
         </tbody>
       </table>
+      </div>
 
       <!-- Radar Chart -->
       <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
         <h4 style="font-size:15px; font-weight:700; color:#b0b8cc; margin-bottom:16px;">6축 품질 비교</h4>
-        <svg viewBox="0 0 280 300" width="260" role="img" aria-label="PPT vs AI 6축 레이더 차트: 구조화, 추적성, 재활용성, 변경회복력, 시각적자유도, 이해관계자접근성 비교">
+        <svg viewBox="0 0 280 300" role="img" aria-label="PPT vs AI 6축 레이더 차트: 구조화, 추적성, 재활용성, 변경회복력, 시각적자유도, 이해관계자접근성 비교">
           <!-- Radar axes -->
           <g transform="translate(140, 145)">
             <!-- Axis lines -->
@@ -1617,6 +1715,7 @@
     <div class="grid-2 fade-in">
       <div class="card" style="border-top: 2px solid var(--accent);">
         <h3 style="font-size:16px; margin-bottom:16px;"><span class="badge badge--ppt">PPT</span> 수정 현황</h3>
+        <div class="table-scroll">
         <table class="scope-table">
           <tbody>
             <tr><td>총 수정 횟수</td><td><strong>4,003회</strong> (revision)</td></tr>
@@ -1625,9 +1724,11 @@
             <tr><td>이력 기록</td><td>슬라이드 수기 기록</td></tr>
           </tbody>
         </table>
+        </div>
       </div>
       <div class="card" style="border-top: 2px solid var(--primary);">
         <h3 style="font-size:16px; margin-bottom:16px;"><span class="badge badge--ai">AI</span> 수정 현황</h3>
+        <div class="table-scroll">
         <table class="scope-table">
           <tbody>
             <tr><td>총 커밋 수</td><td><strong>30건</strong></td></tr>
@@ -1636,6 +1737,7 @@
             <tr><td>이력 기록</td><td>Git 커밋 <strong>자동 기록</strong></td></tr>
           </tbody>
         </table>
+        </div>
       </div>
     </div>
 
@@ -1722,6 +1824,7 @@
     <h2 class="section-title fade-in">개발팀 활용 관점</h2>
     <p class="section-desc fade-in">기획서에서 개발에 필요한 정보를 얼마나 바로 쓸 수 있는가</p>
 
+    <div class="table-scroll">
     <table class="comp-table fade-in">
       <thead>
         <tr>
@@ -1768,6 +1871,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
     <div class="note fade-in" style="margin-top:32px;">
       <strong>실무 효과:</strong> 개발팀이 기획서를 받은 후 "이건 어디에 정의되어 있나요?"라는
       질문이 줄어듭니다. API 스펙, DB 구조, 유효성 규칙, 테스트케이스가
